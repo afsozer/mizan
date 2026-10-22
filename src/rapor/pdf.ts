@@ -5,9 +5,9 @@ import { dirname } from 'node:path';
 import pdfmake from 'pdfmake';
 import type { HesapSonucu, KalemSonucu } from '../hesap.ts';
 import { Decimal, tl, topla, yuzde } from '../para.ts';
-import { sure, sureYaz, trTarih } from '../tarih.ts';
+import { trTarih } from '../tarih.ts';
 import type { Kaynak } from '../tablolar.ts';
-import { toplamHizmet } from '../kalemler/ortak.ts';
+import { donemYaz, sureAciklamasi } from '../kalemler/ortak.ts';
 
 const require = createRequire(import.meta.url);
 const FONT_DIZINI = dirname(require.resolve('pdfmake/fonts/Roboto.js'));
@@ -83,9 +83,14 @@ function kalemBolumu(k: KalemSonucu, no: number): Icerik[] {
   parca.push({ text: 'Dayanak', style: 'etiket' }, madde(k.dayanak));
   parca.push({ text: 'Formül', style: 'etiket' }, madde(k.formul));
   parca.push(ikiSutun(k.bilgiler));
-  if (k.detay) {
-    const sag = k.detay.basliklar.map((_, i) => i).filter((i) => i > 0 && !/Açıklama|Dönem|Dolum/.test(k.detay!.basliklar[i]!));
-    parca.push(tablo(k.detay.basliklar, k.detay.satirlar, { sag, toplam: k.detay.toplam }));
+  for (const [baslikMetni, d] of [
+    ['', k.detay] as const,
+    ...(k.ekDetaylar ?? []).map((e) => [e.baslik, e.tablo] as const),
+  ]) {
+    if (!d) continue;
+    if (baslikMetni) parca.push({ text: baslikMetni, style: 'etiket' });
+    const sag = d.basliklar.map((_, i) => i).filter((i) => i > 0 && !/Açıklama|Dönem|Dolum|Ödeme tarihi/.test(d.basliklar[i]!));
+    parca.push(tablo(d.basliklar, d.satirlar, { sag, toplam: d.toplam }));
   }
 
   const ozet: string[][] = [['Hesaplanan brüt', tl(k.hamBrut)]];
@@ -156,13 +161,10 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
     tl(topla(k.faizler.map((f) => f.toplam))),
   ]);
 
-  const hizmetSatirlari: [string, string][] = g.hizmet.donemler.map((p, i) => [
-    `Hizmet dönemi ${i + 1}`,
-    `${trTarih(p.giris)} - ${trTarih(p.cikis)} (${sureYaz(sure(p.giris, p.cikis))})`,
-  ]);
+  const hizmetSatirlari: [string, string][] = g.hizmet.donemler.map((p, i) => [`Hizmet dönemi ${i + 1}`, donemYaz(g, p)]);
   const girdiler: [string, string][] = [
     ...hizmetSatirlari,
-    ['Toplam hizmet', sureYaz(toplamHizmet(g))],
+    ['Toplam hizmet', sureAciklamasi(g)],
     ['Fesih', `${trTarih(g.hizmet.fesihTarihi)}, ${g.hizmet.fesihSekli}`],
     [
       'Son çıplak brüt ücret',
@@ -181,6 +183,16 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
     if ('ucretTuru' in kg) kalemTercihleri.push([k.ad, 'İzin ücretine esas ücret', kg.ucretTuru === 'ciplak' ? 'çıplak' : 'giydirilmiş', '-']);
     if (kg.takdiriIndirim) kalemTercihleri.push([k.ad, 'Takdiri indirim', yuzde(kg.takdiriIndirim.oran), kg.takdiriIndirim.gerekce]);
     if (kg.mahsup) kalemTercihleri.push([k.ad, 'Mahsup', `${tl(kg.mahsup.tutar)} TL`, kg.mahsup.aciklama]);
+    if ('oncekiOdemeler' in kg && kg.oncekiOdemeler) {
+      const op = kg.oncekiOdemeler;
+      kalemTercihleri.push([k.ad, 'Önceki ödemelerin mahsubu', op.faiz === 'yasal' ? 'yasal faiziyle' : 'faizsiz', op.gerekce]);
+    }
+    if ('donemEsasi' in kg && kg.donemEsasi) {
+      kalemTercihleri.push([k.ad, 'Bildirim süresi esası', kg.donemEsasi === 'son' ? 'son hizmet dönemi' : 'tüm dönemler', '-']);
+    }
+    if ('kullandirilanGun' in kg && kg.kullandirilanGun) {
+      kalemTercihleri.push([k.ad, 'Kullandırılan bildirim süresi', `${kg.kullandirilanGun.toString()} gün`, '-']);
+    }
     for (const f of kg.faiz ?? []) {
       kalemTercihleri.push([k.ad, 'Faiz', `${faizTuruAdi(f.tur)}, ${trTarih(f.baslangic)}${f.tutar ? `, ${tl(f.tutar)} TL` : ''}`, f.gerekce]);
     }

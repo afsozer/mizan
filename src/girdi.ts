@@ -35,9 +35,19 @@ interface OrtakKalem {
   takdiriIndirim?: TakdiriIndirim;
 }
 
+export interface OncekiOdeme {
+  tarih: string;
+  /** Biri verilir: net verilirse kıdemde yalnız damga vergisi kesildiği kabulüyle brüte çevrilir. */
+  netTutar?: Decimal;
+  brutTutar?: Decimal;
+  aciklama?: string;
+}
+
 export interface KidemGirdisi extends OrtakKalem {
   hakVar: boolean;
   gerekce: string;
+  /** Daha önce ödenen kıdem: brüte çevrilip (isteğe göre) yasal faiziyle mahsup edilir. */
+  oncekiOdemeler?: { faiz: 'yasal' | 'yok'; faizBitis?: string; gerekce: string; liste: OncekiOdeme[] };
 }
 
 export interface IhbarGirdisi extends OrtakKalem {
@@ -45,6 +55,10 @@ export interface IhbarGirdisi extends OrtakKalem {
   gerekce: string;
   /** 4857 m.17 sınır sürelerinde yorum farkı için elle hafta sayısı. */
   haftaSayisi?: Decimal;
+  /** Birden fazla hizmet döneminde zorunlu: bildirim süresi son döneme mi tüm dönemlere mi göre. */
+  donemEsasi?: 'son' | 'tumu';
+  /** Bildirim süresinin işçiye kullandırılan kısmı (gün). */
+  kullandirilanGun?: Decimal;
 }
 
 export interface YillikIzinGirdisi extends OrtakKalem {
@@ -58,6 +72,8 @@ export interface CalismaDonemi {
   bitis: string;
   /** Dönem içinde çalışılmayan günler (yıllık izin, rapor): hafta sayısından düşülür. */
   dislanacakGun: Decimal;
+  /** Dönemin hafta sayısı elle (ör. puantajdan ya da raporda kabul edilen); verilirse gün/7 yerine kullanılır. */
+  haftaSayisi?: Decimal;
 }
 
 export interface FazlaCalismaGirdisi extends OrtakKalem {
@@ -85,6 +101,8 @@ export interface VergiParametresi {
   oncekiKumulatifMatrah: Decimal;
   /** GVK m.23/1-18 ve DVK (2) sayılı tablo IV-34: ödeme ayında bir kez. */
   asgariUcretIstisnasi?: boolean;
+  /** Dilim yönteminde matrahlar kalemler arasında birikir mi, her kalem önceki matrahtan mı başlar. */
+  birikim?: 'kalemler-arasi' | 'kalem-bazinda';
 }
 
 export interface Girdi {
@@ -97,6 +115,9 @@ export interface Girdi {
     fesihSekli: string;
     /** Yalnız yıllık izinde yaş kuralı (4857 m.53/3) için; raporda yaş olarak görünür. */
     dogumTarihi?: string;
+    /** Gün esaslı süre hesabında hizmetten düşülecek günler (ör. ücretsiz izin) ve gerekçesi. */
+    dislanacakGun?: Decimal;
+    dislanacakGerekce?: string;
   };
   ucret: {
     /** "asgari" yazılırsa son ücret tarihindeki asgari ücret alınır. */
@@ -113,6 +134,8 @@ export interface Girdi {
     faizGunEsasi?: Decimal;
     faizMatrahi?: 'brut' | 'net';
     indirimMahsupSirasi?: 'once-indirim' | 'once-mahsup';
+    /** takvim: yıl/ay/gün takvimden; gun: gün sayısı, 1 yıl 365, 1 ay 30 gün. */
+    sureHesabi?: 'takvim' | 'gun';
     vergi: VergiParametresi;
   };
   tablolar?: { mevduatFaizi?: string };
@@ -261,14 +284,18 @@ function indirimOku(o: Okuyucu): TakdiriIndirim {
 }
 
 function donemOku<A extends string>(o: Okuyucu, ekAlan: A): CalismaDonemi & Record<A, Decimal> {
-  o.izinli(['baslangic', 'bitis', 'dislanacakGun', ekAlan]);
+  o.izinli(['baslangic', 'bitis', 'dislanacakGun', 'haftaSayisi', ekAlan]);
   const baslangic = o.tarih('baslangic');
   const bitis = o.tarih('bitis');
   if (karsilastir(bitis, baslangic) < 0) throw new Error(`${o.yer}: bitiş başlangıçtan önce`);
+  if (o.var('haftaSayisi') && o.var('dislanacakGun')) {
+    throw new Error(`${o.yer}: haftaSayisi verilince dislanacakGun kullanılmaz (hafta sayısı zaten net)`);
+  }
   return {
     baslangic,
     bitis,
     dislanacakGun: o.var('dislanacakGun') ? o.sayi('dislanacakGun') : d(0),
+    haftaSayisi: o.var('haftaSayisi') ? o.sayi('haftaSayisi') : undefined,
     [ekAlan]: o.sayi(ekAlan),
   } as CalismaDonemi & Record<A, Decimal>;
 }
@@ -291,7 +318,7 @@ export function girdiCoz(veri: unknown): Girdi {
   };
 
   const h = k.alt('hizmet');
-  h.izinli(['donemler', 'fesihTarihi', 'fesihSekli', 'dogumTarihi']);
+  h.izinli(['donemler', 'fesihTarihi', 'fesihSekli', 'dogumTarihi', 'dislanacakGun', 'dislanacakGerekce']);
   const donemler = h.liste('donemler').map((p) => {
     p.izinli(['giris', 'cikis']);
     const giris = p.tarih('giris');
@@ -310,7 +337,11 @@ export function girdiCoz(veri: unknown): Girdi {
     fesihTarihi: h.tarih('fesihTarihi'),
     fesihSekli: h.metin('fesihSekli'),
     dogumTarihi: h.var('dogumTarihi') ? h.tarih('dogumTarihi') : undefined,
+    dislanacakGun: h.var('dislanacakGun') ? h.sayi('dislanacakGun') : undefined,
+    dislanacakGerekce: h.var('dislanacakGerekce') ? h.metin('dislanacakGerekce') : undefined,
   };
+  if (hizmet.dislanacakGun && !hizmet.dislanacakGerekce) throw new Error('girdi.hizmet.dislanacakGerekce: düşülen günlerin gerekçesi yazılmalı');
+  if (hizmet.dislanacakGun && !hizmet.dislanacakGun.isInteger()) throw new Error('girdi.hizmet.dislanacakGun: tam gün olmalı');
 
   const u = k.alt('ucret');
   u.izinli(['sonBrutAylik', 'sonUcretTarihi', 'yontem', 'donemsel', 'yanHaklar']);
@@ -336,9 +367,9 @@ export function girdiCoz(veri: unknown): Girdi {
   if (yontem !== 'donemsel' && ucret.donemsel) throw new Error('girdi.ucret.donemsel: yalnız yöntem "donemsel" iken kullanılır');
 
   const p = k.alt('parametreler');
-  p.izinli(['gunlukBolen', 'aylikCalismaSaati', 'haftaHesabi', 'faizGunEsasi', 'faizMatrahi', 'indirimMahsupSirasi', 'vergi']);
+  p.izinli(['gunlukBolen', 'aylikCalismaSaati', 'haftaHesabi', 'faizGunEsasi', 'faizMatrahi', 'indirimMahsupSirasi', 'sureHesabi', 'vergi']);
   const v = p.alt('vergi');
-  v.izinli(['yontem', 'sabitOran', 'yil', 'oncekiKumulatifMatrah', 'asgariUcretIstisnasi']);
+  v.izinli(['yontem', 'sabitOran', 'yil', 'oncekiKumulatifMatrah', 'asgariUcretIstisnasi', 'birikim']);
   const vergiYontem = v.secenek('yontem', ['dilim', 'sabit'] as const);
   if (vergiYontem === 'dilim' && v.var('sabitOran')) throw new Error('girdi.parametreler.vergi.sabitOran: yalnız yöntem "sabit" iken kullanılır');
   const vergi: VergiParametresi = {
@@ -347,7 +378,9 @@ export function girdiCoz(veri: unknown): Girdi {
     yil: v.var('yil') ? v.sayi('yil').toNumber() : undefined,
     oncekiKumulatifMatrah: v.var('oncekiKumulatifMatrah') ? v.sayi('oncekiKumulatifMatrah') : d(0),
     asgariUcretIstisnasi: v.var('asgariUcretIstisnasi') ? v.mantiksal('asgariUcretIstisnasi') : undefined,
+    birikim: v.var('birikim') ? v.secenek('birikim', ['kalemler-arasi', 'kalem-bazinda'] as const) : undefined,
   };
+  if (vergi.birikim && vergiYontem !== 'dilim') throw new Error('girdi.parametreler.vergi.birikim: yalnız yöntem "dilim" iken kullanılır');
   const parametreler = {
     gunlukBolen: p.var('gunlukBolen') ? p.sayi('gunlukBolen', 1) : undefined,
     aylikCalismaSaati: p.var('aylikCalismaSaati') ? p.sayi('aylikCalismaSaati', 1) : undefined,
@@ -357,8 +390,12 @@ export function girdiCoz(veri: unknown): Girdi {
     indirimMahsupSirasi: p.var('indirimMahsupSirasi')
       ? p.secenek('indirimMahsupSirasi', ['once-indirim', 'once-mahsup'] as const)
       : undefined,
+    sureHesabi: p.var('sureHesabi') ? p.secenek('sureHesabi', ['takvim', 'gun'] as const) : undefined,
     vergi,
   };
+  if (hizmet.dislanacakGun && parametreler.sureHesabi !== 'gun') {
+    throw new Error('girdi.hizmet.dislanacakGun: yalnız parametreler.sureHesabi "gun" iken kullanılır');
+  }
 
   let tablolar: Girdi['tablolar'];
   if (k.var('tablolar')) {
@@ -372,18 +409,43 @@ export function girdiCoz(veri: unknown): Girdi {
   const kalemler: Girdi['kalemler'] = {};
   if (km.var('kidem')) {
     const o = km.alt('kidem');
-    o.izinli(['hakVar', 'gerekce', ...ORTAK]);
+    o.izinli(['hakVar', 'gerekce', 'oncekiOdemeler', ...ORTAK]);
     kalemler.kidem = { hakVar: o.mantiksal('hakVar'), gerekce: o.metin('gerekce'), ...ortakOku(o) };
+    if (o.var('oncekiOdemeler')) {
+      if (kalemler.kidem.mahsup) throw new Error(`${o.yer}: mahsup ve oncekiOdemeler birlikte kullanılmaz`);
+      const op = o.alt('oncekiOdemeler');
+      op.izinli(['faiz', 'faizBitis', 'gerekce', 'liste']);
+      kalemler.kidem.oncekiOdemeler = {
+        faiz: op.secenek('faiz', ['yasal', 'yok'] as const),
+        faizBitis: op.var('faizBitis') ? op.tarih('faizBitis') : undefined,
+        gerekce: op.metin('gerekce'),
+        liste: op.liste('liste').map((x) => {
+          x.izinli(['tarih', 'netTutar', 'brutTutar', 'aciklama']);
+          if (x.var('netTutar') === x.var('brutTutar')) throw new Error(`${x.yer}: netTutar ya da brutTutar alanlarından biri verilmeli`);
+          return {
+            tarih: x.tarih('tarih'),
+            netTutar: x.var('netTutar') ? x.tutar('netTutar') : undefined,
+            brutTutar: x.var('brutTutar') ? x.tutar('brutTutar') : undefined,
+            aciklama: x.var('aciklama') ? x.metin('aciklama') : undefined,
+          };
+        }),
+      };
+    }
   }
   if (km.var('ihbar')) {
     const o = km.alt('ihbar');
-    o.izinli(['hakVar', 'gerekce', 'haftaSayisi', ...ORTAK]);
+    o.izinli(['hakVar', 'gerekce', 'haftaSayisi', 'donemEsasi', 'kullandirilanGun', ...ORTAK]);
     kalemler.ihbar = {
       hakVar: o.mantiksal('hakVar'),
       gerekce: o.metin('gerekce'),
       haftaSayisi: o.var('haftaSayisi') ? o.sayi('haftaSayisi', 1) : undefined,
+      donemEsasi: o.var('donemEsasi') ? o.secenek('donemEsasi', ['son', 'tumu'] as const) : undefined,
+      kullandirilanGun: o.var('kullandirilanGun') ? o.sayi('kullandirilanGun') : undefined,
       ...ortakOku(o),
     };
+    if (donemler.length > 1 && !kalemler.ihbar.donemEsasi) {
+      throw new Error(`${o.yer}.donemEsasi: birden fazla hizmet döneminde yazılmalı (son | tumu)`);
+    }
   }
   if (km.var('yillikIzin')) {
     const o = km.alt('yillikIzin');

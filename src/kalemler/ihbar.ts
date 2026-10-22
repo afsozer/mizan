@@ -1,6 +1,6 @@
 import { d, kurus, sayi, tl } from '../para.ts';
-import { sureYaz, type YilAyGun } from '../tarih.ts';
-import { KALEM_ADLARI, toplamHizmet, type Baglam, type KalemHesabi } from './ortak.ts';
+import type { YilAyGun } from '../tarih.ts';
+import { hizmetSuresi, KALEM_ADLARI, sureAciklamasi, type Baglam, type KalemHesabi } from './ortak.ts';
 
 /**
  * 4857 m.17/2: (a) altı aydan az 2, (b) altı aydan bir buçuk yıla kadar 4, (c) bir buçuk yıldan üç
@@ -20,7 +20,11 @@ export function ihbarHaftasi(s: YilAyGun): { hafta: number; sinirda: boolean } {
 export function ihbarHesapla(b: Baglam): KalemHesabi {
   const g = b.girdi;
   const k = g.kalemler.ihbar!;
-  const hizmet = toplamHizmet(g);
+  // Son dönem esasında yalnız son hizmet dönemi sayılır; düşülecek günler (ücretsiz izin) yalnız
+  // tüm dönemler esasında uygulanır, çünkü girdide hangi döneme ait oldukları belirtilmez.
+  const son = k.donemEsasi === 'son';
+  const donemler = son ? g.hizmet.donemler.slice(-1) : g.hizmet.donemler;
+  const hizmet = hizmetSuresi(g, donemler, !son);
   const notlar: string[] = [];
   const sonuc: KalemHesabi = {
     kod: 'ihbar',
@@ -30,15 +34,26 @@ export function ihbarHesapla(b: Baglam): KalemHesabi {
       '4857 s.K. m.17/4: bildirim şartına uymayan taraf bildirim süresine ilişkin ücret tutarında tazminat öder',
       '4857 s.K. m.17/son: hesapta ücrete ek menfaatler de göz önünde tutulur (giydirilmiş ücret)',
     ],
-    formul: ['Günlük giydirilmiş ücret = giydirilmiş brüt aylık / günlük bölen', 'İhbar = günlük giydirilmiş ücret × hafta × 7'],
+    formul: [
+      'Günlük giydirilmiş ücret = giydirilmiş brüt aylık / günlük bölen',
+      k.kullandirilanGun ? 'İhbar = günlük giydirilmiş ücret × (hafta × 7 - kullandırılan gün)' : 'İhbar = günlük giydirilmiş ücret × hafta × 7',
+    ],
     bilgiler: [
       ['Hak durumu', `${k.hakVar ? 'Var' : 'Yok'} (girdi: ${k.gerekce})`],
-      ['Toplam hizmet', sureYaz(hizmet)],
+      [son ? 'Son dönem hizmeti' : 'Toplam hizmet', sureAciklamasi(g, donemler, !son)],
+      ...(k.donemEsasi
+        ? [['Süre esası', son ? 'yalnız son hizmet dönemi (girdi)' : 'tüm hizmet dönemleri birleştirilerek (girdi)'] as [string, string]]
+        : []),
     ],
     hamBrut: d(0),
     kesintiTuru: 'ihbar',
     notlar,
   };
+  if (son) {
+    sonuc.dayanak.push(
+      'Kıdemdeki 1475 m.14/2 birleştirmesine paralel bir hüküm olmadığından ihbarda fasılalı dönemler birleştirilmez (Yargıtay 9. HD 03.06.2021, 2021/5562 E., 2021/9893 K.)',
+    );
+  }
   if (!k.hakVar) {
     notlar.push('Girdide ihbar tazminatı hakkı olmadığı belirtildi; tutar hesaplanmadı.');
     return sonuc;
@@ -56,9 +71,15 @@ export function ihbarHesapla(b: Baglam): KalemHesabi {
   }
   const giydirilmis = b.ucret.giydirilmis();
   const gunluk = giydirilmis.div(b.esaslar.gunlukBolen);
-  const gun = hafta.times(7);
+  const tumGun = hafta.times(7);
+  const kullandirilan = k.kullandirilanGun ?? d(0);
+  if (kullandirilan.gt(tumGun)) throw new Error('İhbar: kullandırılan gün bildirim süresinden uzun olamaz');
+  const gun = tumGun.minus(kullandirilan);
   sonuc.bilgiler.push(
-    ['Bildirim süresi', `${sayi(hafta)} hafta${k.haftaSayisi ? ' (girdi ile verildi)' : ''} = ${sayi(gun)} gün`],
+    ['Bildirim süresi', `${sayi(hafta)} hafta${k.haftaSayisi ? ' (girdi ile verildi)' : ''} = ${sayi(tumGun)} gün`],
+    ...(k.kullandirilanGun
+      ? [['Kullandırılan bildirim süresi', `${sayi(kullandirilan)} gün (girdi); kalan ${sayi(gun)} gün`] as [string, string]]
+      : []),
     ['Giydirilmiş brüt ücret', `${tl(giydirilmis)} TL`],
     ['Günlük giydirilmiş ücret', `${tl(gunluk, 4)} TL`],
   );

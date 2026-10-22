@@ -70,6 +70,14 @@ export function esaslariBelirle(g: Girdi): Esaslar {
     });
   }
 
+  sec(
+    'Süre hesabı',
+    p.sureHesabi,
+    'takvim' as const,
+    (x) => (x === 'takvim' ? 'takvim esaslı, giriş ve çıkış günü dahil' : 'gün sayısı; 1 yıl 365 gün, 1 ay 30 gün'),
+    'Hesap esası; birden fazla dönem takvimde toplanıp 30 gün 1 ay sayılır',
+  );
+
   const v = p.vergi;
   liste.push({
     ad: 'Gelir vergisi yöntemi',
@@ -81,6 +89,15 @@ export function esaslariBelirle(g: Girdi): Esaslar {
     dayanak: 'Hukuki tercih (GVK m.61, m.94, m.103)',
   });
   const vergiYili = sec('Vergi yılı', v.yil, yilAl(g.hesapTarihi), (x) => String(x), 'Hesap tarihinin yılı');
+  if (v.yontem === 'dilim') {
+    sec(
+      'Gelir vergisi matrah birikimi',
+      v.birikim,
+      'kalemler-arasi' as const,
+      (x) => (x === 'kalemler-arasi' ? 'kalemlerin matrahları sırayla birikir' : 'her kalem önceki matrahtan ayrı başlar'),
+      'Hukuki tercih (GVK m.103 kümülatif tarife)',
+    );
+  }
   const asgariUcretIstisnasi = sec(
     'Asgari ücret GV ve DV istisnası',
     v.asgariUcretIstisnasi,

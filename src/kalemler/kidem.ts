@@ -1,6 +1,7 @@
-import { d, Decimal, kurus, tl } from '../para.ts';
-import { sure, sureYaz, trTarih } from '../tarih.ts';
-import { KALEM_ADLARI, toplamHizmet, type Baglam, type KalemHesabi } from './ortak.ts';
+import { d, Decimal, kurus, tl, topla, yuzde } from '../para.ts';
+import { faizHesapla } from '../faiz.ts';
+import { gunFarki, trTarih } from '../tarih.ts';
+import { donemYaz, KALEM_ADLARI, sureAciklamasi, toplamHizmet, type Baglam, type KalemHesabi } from './ortak.ts';
 
 export function kidemHesapla(b: Baglam): KalemHesabi {
   const g = b.girdi;
@@ -10,10 +11,8 @@ export function kidemHesapla(b: Baglam): KalemHesabi {
   const bilgiler: [string, string][] = [
     ['Hak durumu', `${k.hakVar ? 'Var' : 'Yok'} (girdi: ${k.gerekce})`],
     ['Fesih', `${trTarih(g.hizmet.fesihTarihi)}, ${g.hizmet.fesihSekli}`],
-    ...g.hizmet.donemler.map(
-      (p, i) => [`Hizmet dönemi ${i + 1}`, `${trTarih(p.giris)} - ${trTarih(p.cikis)} (${sureYaz(sure(p.giris, p.cikis))})`] as [string, string],
-    ),
-    ['Toplam hizmet', sureYaz(hizmet)],
+    ...g.hizmet.donemler.map((p, i) => [`Hizmet dönemi ${i + 1}`, donemYaz(g, p)] as [string, string]),
+    ['Toplam hizmet', sureAciklamasi(g)],
   ];
   const sonuc: KalemHesabi = {
     kod: 'kidem',
@@ -65,8 +64,67 @@ export function kidemHesapla(b: Baglam): KalemHesabi {
   };
   sonuc.hamBrut = yilT.plus(ayT).plus(gunT);
   sonuc.detay.toplam = ['Toplam', '', tl(sonuc.hamBrut)];
-  if (g.hizmet.donemler.length > 1) {
+  if (g.hizmet.donemler.length > 1 && g.parametreler.sureHesabi !== 'gun') {
     notlar.push('Birden fazla hizmet dönemi toplandı (1475 s.K. m.14/2); 30 gün 1 ay, 12 ay 1 yıl sayıldı.');
   }
+  if (k.oncekiOdemeler) oncekiOdemeleriMahsupEt(b, sonuc);
   return sonuc;
+}
+
+/**
+ * Daha önce ödenen kıdem tazminatı brüte çevrilir ve ödeme gününden faiz bitişine (varsayılan
+ * fesih tarihi) kadar yasal faiziyle birlikte mahsup edilir. Net ödeme, kıdem tavan içinde gelir
+ * vergisinden istisna olduğundan yalnız damga vergisi kesildiği kabulüyle brüte çevrilir.
+ */
+function oncekiOdemeleriMahsupEt(b: Baglam, sonuc: KalemHesabi): void {
+  const g = b.girdi;
+  const op = g.kalemler.kidem!.oncekiOdemeler!;
+  const faizBitis = op.faizBitis ?? g.hizmet.fesihTarihi;
+  const satirlar: string[][] = [];
+  const mahsuplar: Decimal[] = [];
+  const brutler: Decimal[] = [];
+  const faizler: Decimal[] = [];
+  for (const o of op.liste) {
+    const damga = d(b.tablolar.damga.bul(o.tarih, b.kayit).oran);
+    const brut = o.brutTutar ?? kurus(o.netTutar!.div(d(1).minus(damga)));
+    const faiz =
+      op.faiz === 'yasal'
+        ? faizHesapla(b.tablolar.yasalFaiz, 'yasal', brut, o.tarih, faizBitis, b.esaslar.faizGunEsasi, 'önceki ödeme', b.kayit)
+        : undefined;
+    const faizTutar = faiz?.toplam ?? d(0);
+    brutler.push(brut);
+    faizler.push(faizTutar);
+    mahsuplar.push(brut.plus(faizTutar));
+    satirlar.push([
+      trTarih(o.tarih) + (o.aciklama ? ` (${o.aciklama})` : ''),
+      o.netTutar ? tl(o.netTutar) : '-',
+      tl(brut),
+      faiz ? String(Math.max(0, gunFarki(o.tarih, faizBitis))) : '-',
+      faiz ? [...new Set(faiz.kesitler.map((x) => yuzde(x.oran)))].join(', ') || '-' : '-',
+      tl(faizTutar),
+      tl(brut.plus(faizTutar)),
+    ]);
+  }
+  const toplam = topla(mahsuplar);
+  sonuc.hesaplananMahsup = {
+    tutar: toplam,
+    aciklama: `önceki ${op.liste.length} kıdem ödemesi${op.faiz === 'yasal' ? `, ${trTarih(faizBitis)} tarihine kadar yasal faiziyle` : ''}`,
+  };
+  sonuc.ekDetaylar = [
+    {
+      baslik: `Önceki kıdem ödemelerinin mahsubu (girdi: ${op.gerekce})`,
+      tablo: {
+        basliklar: ['Ödeme tarihi', 'Net (TL)', 'Brüt (TL)', 'Faiz günü', 'Yasal faiz oranı', 'Faiz (TL)', 'Mahsup (TL)'],
+        satirlar,
+        toplam: ['Toplam', '', tl(topla(brutler)), '', '', tl(topla(faizler)), tl(toplam)],
+      },
+    },
+  ];
+  sonuc.dayanak.push(
+    'Daha önce ödenen kıdem tazminatı yasal faiziyle birlikte mahsup edilir (Yargıtay 9. HD 21.12.2020, 2016/32987 E., 2020/19369 K.); ' +
+      'faiz ödeme tarihinden fesih tarihine kadar işletilir (22. HD 17.02.2014, 2014/1552 E., 2014/2597 K.)',
+  );
+  if (op.liste.some((o) => o.netTutar)) {
+    sonuc.notlar.push('Net ödemeler, kıdem tavan içinde gelir vergisinden istisna olduğundan yalnız damga vergisi kesildiği kabulüyle brüte çevrildi: brüt = net / (1 - damga oranı).');
+  }
 }

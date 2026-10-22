@@ -112,12 +112,15 @@ export function hesapla(girdi: Girdi, tablolar?: Tablolar): HesapSonucu {
     const kg = girdi.kalemler[kod];
     if (!kg) continue;
     const k = hesap(b);
-    const { brut, indirim } = indirimVeMahsup(k, kg.takdiriIndirim, kg.mahsup, esaslar);
-    const kes = kesintiHesapla(brut, k.kesintiTuru, girdi.hesapTarihi, esaslar.vergiYili, girdi.parametreler.vergi, birikim, t, kayit);
+    const mahsup = k.hesaplananMahsup ?? kg.mahsup;
+    const { brut, indirim } = indirimVeMahsup(k, kg.takdiriIndirim, mahsup, esaslar);
+    const kalemBirikimi =
+      girdi.parametreler.vergi.birikim === 'kalem-bazinda' ? new VergiBirikimi(girdi.parametreler.vergi.oncekiKumulatifMatrah) : birikim;
+    const kes = kesintiHesapla(brut, k.kesintiTuru, girdi.hesapTarihi, esaslar.vergiYili, girdi.parametreler.vergi, kalemBirikimi, t, kayit);
     if (indirim) {
       k.bilgiler.push(['Takdiri indirim', `${yuzde(indirim.oran)} (girdi: ${indirim.gerekce})`]);
     }
-    kalemler.push({ ...k, indirim, mahsup: kg.mahsup, brut, kesintiler: kes.kesintiler, net: kes.net, faizler: [] });
+    kalemler.push({ ...k, indirim, mahsup, brut, kesintiler: kes.kesintiler, net: kes.net, faizler: [] });
   }
 
   if (esaslar.asgariUcretIstisnasi) {

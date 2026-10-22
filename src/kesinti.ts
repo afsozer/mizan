@@ -62,7 +62,7 @@ export function kesintiHesapla(
       oranMetni = yuzde(vergi.sabitOran!);
     } else {
       gv = kurus(tablolar.gelirVergisi.vergi(vergiYili, gvMatrah, birikim.kumulatif, kayit));
-      oranMetni = `${vergiYili} tarifesi, kümülatif`;
+      oranMetni = `${vergiYili} tarifesi, ${vergi.birikim === 'kalem-bazinda' ? 'kalem bazında' : 'kümülatif'}`;
     }
     birikim.kumulatif = birikim.kumulatif.plus(gvMatrah);
     kesintiler.push({ ad: 'Gelir vergisi', matrah: gvMatrah, oran: oranMetni, tutar: gv, dayanak: 'GVK m.61, m.94, m.103' });

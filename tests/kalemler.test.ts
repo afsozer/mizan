@@ -4,6 +4,7 @@ import { hesapla } from '../src/hesap.ts';
 import { mevduatFaiziHesapla } from '../src/faiz.ts';
 import { d } from '../src/para.ts';
 import { ihbarHaftasi } from '../src/kalemler/ihbar.ts';
+import { gundenSure } from '../src/kalemler/ortak.ts';
 import { izinGunu, yilDolumlari } from '../src/kalemler/yillik-izin.ts';
 import { girdi, testTablolari } from './yardimci.ts';
 
@@ -313,4 +314,100 @@ test('indirim ve mahsup birlikteyse sıra açıkça istenir', () => {
   const k = kalem(hesapla(g, t), 'fazlaCalisma');
   // sabit 9000: 4 hafta × 10 × 40 × 1,5 = 2400; (2400 - 100) × 0,7
   assert.equal(k.brut.toFixed(2), '1610.00');
+});
+
+test('önceki kıdem ödemesi brüte çevrilip yasal faiziyle mahsup edilir', () => {
+  const g = girdi({
+    kalemler: {
+      kidem: {
+        hakVar: true,
+        gerekce: 'x',
+        oncekiOdemeler: { faiz: 'yasal', gerekce: 'avans', liste: [{ tarih: '2021-01-15', netTutar: 1000 }] },
+      },
+    },
+  });
+  const k = kalem(hesapla(g, t), 'kidem');
+  // 1000 / (1 - 0,00759) = 1007,65; 243 gün × %12 = 80,50
+  assert.deepEqual(k.ekDetaylar![0]!.tablo.toplam, ['Toplam', '', '1.007,65', '', '', '80,50', '1.088,15']);
+  assert.equal(k.mahsup!.tutar.toFixed(2), '1088.15');
+  assert.equal(k.brut.toFixed(2), '9158.43');
+  assert.throws(
+    () =>
+      girdi({
+        kalemler: {
+          kidem: {
+            hakVar: true,
+            gerekce: 'x',
+            mahsup: { tutar: 1, aciklama: 'x' },
+            oncekiOdemeler: { faiz: 'yok', gerekce: 'x', liste: [{ tarih: '2021-01-15', brutTutar: 1 }] },
+          },
+        },
+      }),
+    /birlikte kullanılmaz/,
+  );
+});
+
+test('ihbarda dönem esası ve kullandırılan bildirim süresi', () => {
+  const hizmet = {
+    donemler: [
+      { giris: '2015-01-01', cikis: '2018-12-31' },
+      { giris: '2020-01-01', cikis: '2021-09-15' },
+    ],
+    fesihTarihi: '2021-09-15',
+    fesihSekli: 'fesih',
+  };
+  const ihbar = (ek: Record<string, unknown>) =>
+    kalem(hesapla(girdi({ hizmet, kalemler: { ihbar: { hakVar: true, gerekce: 'x', ...ek } } }), t), 'ihbar');
+  assert.throws(() => ihbar({}), /donemEsasi/);
+  assert.equal(ihbar({ donemEsasi: 'son' }).hamBrut.toFixed(2), '14000.00'); // 1 yıl 8 ay 15 gün: 6 hafta
+  assert.equal(ihbar({ donemEsasi: 'tumu' }).hamBrut.toFixed(2), '18666.67'); // 5 yıl 8 ay 15 gün: 8 hafta
+  assert.equal(ihbar({ donemEsasi: 'son', kullandirilanGun: 10 }).hamBrut.toFixed(2), '10666.67'); // 32 gün
+});
+
+test('gün esaslı süre: 1 yıl 365, 1 ay 30 gün; düşülen günler', () => {
+  assert.deepEqual(gundenSure(365), { yil: 1, ay: 0, gun: 0 });
+  assert.deepEqual(gundenSure(863), { yil: 2, ay: 4, gun: 13 });
+  const g = girdi({
+    hizmet: {
+      donemler: [{ giris: '2020-01-01', cikis: '2021-09-15' }],
+      fesihTarihi: '2021-09-15',
+      fesihSekli: 'fesih',
+      dislanacakGun: 30,
+      dislanacakGerekce: 'ücretsiz izin',
+    },
+    parametreler: { sureHesabi: 'gun', vergi: { yontem: 'sabit', sabitOran: 0.15 } },
+  });
+  // 624 gün - 30 = 594 gün = 1 yıl 7 ay 19 gün; 6000 + 6000 / 12 × 7 + 6000 / 365 × 19
+  assert.equal(kalem(hesapla(g, t), 'kidem').hamBrut.toFixed(2), '9812.33');
+  assert.throws(
+    () =>
+      girdi({
+        hizmet: { ...g.hizmet, dislanacakGun: 30, dislanacakGerekce: 'x' },
+      }),
+    /sureHesabi "gun"/,
+  );
+});
+
+test('gelir vergisi kalem bazında: her kalem önceki matrahtan başlar', () => {
+  const g = girdi({
+    parametreler: { vergi: { yontem: 'dilim', birikim: 'kalem-bazinda' } },
+    kalemler: { ihbar: { hakVar: true, gerekce: 'x' }, yillikIzin: { kullanilanGun: 4, ucretTuru: 'ciplak' } },
+  });
+  const s = hesapla(g, t);
+  const gv = (kod: string) => kalem(s, kod).kesintiler.find((x) => x.ad === 'Gelir vergisi')!.tutar.toFixed(2);
+  assert.equal(gv('ihbar'), '2300.00');
+  assert.equal(gv('yillikIzin'), '382.50'); // birikimde 510,00 olurdu
+});
+
+test('dönem hafta sayısı elle verilebilir', () => {
+  const g = girdi({
+    kalemler: {
+      fazlaCalisma: {
+        donemler: [{ baslangic: '2021-01-01', bitis: '2021-01-31', haftalikFazlaSaat: 10, haftaSayisi: 3 }],
+        takdiriIndirim: { oran: 0, gerekce: 'x' },
+      },
+    },
+  });
+  // sabit 9000 / 225 = 40; 3 × 10 × 40 × 1,5
+  assert.equal(kalem(hesapla(g, t), 'fazlaCalisma').hamBrut.toFixed(2), '1800.00');
 });

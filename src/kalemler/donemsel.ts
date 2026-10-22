@@ -3,6 +3,11 @@ import { Decimal, kurus, sayi, tl, topla } from '../para.ts';
 import { dahilGun, trTarih } from '../tarih.ts';
 import { haftaSayisi, KALEM_ADLARI, type Baglam, type KalemHesabi } from './ortak.ts';
 
+function verilenHaftaNotu(donemler: { haftaSayisi?: Decimal }[]): string[] {
+  const n = donemler.filter((x) => x.haftaSayisi).length;
+  return n ? [`${n} dönemde hafta sayısı girdi ile verildi; gün / 7 hesabı yerine o sayı kullanıldı.`] : [];
+}
+
 export function fazlaCalismaHesapla(b: Baglam): KalemHesabi {
   const k = b.girdi.kalemler.fazlaCalisma!;
   const { aylikCalismaSaati, fazlaCalismaCarpani: carpan } = b.esaslar;
@@ -12,7 +17,7 @@ export function fazlaCalismaHesapla(b: Baglam): KalemHesabi {
     const donemGun = dahilGun(donem.baslangic, donem.bitis);
     for (const kesit of b.ucret.kesitler(donem.baslangic, donem.bitis)) {
       const gun = dahilGun(kesit.baslangic, kesit.bitis);
-      const { dusulen, hafta } = haftaSayisi(b, gun, donemGun, donem.dislanacakGun);
+      const { dusulen, hafta } = haftaSayisi(b, gun, donemGun, donem.dislanacakGun, donem.haftaSayisi);
       const saatUcreti = kesit.aylik.div(aylikCalismaSaati);
       const tutar = kurus(hafta.times(donem.haftalikFazlaSaat).times(saatUcreti).times(carpan));
       tutarlar.push(tutar);
@@ -54,6 +59,7 @@ export function fazlaCalismaHesapla(b: Baglam): KalemHesabi {
     kesintiTuru: 'ucret',
     notlar: [
       'Dönem haftası ve düşülen günler (izin, rapor) dönem içindeki ücret kesitlerine gün sayısıyla orantılı dağıtıldı.',
+      ...verilenHaftaNotu(k.donemler),
     ],
   };
 }
@@ -67,7 +73,7 @@ export function haftaTatiliHesapla(b: Baglam): KalemHesabi {
     const donemGun = dahilGun(donem.baslangic, donem.bitis);
     for (const kesit of b.ucret.kesitler(donem.baslangic, donem.bitis)) {
       const gun = dahilGun(kesit.baslangic, kesit.bitis);
-      const { dusulen, hafta } = haftaSayisi(b, gun, donemGun, donem.dislanacakGun);
+      const { dusulen, hafta } = haftaSayisi(b, gun, donemGun, donem.dislanacakGun, donem.haftaSayisi);
       const gunluk = kesit.aylik.div(gunlukBolen);
       const tutar = kurus(hafta.times(donem.haftalikGun).times(gunluk).times(carpan));
       tutarlar.push(tutar);
@@ -106,6 +112,7 @@ export function haftaTatiliHesapla(b: Baglam): KalemHesabi {
     kesintiTuru: 'ucret',
     notlar: [
       'Hafta tatilinde yapılan çalışma ayrıca fazla çalışma hesabına katıldıysa aynı saatler iki kez ödenmiş olur; dönem girdileri buna göre kurulmalı.',
+      ...verilenHaftaNotu(k.donemler),
     ],
   };
 }
