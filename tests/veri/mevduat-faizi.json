@@ -1,0 +1,28 @@
+{
+  "tablo": "mevduat-faizi",
+  "ad": "Mevduat faizi (test)",
+  "aciklama": "Birim testleri için uydurma değerler.",
+  "dogrulamaTarihi": "2030-12-31",
+  "satirlar": [
+    {
+      "baslangic": "2020-01-01",
+      "bitis": "2021-03-31",
+      "oran": "0.20",
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    },
+    {
+      "baslangic": "2021-04-01",
+      "bitis": null,
+      "oran": "0.30",
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    }
+  ]
+}

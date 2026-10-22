@@ -1,0 +1,51 @@
+{
+  "tablo": "gelir-vergisi",
+  "ad": "Gelir vergisi (test)",
+  "dogrulamaTarihi": "2030-12-31",
+  "satirlar": [
+    {
+      "yil": 2021,
+      "dilimler": [
+        {
+          "ustSinir": "10000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "50000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.27"
+        }
+      ],
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    },
+    {
+      "yil": 2022,
+      "dilimler": [
+        {
+          "ustSinir": "10000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "50000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.27"
+        }
+      ],
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    }
+  ]
+}

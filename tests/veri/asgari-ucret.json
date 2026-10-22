@@ -1,0 +1,41 @@
+{
+  "tablo": "asgari-ucret",
+  "ad": "Asgari ücret (test)",
+  "aciklama": "Birim testleri için uydurma değerler.",
+  "dogrulamaTarihi": "2030-12-31",
+  "satirlar": [
+    {
+      "baslangic": "2020-01-01",
+      "bitis": "2020-12-31",
+      "brutAylik": "3000",
+      "brutGunluk": "100",
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    },
+    {
+      "baslangic": "2021-01-01",
+      "bitis": "2021-06-30",
+      "brutAylik": "3600",
+      "brutGunluk": "120",
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    },
+    {
+      "baslangic": "2021-07-01",
+      "bitis": null,
+      "brutAylik": "4500",
+      "brutGunluk": "150",
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    }
+  ]
+}

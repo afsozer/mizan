@@ -1,0 +1,28 @@
+{
+  "name": "mizan",
+  "version": "0.1.0",
+  "description": "Bilirkişi raporu düzeyinde işçilik alacakları hesabı: kaynaklı tablolar, parametreli hukuki tercihler, tarihli PDF rapor.",
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "author": "Av. Alpaslan Fatih Sözer",
+  "bin": {
+    "mizan": "bin/mizan.ts"
+  },
+  "engines": {
+    "node": ">=23.6"
+  },
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "ornek": "node bin/mizan.ts hesapla ornekler/ornek-iscilik.yaml --cikti ornekler/cikti"
+  },
+  "dependencies": {
+    "decimal.js": "10.6.0",
+    "pdfmake": "0.3.11",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.4",
+    "typescript": "7.0.2"
+  }
+}

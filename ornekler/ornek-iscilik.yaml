@@ -1,0 +1,94 @@
+# mizan örnek girdisi: kurgusal bir işçilik alacağı hesabı.
+# Tarihler YYYY-AA-GG, tutarlar TL, ondalık ayırıcı nokta, oranlar 0-1 arası (%30 = 0.30).
+# Şemada olmayan alan hata verir; ad, kimlik numarası gibi kişisel veri yazılacak yer yoktur.
+
+dosya:
+  mahkeme: Örnek İş Mahkemesi
+  esasNo: 2026/1
+  kisaAd: ornek-is              # kanıt dosyası adında kullanılır
+  kaynak: örnek hesap           # defterdeki "Kaynak" sütunu: "kendi dosyam" ya da meslektaşın adı ve barosu
+  altAlan: "60.02"
+  # hazirlayan: Av. Ad Soyad (Baro, sicil no)
+
+hesapTarihi: 2026-10-22         # faiz bitişi de bu gün (ayrıca faizBitis verilebilir)
+
+hizmet:
+  donemler:
+    - { giris: 2021-03-01, cikis: 2026-06-30 }
+  fesihTarihi: 2026-06-30
+  fesihSekli: İşveren tarafından haklı neden gösterilmeden fesih (girdi kabulü)
+  # dogumTarihi: 1975-04-12     # yalnız yıllık izinde 18 ve altı / 50 ve üstü yaş kuralı için
+
+ucret:
+  sonBrutAylik: 40000           # son çıplak brüt aylık ücret ("asgari" de yazılabilir)
+  yontem: asgari-orani          # asgari | asgari-orani | sabit | donemsel
+  yanHaklar:                    # kıdem ve ihbarda giydirilmiş ücrete eklenir (aylık brüt)
+    - { ad: Yemek yardımı, tutar: 2500 }
+    - { ad: Yol yardımı, tutar: 1500 }
+
+parametreler:
+  vergi:
+    yontem: dilim               # dilim (yılın ücret tarifesi, kümülatif) | sabit (sabitOran ile)
+    asgariUcretIstisnasi: true  # ödeme ayında bir kez (GVK m.23/1-18, GİB özelgesi 13.12.2023)
+  # Varsayılanı olan esaslar (yazılmazsa raporda "varsayılan" görünür):
+  # gunlukBolen: 30
+  # aylikCalismaSaati: 225
+  # haftaHesabi: ondalik        # ondalik | tam
+  # faizGunEsasi: 365
+  # faizMatrahi: brut           # brut | net
+  # indirimMahsupSirasi: once-indirim   # indirim ve mahsup birlikteyse zorunlu
+
+# tablolar:
+#   mevduatFaizi: kamu          # "kamu bankalarınca" talep edildiyse; banka yazısı için JSON tablo yolu
+
+kalemler:
+  kidem:
+    hakVar: true
+    gerekce: İşveren feshi, haklı neden ispatlanamadı (örnek kabul)
+    faiz:
+      - { tur: mevduat, baslangic: 2026-06-30, gerekce: fesih tarihi (1475 s.K. m.14) }
+
+  ihbar:
+    hakVar: true
+    gerekce: Bildirim süresi verilmeden fesih (örnek kabul)
+    faiz:
+      - { tur: yasal, baslangic: 2026-08-01, gerekce: "dava tarihi, temerrüt ihtarı yok" }
+
+  yillikIzin:
+    kullanilanGun: 28           # işverenin ispatladığı kullanılan izin
+    ucretTuru: ciplak           # ciplak | giydirilmis
+    faiz:
+      - { tur: yasal, baslangic: 2026-08-01, gerekce: dava tarihi }
+
+  fazlaCalisma:
+    donemler:
+      # Dava 01.08.2026: beş yıllık zamanaşımı nedeniyle hesap 01.08.2021'den başlar.
+      - { baslangic: 2021-08-01, bitis: 2023-12-31, haftalikFazlaSaat: 9, dislanacakGun: 42 }
+      - { baslangic: 2024-01-01, bitis: 2026-06-30, haftalikFazlaSaat: 6, dislanacakGun: 42 }
+    takdiriIndirim: { oran: 0.30, gerekce: Tanık beyanına dayalı hesap }
+    faiz:
+      - { tur: yasal, baslangic: 2026-08-01, gerekce: dava tarihi, tutar: 10000 }
+      - { tur: yasal, baslangic: 2026-10-01, gerekce: ıslah tarihi }
+
+  haftaTatili:
+    donemler:
+      - { baslangic: 2021-08-01, bitis: 2023-12-31, haftalikGun: 0.5 }   # ayda iki pazar
+    takdiriIndirim: { oran: 0.30, gerekce: Tanık beyanına dayalı hesap }
+    faiz:
+      - { tur: yasal, baslangic: 2026-08-01, gerekce: dava tarihi }
+
+  ubgt:
+    gunler:
+      - { tarih: 2024-04-23, gun: 1, aciklama: Ulusal Egemenlik ve Çocuk Bayramı }
+      - { tarih: 2024-05-01, gun: 1, aciklama: Emek ve Dayanışma Günü }
+      - { tarih: 2024-05-19, gun: 1, aciklama: Gençlik ve Spor Bayramı }
+      - { tarih: 2024-07-15, gun: 1, aciklama: Demokrasi ve Milli Birlik Günü }
+      - { tarih: 2024-08-30, gun: 1, aciklama: Zafer Bayramı }
+      - { tarih: 2024-10-28, gun: 0.5, aciklama: Cumhuriyet Bayramı arifesi }
+      - { tarih: 2024-10-29, gun: 1, aciklama: Cumhuriyet Bayramı }
+      - { tarih: 2025-01-01, gun: 1, aciklama: Yılbaşı }
+      - { tarih: 2025-04-23, gun: 1, aciklama: Ulusal Egemenlik ve Çocuk Bayramı }
+      - { tarih: 2025-05-01, gun: 1, aciklama: Emek ve Dayanışma Günü }
+    takdiriIndirim: { oran: 0.30, gerekce: Tanık beyanına dayalı hesap }
+    faiz:
+      - { tur: yasal, baslangic: 2026-08-01, gerekce: dava tarihi }

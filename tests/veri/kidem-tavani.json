@@ -1,0 +1,28 @@
+{
+  "tablo": "kidem-tavani",
+  "ad": "Kıdem tavanı (test)",
+  "aciklama": "Birim testleri için uydurma değerler.",
+  "dogrulamaTarihi": "2030-12-31",
+  "satirlar": [
+    {
+      "baslangic": "2020-01-01",
+      "bitis": "2020-12-31",
+      "tutar": "5000",
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    },
+    {
+      "baslangic": "2021-01-01",
+      "bitis": null,
+      "tutar": "6000",
+      "kaynak": {
+        "ad": "TEST VERİSİ, gerçek oran değildir",
+        "url": "https://example.invalid/test",
+        "dogrulama": "test"
+      }
+    }
+  ]
+}
