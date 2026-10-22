@@ -1,0 +1,19 @@
+{
+  "tablo": "damga-vergisi",
+  "ad": "Damga vergisi (ücret ve tazminat makbuzları)",
+  "aciklama": "488 s.K. (1) sayılı tablo IV-1-b: maaş, ücret, gündelik, ikramiye, tazminat ve benzeri hizmet karşılığı alınan paralar için verilen makbuzlar. Kanundaki oran binde 6, uygulanan oran binde 7,59; 2016-2026 arasında değişmedi. Kıdem ve ihbar tazminatı makbuzları da bu orana tabidir.",
+  "dogrulamaTarihi": "2026-10-22",
+  "satirlar": [
+    {
+      "baslangic": "2016-01-01",
+      "bitis": null,
+      "oran": "0.00759",
+      "kaynak": {
+        "ad": "488 s.K. (1) sayılı tablo IV-1-b; her yılın Damga Vergisi Kanunu Genel Tebliği eki (1) sayılı tablo",
+        "url": "https://www.mevzuat.gov.tr/MevzuatMetin/1.5.488.pdf",
+        "dogrulama": "2016-2026 her yılın DV genel tebliği ek tablosunda IV-1-b oranı binde 7,59 okundu (OCR); mevzuat.gov.tr güncel metninde de binde 7,59",
+        "not": "Yıllık ek tablolar: 2016: https://www.resmigazete.gov.tr/eskiler/2015/12/20151225-11-1.pdf; 2017: https://www.resmigazete.gov.tr/eskiler/2016/12/20161227-11-1.pdf; 2018: https://www.resmigazete.gov.tr/eskiler/2017/12/20171229M1-4-1.pdf; 2019: https://www.resmigazete.gov.tr/eskiler/2018/12/20181231M3-8-1.pdf; 2020: https://www.resmigazete.gov.tr/eskiler/2019/12/20191227M2-7-1.pdf; 2021: https://www.resmigazete.gov.tr/eskiler/2020/12/20201229M1-8-1.pdf; 2022: https://www.resmigazete.gov.tr/eskiler/2021/12/20211221-12-1.pdf; 2023: https://www.resmigazete.gov.tr/eskiler/2022/12/20221230M2-8-1.pdf; 2024: https://www.resmigazete.gov.tr/eskiler/2023/12/20231230M2-8.pdf; 2025: https://www.resmigazete.gov.tr/eskiler/2024/12/20241230M2-8-1.pdf; 2026: https://www.resmigazete.gov.tr/eskiler/2025/12/20251231M5-25.pdf"
+      }
+    }
+  ]
+}

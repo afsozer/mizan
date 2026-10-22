@@ -1,0 +1,377 @@
+{
+  "tablo": "gelir-vergisi",
+  "ad": "Gelir vergisi tarifesi (ücret)",
+  "aciklama": "GVK m.103 tarifesinin ücret gelirleri için olanı. 2016'dan beri ücret ve ücret dışı tarifeler yalnız %27 diliminin üst sınırında ayrışır. Tutarlar her yıl GVK mükerrer m.123 uyarınca yeniden değerleme oranıyla belirlenip Gelir Vergisi Genel Tebliğinde yayımlanır.",
+  "dogrulamaTarihi": "2026-10-22",
+  "satirlar": [
+    {
+      "yil": 2016,
+      "dilimler": [
+        {
+          "ustSinir": "12600",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "30000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "110000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.35"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 290), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2015/12/20151225-14.htm",
+        "resmiGazete": {
+          "tarih": "2015-12-25",
+          "sayi": "29573"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG None; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6699"
+      }
+    },
+    {
+      "yil": 2017,
+      "dilimler": [
+        {
+          "ustSinir": "13000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "30000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "110000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.35"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 296), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2016/12/20161227-15.htm",
+        "resmiGazete": {
+          "tarih": "2016-12-27",
+          "sayi": "29931"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG None; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6692"
+      }
+    },
+    {
+      "yil": 2018,
+      "dilimler": [
+        {
+          "ustSinir": "14800",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "34000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "120000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.35"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 302), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2017/12/20171229M1-6.htm",
+        "resmiGazete": {
+          "tarih": "2017-12-29",
+          "sayi": "30285"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6687"
+      }
+    },
+    {
+      "yil": 2019,
+      "dilimler": [
+        {
+          "ustSinir": "18000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "40000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "148000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.35"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 305), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2018/12/20181231M3-12.htm",
+        "resmiGazete": {
+          "tarih": "2018-12-31",
+          "sayi": "30642"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG 3. Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6684"
+      }
+    },
+    {
+      "yil": 2020,
+      "dilimler": [
+        {
+          "ustSinir": "22000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "49000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "180000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": "600000",
+          "oran": "0.35"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.40"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 310), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2019/12/20191227M2-11.htm",
+        "resmiGazete": {
+          "tarih": "2019-12-27",
+          "sayi": "30991"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı (sayfa görüntüsü OCR ile okundu, mevzuat.gov.tr metniyle karşılaştırıldı)",
+        "not": "RG 2. Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6680"
+      }
+    },
+    {
+      "yil": 2021,
+      "dilimler": [
+        {
+          "ustSinir": "24000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "53000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "190000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": "650000",
+          "oran": "0.35"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.40"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 313), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2020/12/20201229M1-12.htm",
+        "resmiGazete": {
+          "tarih": "2020-12-29",
+          "sayi": "31349"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6677"
+      }
+    },
+    {
+      "yil": 2022,
+      "dilimler": [
+        {
+          "ustSinir": "32000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "70000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "250000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": "880000",
+          "oran": "0.35"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.40"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 317), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2021/12/20211221-16.htm",
+        "resmiGazete": {
+          "tarih": "2021-12-21",
+          "sayi": "31696"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG None; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6673"
+      }
+    },
+    {
+      "yil": 2023,
+      "dilimler": [
+        {
+          "ustSinir": "70000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "150000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "550000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": "1900000",
+          "oran": "0.35"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.40"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 323), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2022/12/20221230M2-13.htm",
+        "resmiGazete": {
+          "tarih": "2022-12-30",
+          "sayi": "32059"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG 2. Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6666"
+      }
+    },
+    {
+      "yil": 2024,
+      "dilimler": [
+        {
+          "ustSinir": "110000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "230000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "870000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": "3000000",
+          "oran": "0.35"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.40"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 324), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/12/20231230M2-12.pdf",
+        "resmiGazete": {
+          "tarih": "2023-12-30",
+          "sayi": "32415"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG 2. Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6665"
+      }
+    },
+    {
+      "yil": 2025,
+      "dilimler": [
+        {
+          "ustSinir": "158000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "330000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "1200000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": "4300000",
+          "oran": "0.35"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.40"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 329), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/12/20241230M2-12.htm",
+        "resmiGazete": {
+          "tarih": "2024-12-30",
+          "sayi": "32768"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı",
+        "not": "RG 2. Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/6660"
+      }
+    },
+    {
+      "yil": 2026,
+      "dilimler": [
+        {
+          "ustSinir": "190000",
+          "oran": "0.15"
+        },
+        {
+          "ustSinir": "400000",
+          "oran": "0.20"
+        },
+        {
+          "ustSinir": "1500000",
+          "oran": "0.27"
+        },
+        {
+          "ustSinir": "5300000",
+          "oran": "0.35"
+        },
+        {
+          "ustSinir": null,
+          "oran": "0.40"
+        }
+      ],
+      "kaynak": {
+        "ad": "Gelir Vergisi Genel Tebliği (Seri No: 332), ücret gelirleri tarifesi (GVK m.103)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/12/20251231M5-30.pdf",
+        "resmiGazete": {
+          "tarih": "2025-12-31",
+          "sayi": "33124"
+        },
+        "dogrulama": "RG metninden okundu; tebliğdeki birikmiş vergi tutarları dilim oranlarıyla yeniden hesaplandı, tutarlı (sayfa görüntüsü OCR ile okundu, mevzuat.gov.tr metniyle karşılaştırıldı)",
+        "not": "RG 5. Mukerrer; GİB: https://gib.gov.tr/mevzuat/kanun/433/teblig/11853"
+      }
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "tablo": "yasal-faiz",
+  "ad": "Yasal faiz (3095 s.K. m.1)",
+  "aciklama": "Ticari olmayan işçilik alacaklarında (ihbar, yıllık izin, fazla çalışma, hafta tatili, UBGT) değişen oranlarla uygulanır. 31.07.2026'dan itibaren oran kanundaki formülle bulunur: önceki yılın 31 Aralık günü TCMB reeskont oranının %80'i; 30 Haziran oranı 31 Aralık oranından 5 puan ya da daha fazla farklıysa yılın ikinci yarısında 30 Haziran oranının %80'i. 2027 için satır, 31.12.2026 reeskont oranı belli olunca eklenir.",
+  "dogrulamaTarihi": "2026-10-22",
+  "satirlar": [
+    {
+      "baslangic": "2005-01-01",
+      "bitis": "2005-04-30",
+      "oran": "0.38",
+      "kaynak": {
+        "ad": "3095 s.K. m.1 (4489 s.K. ile değişik) formülü: 31.12.2004'teki TCMB reeskont oranı (TCMB tebliği)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2004/06/20040615.htm",
+        "resmiGazete": {
+          "tarih": "2004-06-15",
+          "sayi": "25493"
+        },
+        "dogrulama": "Okundu: 4489 s. Kanun metni (https://www.resmigazete.gov.tr/arsiv/23910.pdf, s.22); 15.06.2004 tarihli TCMB tebliği (RG sayfasındaki görüntü https://www.resmigazete.gov.tr/eskiler/2004/06/20040615-410.gif: iskonto %38, avans %42); TCMB reeskont tablosu (15.06.2004=38, 13.01.2005=32). Oran bir kararla ilan edilmemiş, kanundaki formülden türetilmiştir. 30 Haziran kuralı, 5335 s. Kanun 01.05.2005'te yürürlüğe girdiği için bu dönemde devreye girmez.",
+        "not": "3095 s. K. m.1 (4489 s. K. m.1 ile değişik, RG 18.12.1999/23910): kanuni faiz = TCMB'nin önceki yılın 31 Aralık günü kısa vadeli kredi işlemlerinde uyguladığı reeskont oranı. 31.12.2004'te yürürlükte olan oran %38 (TCMB tebliği, RG 15.06.2004/25493; sonraki değişiklik 13.01.2005'te, yani 31 Aralık'tan sonra)."
+      }
+    },
+    {
+      "baslangic": "2005-05-01",
+      "bitis": "2005-12-31",
+      "oran": "0.12",
+      "kaynak": {
+        "ad": "3095 s.K. m.1, 5335 s.K. m.14 ile değişik (yıllık %12)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2005/04/20050427-1.htm",
+        "resmiGazete": {
+          "tarih": "2005-04-27",
+          "sayi": "25798"
+        },
+        "dogrulama": "Okundu: RG 27.04.2005/25798, 5335 s. Kanun m.14 metni; yürürlük tarihi mevzuat.gov.tr 3095 s. Kanun metnindeki değişiklik çizelgesinden (https://www.mevzuat.gov.tr/mevzuatmetin/1.5.3095.pdf).",
+        "not": "3095 s. K. m.1, 5335 s. Kanun m.14 ile değişik ('yıllık yüzde oniki'); yürürlük: 27.04.2005'i izleyen ay başı (mevzuat.gov.tr 3095 değişiklik çizelgesi)."
+      }
+    },
+    {
+      "baslangic": "2006-01-01",
+      "bitis": "2024-05-31",
+      "oran": "0.09",
+      "kaynak": {
+        "ad": "Bakanlar Kurulu Kararı 2005/9831 (19.12.2005)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2005/12/20051230-3.htm",
+        "resmiGazete": {
+          "tarih": "2005-12-30",
+          "sayi": "26039"
+        },
+        "dogrulama": "Okundu: RG 30.12.2005/26039 karar metni. 2006-2024 arasında başka oran kararı olmadığı: RG başlık dizininde 'Kanuni Faiz' araması yalnız 2005/9831 ve 8485'i döndürdü; mevzuat.gov.tr değişiklik çizelgesinde m.1 için 5335, KHK/700 (yalnız yetkili makam BK yerine CB) ve 7589 var.",
+        "not": "Bakanlar Kurulu Kararı 2005/9831 (karar tarihi 19.12.2005): oran 01.01.2006'dan geçerli olmak üzere %12'den %9'a indirildi."
+      }
+    },
+    {
+      "baslangic": "2024-06-01",
+      "bitis": "2026-07-30",
+      "oran": "0.24",
+      "kaynak": {
+        "ad": "Cumhurbaşkanı Kararı 8485 (20.05.2024)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/05/20240521-23.pdf",
+        "resmiGazete": {
+          "tarih": "2024-05-21",
+          "sayi": "32552"
+        },
+        "dogrulama": "Okundu: RG 21.05.2024/32552 PDF (metin görüntü olarak gömülü, sayfa görüntüsünden okundu). Bitiş: 7589 s. Kanun m.10'un yürürlüğe girdiği 31.07.2026'dan bir gün önce.",
+        "not": "Cumhurbaşkanı Kararı sayı 8485 (karar tarihi 20.05.2024): 3095 s. K. m.1'deki kanuni faiz oranı 01.06.2024'ten geçerli olmak üzere yıllık %24."
+      }
+    },
+    {
+      "baslangic": "2026-07-31",
+      "bitis": "2026-12-31",
+      "oran": "0.31",
+      "kaynak": {
+        "ad": "3095 s.K. m.1, 7589 s.K. m.10 ile değişik: önceki yılın 31 Aralık reeskont oranının %80'i (31.12.2025 oranı %38,75 × 0,80)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2026/07/20260731-1.htm",
+        "resmiGazete": {
+          "tarih": "2026-07-31",
+          "sayi": "33326"
+        },
+        "dogrulama": "Okundu: RG 31.07.2026/33326, 7589 s. Kanun m.10 ve m.26 (3095'e ilişkin geçiş hükmü yok); RG 20.12.2025/33113 TCMB tebliği (iskonto %38,75, avans %39,75; görüntüden okundu); TCMB 'Reeskont ve Avans Faiz Oranları' sayfası 22.10.2026 erişimde son satır 20.12.2025=38,75, 2026'da değişiklik yok, dolayısıyla 30.06.2026 oranı da 38,75 ve ikinci yarı kuralı tetiklenmiyor. %31 resmi bir 'ilan' değil, kanuni formülden hesaplanmıştır. 01.01.2027'den itibaren oran 31.12.2026 reeskont oranına göre yeniden hesaplanmalıdır.",
+        "not": "3095 s. K. m.1, 7589 s. Kanun m.10 ile değişik (kabul 16.07.2026; yürürlük m.26/1-c uyarınca yayımı tarihinde): kanuni faiz = TCMB'nin önceki yılın 31 Aralık günü kısa vadeli kredi işlemlerinde uyguladığı reeskont oranının %80'i; 30 Haziran oranı 31 Aralık oranından 5 puan veya daha fazla farklıysa yılın ikinci yarısında 30 Haziran oranının %80'i. 31.12.2025 reeskont oranı %38,75 (TCMB tebliği RG 20.12.2025/33113) x 0,80 = %31,00."
+      }
+    }
+  ]
+}

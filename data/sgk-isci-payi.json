@@ -1,0 +1,20 @@
+{
+  "tablo": "sgk-isci-payi",
+  "ad": "SGK ve işsizlik sigortası işçi payı",
+  "aciklama": "5510 s.K. m.81/1-a malullük, yaşlılık ve ölüm sigortası sigortalı hissesi %9 ile m.81/1-f genel sağlık sigortası sigortalı hissesi %5 toplamı (sgkIsci) ve 4447 s.K. m.49/1 işsizlik sigortası sigortalı payı %1 (issizlikIsci). 2016-2026 arasında sigortalı payı değişmedi; 7566 s.K. 01.01.2026'dan itibaren yalnız işveren MYÖ hissesini artırdı. Kıdem ve ihbar tazminatı prime esas kazanca girmez (5510 m.80/1-b).",
+  "dogrulamaTarihi": "2026-10-22",
+  "satirlar": [
+    {
+      "baslangic": "2016-01-01",
+      "bitis": null,
+      "sgkIsci": "0.14",
+      "issizlikIsci": "0.01",
+      "kaynak": {
+        "ad": "5510 s.K. m.81/1-a (MYÖ sigortalı %9) ve m.81/1-f (GSS sigortalı %5); 4447 s.K. m.49/1 (işsizlik sigortalı %1)",
+        "url": "https://www.mevzuat.gov.tr/MevzuatMetin/1.5.5510.pdf",
+        "dogrulama": "mevzuat.gov.tr 5510 ve 4447 metinleri ve dipnotları okundu; 5754 s.K. (RG 08.05.2008/26870) ve 7566 s.K. (RG 19.12.2025/33112) metinleri RG'den okundu",
+        "not": "4447 s.K. metni: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4447.pdf. SGDP'ye tabi çalışan emekliler kapsam dışı."
+      }
+    }
+  ]
+}

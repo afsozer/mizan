@@ -1,0 +1,216 @@
+{
+  "tablo": "asgari-ucret",
+  "ad": "Asgari ücret (brüt)",
+  "aciklama": "Asgari Ücret Tespit Komisyonu kararları (4857 s.K. m.39). 2014'ten beri yaş, 1989'dan beri sektör ayrımı yok; her dönem tek satır. Kararlar günlük brüt tutarı belirler; aylık brüt tutar ÇSGB'nin dönem belgelerinden alınmıştır (günlük × 30). 2022 ve 2023'te yıl ortası artış vardır; 2024, 2025 ve 2026'da yoktur (01.12.2015-22.10.2026 RG fihristleri tarandı). 2026 kararı 01.01.2026-31.12.2026 dönemi içindir (ÇSGB); yıl içinde yeni karar çıkarsa satır bölünür.",
+  "dogrulamaTarihi": "2026-10-22",
+  "satirlar": [
+    {
+      "baslangic": "2016-01-01",
+      "bitis": "2016-12-31",
+      "brutAylik": "1647.00",
+      "brutGunluk": "54.90",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 30.12.2015 tarihli, 2015/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2015/12/20151231-11.pdf",
+        "resmiGazete": {
+          "tarih": "2015-12-31",
+          "sayi": "29579"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/rjrp0du4/2016_onikiay.pdf"
+      }
+    },
+    {
+      "baslangic": "2017-01-01",
+      "bitis": "2017-12-31",
+      "brutAylik": "1777.50",
+      "brutGunluk": "59.25",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 29.12.2016 tarihli, 2016/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2016/12/20161230-22.pdf",
+        "resmiGazete": {
+          "tarih": "2016-12-30",
+          "sayi": "29934"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/onlm0nvg/2017_onikiay.pdf"
+      }
+    },
+    {
+      "baslangic": "2018-01-01",
+      "bitis": "2018-12-31",
+      "brutAylik": "2029.50",
+      "brutGunluk": "67.65",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 29.12.2017 tarihli, 2017/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2017/12/20171230-10.pdf",
+        "resmiGazete": {
+          "tarih": "2017-12-30",
+          "sayi": "30286"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/l3lb3fyv/2018_onikiay.pdf"
+      }
+    },
+    {
+      "baslangic": "2019-01-01",
+      "bitis": "2019-12-31",
+      "brutAylik": "2558.40",
+      "brutGunluk": "85.28",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 25.12.2018 tarihli, 2018/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2018/12/20181227-10.pdf",
+        "resmiGazete": {
+          "tarih": "2018-12-27",
+          "sayi": "30638"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/v31hhspp/2019_onikiay.pdf"
+      }
+    },
+    {
+      "baslangic": "2020-01-01",
+      "bitis": "2020-12-31",
+      "brutAylik": "2943.00",
+      "brutGunluk": "98.10",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 26.12.2019 tarihli, 2019/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2019/12/20191227-21.pdf",
+        "resmiGazete": {
+          "tarih": "2019-12-27",
+          "sayi": "30991"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/hy2jxzps/2020_onikiay.pdf"
+      }
+    },
+    {
+      "baslangic": "2021-01-01",
+      "bitis": "2021-12-31",
+      "brutAylik": "3577.50",
+      "brutGunluk": "119.25",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 28.12.2020 tarihli, 2020/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2020/12/20201230-2.pdf",
+        "resmiGazete": {
+          "tarih": "2020-12-30",
+          "sayi": "31350"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/xddbty3t/asgari-ucret-2021.pdf"
+      }
+    },
+    {
+      "baslangic": "2022-01-01",
+      "bitis": "2022-06-30",
+      "brutAylik": "5004.00",
+      "brutGunluk": "166.80",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 16.12.2021 tarihli, 2021/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2021/12/20211217-8.pdf",
+        "resmiGazete": {
+          "tarih": "2021-12-17",
+          "sayi": "31692"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/e1yly2qe/2022_birincialtiay.pdf"
+      }
+    },
+    {
+      "baslangic": "2022-07-01",
+      "bitis": "2022-12-31",
+      "brutAylik": "6471.00",
+      "brutGunluk": "215.70",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 01.07.2022 tarihli, 2022/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2022/07/20220701M1-1.htm",
+        "resmiGazete": {
+          "tarih": "2022-07-01",
+          "sayi": "31883 (Mükerrer)"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/3dhknx0c/2022-tem.pdf"
+      }
+    },
+    {
+      "baslangic": "2023-01-01",
+      "bitis": "2023-06-30",
+      "brutAylik": "10008.00",
+      "brutGunluk": "333.60",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 22.12.2022 tarihli, 2022/2 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2022/12/20221229-13.pdf",
+        "resmiGazete": {
+          "tarih": "2022-12-29",
+          "sayi": "32058"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/fqvbfpd0/2023_birincialtiay.pdf"
+      }
+    },
+    {
+      "baslangic": "2023-07-01",
+      "bitis": "2023-12-31",
+      "brutAylik": "13414.50",
+      "brutGunluk": "447.15",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 20.06.2023 tarihli, 2023/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/06/20230624-4.pdf",
+        "resmiGazete": {
+          "tarih": "2023-06-24",
+          "sayi": "32231"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/3xth4d4y/temmuz-2023-asgari-ucret.pdf"
+      }
+    },
+    {
+      "baslangic": "2024-01-01",
+      "bitis": "2024-12-31",
+      "brutAylik": "20002.50",
+      "brutGunluk": "666.75",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 27.12.2023 tarihli, 2023/2 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/12/20231230-10.pdf",
+        "resmiGazete": {
+          "tarih": "2023-12-30",
+          "sayi": "32415"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/pbqphfb4/2024-asgari-%C3%BCcret.pdf"
+      }
+    },
+    {
+      "baslangic": "2025-01-01",
+      "bitis": "2025-12-31",
+      "brutAylik": "26005.50",
+      "brutGunluk": "866.85",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 24.12.2024 tarihli, 2024/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/12/20241227-7.pdf",
+        "resmiGazete": {
+          "tarih": "2024-12-27",
+          "sayi": "32765"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/f4xjys1e/2025-asgari-%C3%BCcret_.pdf"
+      }
+    },
+    {
+      "baslangic": "2026-01-01",
+      "bitis": "2026-12-31",
+      "brutAylik": "33030.00",
+      "brutGunluk": "1101.00",
+      "kaynak": {
+        "ad": "Asgari Ücret Tespit Komisyonu Kararı, 23.12.2025 tarihli, 2025/1 sayılı",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/12/20251226-6.pdf",
+        "resmiGazete": {
+          "tarih": "2025-12-26",
+          "sayi": "33119"
+        },
+        "dogrulama": "Günlük brüt tutar RG'deki karar metninden (sayfa görüntüsü) okundu; aylık brüt tutar ÇSGB dönem belgesinden okundu; günlük × 30 = aylık",
+        "not": "ÇSGB: https://www.csgb.gov.tr/Media/gm2fekds/asgari-%C3%BCcret-2026.pdf"
+      }
+    }
+  ]
+}

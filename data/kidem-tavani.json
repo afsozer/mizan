@@ -1,0 +1,250 @@
+{
+  "tablo": "kidem-tavani",
+  "ad": "Kıdem tazminatı tavanı",
+  "aciklama": "1475 s.K. m.14 uyarınca kıdem tazminatının yıllık tutarı, en yüksek devlet memuruna 5434 s.K.'ya göre bir hizmet yılı için ödenecek azami emeklilik ikramiyesini geçemez. Tutar, Hazine ve Maliye Bakanlığının her yarıyıl yayımladığı Mali ve Sosyal Haklara İlişkin Genelge'de doğrudan ilan edilir (Resmi Gazete'de yayımlanmaz). Fesih tarihindeki satır uygulanır. Son satır Temmuz 2026 genelgesinin dönemi olan 31.12.2026'da biter; 2027 Ocak genelgesiyle yeni satır eklenir.",
+  "dogrulamaTarihi": "2026-10-22",
+  "satirlar": [
+    {
+      "baslangic": "2016-01-01",
+      "bitis": "2016-06-30",
+      "tutar": "4092.53",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2016 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 04/01/2016 tarihli ve 27998389-010.06.02-82 sayılı, C) Diğer Hususlar, 2. madde (PDF s. 5)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/07/2016ocakmalivesosyalhaklargenelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2016-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2016-07-01",
+      "bitis": "2016-12-31",
+      "tutar": "4297.21",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2016 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 04/07/2016 tarihli ve 27998389-010.06.02-6152 sayılı, 4. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/07/2016temmuz_mali_sosyal_haklar_genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2016-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2017-01-01",
+      "bitis": "2017-06-30",
+      "tutar": "4426.16",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2017 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 03/01/2017 tarihli ve 27998389-010.06.02-66 sayılı, 4. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/07/104202017ocakgenelgepdf.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2017-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2017-07-01",
+      "bitis": "2017-12-31",
+      "tutar": "4732.48",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2017 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 04/07/2017 tarihli ve 27998389-010.06.02-5820 sayılı, 4. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/07/107202017temmuzmaasgenelgepdf.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2017-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge-yayinlanmistir-1-temmuzdan-gecerli-olmak-uzere-aylik-ve-ucretlerde-692-oraninda-artis-yapildi"
+      }
+    },
+    {
+      "baslangic": "2018-01-01",
+      "bitis": "2018-06-30",
+      "tutar": "5001.76",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2018 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 04/01/2018 tarihli ve 27998389-010.06.02-138 sayılı, B) Diğer Hususlar, 2. madde (PDF s. 3)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/06/109872018ocakmaasgenelgepdf.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2018-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2018-07-01",
+      "bitis": "2018-12-31",
+      "tutar": "5434.42",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2018 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 04/07/2018 tarihli ve 27998389-010.06.02-5278 sayılı, 4. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/06/2018-Y%C4%B1l%C4%B1-Temmuz-Ay%C4%B1na-Ait-Mali-ve-Sosyal-Haklara-%C4%B0li%C5%9Fkin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2018-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2019-01-01",
+      "bitis": "2019-06-30",
+      "tutar": "6017.60",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2019 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 08/01/2019 tarihli ve 27998389-010.06.02-87 sayılı, 4. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/05/123152019-ocak-genelgepdf.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2019-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2019-07-01",
+      "bitis": "2019-12-31",
+      "tutar": "6379.86",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2019 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 04/07/2019 tarihli ve 27998389-010.06.02-205248 sayılı, 4. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2019/07/2019-Y%C4%B1l%C4%B1-Temmuz-Ay%C4%B1na-Ait-Mali-ve-Sosyal-Haklara-%C4%B0li%C5%9Fkin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2019-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2020-01-01",
+      "bitis": "2020-06-30",
+      "tutar": "6730.15",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2020 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 06/01/2020 tarihli ve 27998389-010.06.02-13659 sayılı, 4. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2020/01/Mali-ve-Sosyal-Haklara-%C4%B0li%C5%9Fkin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2020-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2020-07-01",
+      "bitis": "2020-12-31",
+      "tutar": "7117.17",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2020 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 06/07/2020 tarihli ve 27998389-010.06.02-368870 sayılı, 3. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2020/07/Mali-ve-Sosyal-Haklar-2.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2020-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2021-01-01",
+      "bitis": "2021-06-30",
+      "tutar": "7638.96",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2021 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 06/01/2021 tarihli ve 27998389-010.06.02-11638 sayılı, 3. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2021/01/2021-Yili-Ocak-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2021-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2021-07-01",
+      "bitis": "2021-12-31",
+      "tutar": "8284.51",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2021 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 07/07/2021 tarihli ve 27998389-010.06.02-421208 sayılı, 3. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2021/07/Mali-Ve-Sosyal-Haklar-Temmuz.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2021-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2022-01-01",
+      "bitis": "2022-06-30",
+      "tutar": "10848.59",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2022 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge (ikinci genelge), 22/01/2022 tarihli ve 27998389-010.06.02-903791 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2022/01/2022-Yili-Ocak-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge-2.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2022-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge-2 Bu dönem için önce 2022-01-06 tarihli genelgeyle 10596.74 TL ilan edilmişti; 22/01/2022 tarihli genelgenin 4. maddesiyle yürürlükten kaldırıldı; yeni tutar 1/1/2022 tarihinden geçerli (7351 sayılı Kanun ile 375 sayılı KHK geçici 38. madde, 1/1/2022 tarihinden geçerli)."
+      }
+    },
+    {
+      "baslangic": "2022-07-01",
+      "bitis": "2022-12-31",
+      "tutar": "15371.40",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2022 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 04/07/2022 tarihli ve 27998389-010.06.02-1342135 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2022/07/Mali-ve-Sosyal-Haklar.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2022-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2023-01-01",
+      "bitis": "2023-06-30",
+      "tutar": "19982.83",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2023 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge (ikinci genelge), 13/01/2023 tarihli ve 27998389-010.06.02-1843378 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2023/01/2023-Yili-Ocak-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge-Sira-No-4.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2023-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge-2 Bu dönem için önce 2023-01-05 tarihli genelgeyle 17904.62 TL ilan edilmişti; 13/01/2023 tarihli genelgenin 4. maddesiyle yürürlükten kaldırıldı; yeni tutar 1/1/2023 tarihinden geçerli (375 sayılı KHK geçici 43. madde, 1/1/2023 tarihinden geçerli)."
+      }
+    },
+    {
+      "baslangic": "2023-07-01",
+      "bitis": "2023-12-31",
+      "tutar": "23489.83",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2023 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 07/07/2023 tarihli ve 27998389-010.06.02-2298391 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2023/07/2023-Yili-Temmuz-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2023-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2024-01-01",
+      "bitis": "2024-06-30",
+      "tutar": "35058.58",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2024 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 05/01/2024 tarihli ve 27998389-010.06.02-2774790 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2024/01/2024-Yili-Ocak-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2024-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2024-07-01",
+      "bitis": "2024-12-31",
+      "tutar": "41828.42",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2024 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 05/07/2024 tarihli ve 27998389-010.06.02-3248709 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2024/07/2024-Yili-Temmuz-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2024-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2025-01-01",
+      "bitis": "2025-06-30",
+      "tutar": "46655.43",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2025 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 06/01/2025 tarihli ve 27998389-010.06.02-3676469 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2025/01/2025-Yili-Ocak-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2025-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2025-07-01",
+      "bitis": "2025-12-31",
+      "tutar": "53919.68",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2025 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 07/07/2025 tarihli ve 27998389-010.06.02-4098345 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2025/07/2025-Yili-Temmuz-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge-99bbb75c96c50568.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2025-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2026-01-01",
+      "bitis": "2026-06-30",
+      "tutar": "64948.77",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2026 Yılı Ocak Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 06/01/2026 tarihli ve 27998389-010.06.02-4481518 sayılı, 3. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2026/01/2026-Yili-Ocak-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge-f65182d63c880a4c.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2026-yili-ocak-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    },
+    {
+      "baslangic": "2026-07-01",
+      "bitis": "2026-12-31",
+      "tutar": "73729.87",
+      "kaynak": {
+        "ad": "Hazine ve Maliye Bakanlığı, 2026 Yılı Temmuz Ayına Ait Mali ve Sosyal Haklara İlişkin Genelge, 03/07/2026 tarihli ve 27998389-010.06.02-4870801 sayılı, 2. madde (PDF s. 2)",
+        "url": "https://ms.hmb.gov.tr/uploads/2026/07/2026-Yili-Temmuz-Ayina-Ait-Mali-ve-Sosyal-Haklara-Iliskin-Genelge-9b5304ed658d77cb.pdf",
+        "dogrulama": "Genelge PDF'i (taranmış görüntü) OCR ile okundu; tavan cümlesi ve genelge sayı/tarihi sayfa görüntüsünden gözle kontrol edildi, sonraki genelgenin atfıyla çapraz doğrulandı.",
+        "not": "Duyuru: https://www.hmb.gov.tr/duyuru/2026-yili-temmuz-ayina-ait-mali-ve-sosyal-haklara-iliskin-genelge"
+      }
+    }
+  ]
+}
