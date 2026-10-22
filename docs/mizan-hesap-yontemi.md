@@ -9,6 +9,9 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
   Ay eklerken ay sonuna kırpılır (31.01 + 1 ay = 29.02).
 - Tek dönemde takvim süresi olduğu gibi kullanılır (11 ay 30 gün bir yıla yuvarlanmaz). Birden fazla
   hizmet dönemi toplanır (1475 m.14/2); toplamda 30 gün 1 ay, 12 ay 1 yıl sayılır.
+- Seçimli gün esası (`sureHesabi: gun`): dönemlerin gün sayıları (giriş ve çıkış günü dahil) toplanır,
+  düşülecek günler çıkarılır, 1 yıl 365, 1 ay 30 gün sayılır. 01.01.2021 - 31.12.2021 = 365 gün (1 yıl);
+  bitiş günü hariç sayım (364) bir gün eksik verir.
 
 ## Kıdem tazminatı
 
@@ -18,6 +21,9 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 - Esas = min(giydirilmiş brüt, fesih tarihindeki tavan).
 - Kıdem = esas × yıl + esas / 12 × ay + esas / 365 × gün.
 - Toplam hizmet 1 yıldan azsa ya da girdide `hakVar: false` ise hesaplanmaz.
+- Önceki ödemeler: brüt = net / (1 - damga oranı) (kıdem tavan içinde gelir vergisinden istisna);
+  mahsup = brüt + brüt × yasal faiz × (fesih tarihi - ödeme tarihi) / 365. Dayanak 9. HD 21.12.2020,
+  2016/32987 E., 2020/19369 K.; 22. HD 17.02.2014, 2014/1552 E., 2014/2597 K.
 - Kesinti: yalnız damga vergisi.
 - Faiz: 1475 m.14, "mevduata uygulanan en yüksek faiz" (aşağıda "Faiz").
 
@@ -30,6 +36,8 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
   olmadığı için 6 hafta. Tam 1,5 yıl hem (b) hem (c) bendine girer: alt bentte (4 hafta) bırakılır,
   not düşülür, `haftaSayisi` ile değiştirilebilir.
 - Kesinti: gelir vergisi ve damga vergisi.
+- Birden fazla dönemde son dönem mi tüm dönemler mi esas alınacağı girdide seçilir (9. HD 03.06.2021,
+  2021/5562 E., 2021/9893 K.: ihbarda birleştirme yok). Kullandırılan bildirim süresi günden düşülür.
 
 ## Yıllık izin ücreti
 

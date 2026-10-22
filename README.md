@@ -84,8 +84,20 @@ bölümünde "girdi" ya da "varsayılan" diye, dayanağıyla görünür.
 - Yıllık izin ücretine esas ücret (`ciplak` / `giydirilmis`).
 - Faiz türü, başlangıcı ve gerekçesi; dava ve ıslah için ayrı satırlar (`tutar` verilen satırlar
   önce, tutarsız son satır kalanı alır).
-- Gelir vergisi yöntemi: `sabit` (girilen oran) ya da `dilim` (yılın ücret tarifesi, kümülatif matrah;
-  kalemler kıdem, ihbar, izin, fazla çalışma, hafta tatili, UBGT sırasıyla birikir).
+- Gelir vergisi yöntemi: `sabit` (girilen oran) ya da `dilim` (yılın ücret tarifesi). Dilimde
+  `birikim: kalemler-arasi` (varsayılan) matrahları kıdem, ihbar, izin, fazla çalışma, hafta tatili,
+  UBGT sırasıyla biriktirir; `kalem-bazinda` her kalemi önceki matrahtan ayrı başlatır.
+- Kıdemde daha önce yapılan ödemeler (`kalemler.kidem.oncekiOdemeler`): net ya da brüt tutar ve tarih
+  listesi. Net tutar yalnız damga vergisi kesildiği kabulüyle brüte çevrilir; `faiz: yasal` ise ödeme
+  gününden fesih tarihine kadar yasal faiziyle mahsup edilir (Yargıtay 9. HD 2016/32987 E.,
+  2020/19369 K.; 22. HD 2014/1552 E., 2014/2597 K.).
+- İhbarda birden fazla hizmet dönemi varsa `donemEsasi: son | tumu` zorunlu (9. HD 2021/5562 E.,
+  2021/9893 K.: ihbarda fasılalı dönemler birleştirilmez); `kullandirilanGun` ile bildirim süresinin
+  kullandırılan kısmı düşülür.
+- Süre hesabı (`parametreler.sureHesabi`): `takvim` (varsayılan) ya da `gun` (1 yıl 365, 1 ay 30 gün).
+  `gun` esasında `hizmet.dislanacakGun` ve gerekçesiyle hizmetten gün düşülebilir (ör. ücretsiz izin).
+- Fazla çalışma ve hafta tatili dönemlerinde `haftaSayisi`: puantajda ya da raporda kabul edilen hafta
+  sayısı elle verilir, gün / 7 hesabının yerine geçer.
 
 - Asgari ücret gelir ve damga vergisi istisnası (`parametreler.vergi.asgariUcretIstisnasi`): verilirse
   hesap tarihinin ayında bir kez, o ay başka ücret ödenmediği varsayımıyla uygulanır; önce ücret
