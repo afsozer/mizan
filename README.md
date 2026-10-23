@@ -43,6 +43,18 @@ node bin/mizan.ts tablolar     # tabloları denetler, satır sayısı ve doğrul
 node bin/mizan.ts --surum      # sürüm ve git commit
 ```
 
+## Web arayüzü
+
+Aynı hesap tarayıcıda da yapılabilir. Arayüz sunucusuzdur, dosya bilgisi cihazdan çıkmaz; hesap,
+rapor ve tablolar komut satırıyla aynı çekirdekten gelir (`src/index.ts`). Ayrıntı:
+[`web/README.md`](web/README.md).
+
+```bash
+npm run web:dev       # geliştirme sunucusu (127.0.0.1)
+npm run web:build     # web/dist/ altına derler
+npm run web:preview
+```
+
 ## Girdi dosyası
 
 YAML. Tam örnek: [`ornekler/ornek-iscilik.yaml`](ornekler/ornek-iscilik.yaml). Şema sıkıdır:
