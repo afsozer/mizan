@@ -1,16 +1,12 @@
 // Tarihli PDF hesap raporu: girdiler, hukuki tercihler, her kalemin formülü ve dayanağı,
-// brüt-net, faiz ve kullanılan tablo satırlarının resmi kaynakları.
-import { createRequire } from 'node:module';
-import { dirname } from 'node:path';
-import pdfmake from 'pdfmake';
+// brüt-net, faiz ve kullanılan tablo satırlarının resmi kaynakları. Yalnız pdfmake belge tanımı
+// üretir; yazım Node'da src/node/pdf-yaz.ts, tarayıcıda pdfmake'in tarayıcı paketiyle yapılır.
+// Tanım "Roboto" yazı tipini kullanır.
 import type { HesapSonucu, KalemSonucu } from '../hesap.ts';
 import { Decimal, tl, topla, yuzde } from '../para.ts';
 import { trTarih } from '../tarih.ts';
 import type { Kaynak } from '../tablolar.ts';
 import { donemYaz, sureAciklamasi } from '../kalemler/ortak.ts';
-
-const require = createRequire(import.meta.url);
-const FONT_DIZINI = dirname(require.resolve('pdfmake/fonts/Roboto.js'));
 
 type Icerik = Record<string, unknown> | string | Icerik[];
 
@@ -304,18 +300,3 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
     content: icerik,
   };
 }
-
-export async function pdfYaz(tanim: Record<string, unknown>, yol: string): Promise<void> {
-  pdfmake.setFonts({
-    Roboto: {
-      normal: `${FONT_DIZINI}/Roboto/Roboto-Regular.ttf`,
-      bold: `${FONT_DIZINI}/Roboto/Roboto-Medium.ttf`,
-      italics: `${FONT_DIZINI}/Roboto/Roboto-Italic.ttf`,
-      bolditalics: `${FONT_DIZINI}/Roboto/Roboto-MediumItalic.ttf`,
-    },
-  });
-  pdfmake.setUrlAccessPolicy(() => false);
-  pdfmake.setLocalAccessPolicy((p: string) => p.startsWith(FONT_DIZINI));
-  await pdfmake.createPdf(tanim).write(yol);
-}
-

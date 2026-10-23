@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 import { girdiCoz, type Girdi } from '../src/girdi.ts';
-import { tablolariYukle, type Tablolar } from '../src/tablolar.ts';
+import type { Tablolar } from '../src/tablolar.ts';
+import { tablolariYukle } from '../src/node/tablolar-dosya.ts';
 
 export const TEST_VERI = join(import.meta.dirname, 'veri');
 

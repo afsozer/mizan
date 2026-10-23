@@ -2,7 +2,7 @@
 import { d, Decimal, kurus, tl, topla, yuzde } from './para.ts';
 import type { FaizGirdisi, Girdi, KalemKodu, Mahsup, TakdiriIndirim } from './girdi.ts';
 import { esaslariBelirle, type Esaslar, type Parametre } from './parametreler.ts';
-import { KaynakKaydi, tablolariYukle, type Tablolar } from './tablolar.ts';
+import { KaynakKaydi, type Tablolar } from './tablolar.ts';
 import { Ucret } from './ucret.ts';
 import { faizHesapla, mevduatFaiziHesapla, type FaizSonucu } from './faiz.ts';
 import { asgariUcretIstisnasi, istisnaUygula, kesintiHesapla, VergiBirikimi, type Kesinti } from './kesinti.ts';
@@ -99,8 +99,8 @@ function faizleriHesapla(
   });
 }
 
-export function hesapla(girdi: Girdi, tablolar?: Tablolar): HesapSonucu {
-  const t = tablolar ?? tablolariYukle({ mevduatFaizi: girdi.tablolar?.mevduatFaizi });
+/** Tablolar dışarıdan verilir: Node'da src/node/tablolar-dosya.ts, tarayıcıda paketlenmiş JSON. */
+export function hesapla(girdi: Girdi, t: Tablolar): HesapSonucu {
   const kayit = new KaynakKaydi();
   const esaslar = esaslariBelirle(girdi);
   const ucret = new Ucret(girdi, t, kayit);

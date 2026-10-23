@@ -1,8 +1,5 @@
 // Girdi dosyası (YAML) okuma ve sıkı şema denetimi. Şemada olmayan alan reddedilir;
 // böylece rapora ad, kimlik numarası gibi kişisel veri taşıyacak bir alan açılmaz.
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { createHash } from 'node:crypto';
 import { parse } from 'yaml';
 import { d, Decimal } from './para.ts';
 import { gecerliTarih, karsilastir } from './tarih.ts';
@@ -524,10 +521,7 @@ export function girdiCoz(veri: unknown): Girdi {
   };
 }
 
-export function girdiOku(yol: string): { girdi: Girdi; metin: string; ozet: string } {
-  const metin = readFileSync(yol, 'utf8');
-  const girdi = girdiCoz(parse(metin));
-  const mevduat = girdi.tablolar?.mevduatFaizi;
-  if (mevduat && mevduat !== 'kamu') girdi.tablolar!.mevduatFaizi = resolve(dirname(yol), mevduat);
-  return { girdi, metin, ozet: createHash('sha256').update(metin).digest('hex') };
+/** YAML metninden girdi (dosya erişimi yok; tarayıcıda da çalışır). */
+export function girdiMetindenCoz(metin: string): Girdi {
+  return girdiCoz(parse(metin));
 }

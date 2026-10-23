@@ -2,13 +2,15 @@
 // mizan komut satırı: hesapla (PDF rapor + defter satırı) ve tablolar (denetim).
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { girdiOku } from '../src/girdi.ts';
+import { girdiOku } from '../src/node/girdi-dosya.ts';
 import { hesapla } from '../src/hesap.ts';
 import { tl } from '../src/para.ts';
-import { pdfYaz, raporTanimi } from '../src/rapor/pdf.ts';
+import { raporTanimi } from '../src/rapor/pdf.ts';
+import { pdfYaz } from '../src/node/pdf-yaz.ts';
 import { defterSatiri, kanitDosyaAdi } from '../src/rapor/defter.ts';
-import { surumBilgisi, surumYaz } from '../src/surum.ts';
-import { tablolariYukle } from '../src/tablolar.ts';
+import { surumYaz } from '../src/surum.ts';
+import { surumBilgisi } from '../src/node/surum.ts';
+import { tablolariYukle } from '../src/node/tablolar-dosya.ts';
 import { bugun, trTarih } from '../src/tarih.ts';
 
 const YARDIM = `mizan: işçilik alacakları hesap aracı
@@ -36,7 +38,7 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
   const yol = arg[0];
   if (!yol) throw new Error('Girdi dosyası verilmedi.\n\n' + YARDIM);
   const { girdi, ozet } = girdiOku(resolve(yol));
-  const sonuc = hesapla(girdi);
+  const sonuc = hesapla(girdi, tablolariYukle({ mevduatFaizi: girdi.tablolar?.mevduatFaizi }));
   const surum = surumYaz(surumBilgisi());
   const tarih = bugun();
   const dizin = resolve(secenek(arg, '--cikti') ?? '.');

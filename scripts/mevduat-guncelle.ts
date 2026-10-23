@@ -6,7 +6,7 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { d } from '../src/para.ts';
-import { VERI_DIZINI } from '../src/tablolar.ts';
+import { VERI_DIZINI } from '../src/node/tablolar-dosya.ts';
 import { ayEkle, bugun, gunEkle } from '../src/tarih.ts';
 
 const UC = 'https://evds3.tcmb.gov.tr/igmevdsms-dis/fe';

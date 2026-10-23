@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { girdiOku } from '../src/girdi.ts';
+import { girdiOku } from '../src/node/girdi-dosya.ts';
 import { hesapla } from '../src/hesap.ts';
 import { defterSatiri, kanitDosyaAdi, kisaltma } from '../src/rapor/defter.ts';
-import { pdfYaz, raporTanimi } from '../src/rapor/pdf.ts';
-import { tablolariYukle } from '../src/tablolar.ts';
+import { raporTanimi } from '../src/rapor/pdf.ts';
+import { pdfYaz } from '../src/node/pdf-yaz.ts';
+import { tablolariYukle } from '../src/node/tablolar-dosya.ts';
 import { girdi, testTablolari, TEST_VERI } from './yardimci.ts';
 
 test('şemada olmayan alan (ör. işçi adı) reddedilir', () => {
@@ -98,7 +99,7 @@ test('banka yazısından girilen mevduat tablosu kullanılır, yol girdi dosyas�
 
 test('uçtan uca: gerçek tablolar ve örnek girdiyle PDF', async () => {
   const { girdi: g, ozet } = girdiOku(join(import.meta.dirname, '..', 'ornekler', 'ornek-iscilik.yaml'));
-  const s = hesapla(g);
+  const s = hesapla(g, tablolariYukle());
   const brut = (kod: string) => s.kalemler.find((k) => k.kod === kod)!.brut.toFixed(2);
   // giydirilmiş 44.000 < 2026/1 tavanı 64.948,77; 5 yıl 4 ay
   assert.equal(brut('kidem'), '234666.67');

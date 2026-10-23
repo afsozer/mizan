@@ -2,14 +2,8 @@
 // kaynaksız, çakışan ya da boşluklu satır reddedilir. Bitişi belli son satırdan sonrası sorulursa
 // hesap durur. Açık uçlu son satır (kanunla belirlenen oranlar) doğrulama tarihinden sonra da
 // kullanılır ama rapora uyarı düşer; eski oran sessizce yürümez.
-import { readFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { d, Decimal, tl, yuzde } from './para.ts';
 import { gecerliTarih, gunEkle, karsilastir, trTarih, enBuyuk, enKucuk } from './tarih.ts';
-
-export const VERI_DIZINI = join(dirname(fileURLToPath(import.meta.url)), '..', 'data');
 
 export interface Kaynak {
   ad: string;
@@ -95,13 +89,6 @@ function kaynakDenetle(k: unknown, yer: string): asserts k is Kaynak {
   if (typeof kaynak.dogrulama !== 'string' || !kaynak.dogrulama.trim()) {
     throw new Error(`${yer}: kaynak.dogrulama boş (değer kaynağın neresinden okundu?)`);
   }
-}
-
-export function tabloOku<S>(yol: string): { dosya: TabloDosyasi<S>; ozet: string } {
-  const metin = readFileSync(yol, 'utf8');
-  const dosya = JSON.parse(metin) as TabloDosyasi<S>;
-  const ozet = createHash('sha256').update(metin).digest('hex');
-  return { dosya, ozet };
 }
 
 export class DonemselTablo<S extends DonemSatiri> {
@@ -311,29 +298,37 @@ export interface Tablolar {
   gelirVergisi: GelirVergisiTarifesi;
 }
 
-export interface TabloYollari {
-  /** "kamu" ya da bir tablo dosyası yolu (ör. banka yazısından girilen oranlar). */
-  mevduatFaizi?: string;
+/** data/ altındaki tablo dosyalarının adları; Node katmanı ve tarayıcı paketi aynı adları kullanır. */
+export const TABLO_DOSYALARI = {
+  asgariUcret: 'asgari-ucret.json',
+  kidemTavani: 'kidem-tavani.json',
+  sgk: 'sgk-isci-payi.json',
+  damga: 'damga-vergisi.json',
+  yasalFaiz: 'yasal-faiz.json',
+  mevduatFaizi: 'mevduat-faizi.json',
+  mevduatFaiziKamu: 'mevduat-faizi-kamu.json',
+  gelirVergisi: 'gelir-vergisi.json',
+} as const;
+
+/** Ayrıştırılmış bir tablo dosyası ve (varsa) ham metninin SHA-256 özeti. */
+export interface HamTablo {
+  dosya: unknown;
+  ozet?: string;
 }
 
-export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): Tablolar {
-  const yukle = <S extends DonemSatiri>(yol: string, alanlar: (keyof S & string)[]) => {
-    const { dosya, ozet } = tabloOku<S>(yol);
-    return new DonemselTablo<S>(dosya, alanlar, ozet);
-  };
-  const gv = tabloOku<GelirVergisiYili>(join(dizin, 'gelir-vergisi.json'));
+export type HamTablolar = Record<keyof Tablolar, HamTablo>;
+
+/** Ayrıştırılmış JSON tablolarından denetlenmiş tablo nesnelerini kurar (dosya erişimi yok). */
+export function tablolariKur(h: HamTablolar): Tablolar {
+  const kur = <S extends DonemSatiri>(t: HamTablo, alanlar: (keyof S & string)[]) =>
+    new DonemselTablo<S>(t.dosya as TabloDosyasi<S>, alanlar, t.ozet ?? '');
   return {
-    asgariUcret: yukle<AsgariUcretSatiri>(join(dizin, 'asgari-ucret.json'), ['brutAylik', 'brutGunluk']),
-    kidemTavani: yukle<KidemTavaniSatiri>(join(dizin, 'kidem-tavani.json'), ['tutar']),
-    sgk: yukle<SgkSatiri>(join(dizin, 'sgk-isci-payi.json'), ['sgkIsci', 'issizlikIsci']),
-    damga: yukle<OranSatiri>(join(dizin, 'damga-vergisi.json'), ['oran']),
-    yasalFaiz: yukle<OranSatiri>(join(dizin, 'yasal-faiz.json'), ['oran']),
-    mevduatFaizi: yukle<OranSatiri>(
-      yollar.mevduatFaizi === 'kamu'
-        ? join(dizin, 'mevduat-faizi-kamu.json')
-        : resolve(yollar.mevduatFaizi ?? join(dizin, 'mevduat-faizi.json')),
-      ['oran'],
-    ),
-    gelirVergisi: new GelirVergisiTarifesi(gv.dosya, gv.ozet),
+    asgariUcret: kur<AsgariUcretSatiri>(h.asgariUcret, ['brutAylik', 'brutGunluk']),
+    kidemTavani: kur<KidemTavaniSatiri>(h.kidemTavani, ['tutar']),
+    sgk: kur<SgkSatiri>(h.sgk, ['sgkIsci', 'issizlikIsci']),
+    damga: kur<OranSatiri>(h.damga, ['oran']),
+    yasalFaiz: kur<OranSatiri>(h.yasalFaiz, ['oran']),
+    mevduatFaizi: kur<OranSatiri>(h.mevduatFaizi, ['oran']),
+    gelirVergisi: new GelirVergisiTarifesi(h.gelirVergisi.dosya as TabloDosyasi<GelirVergisiYili>, h.gelirVergisi.ozet ?? ''),
   };
 }
