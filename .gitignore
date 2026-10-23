@@ -2,3 +2,5 @@ node_modules/
 ornekler/cikti/
 *.log
 .DS_Store
+.stfolder/
+.stignore
