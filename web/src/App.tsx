@@ -35,6 +35,8 @@ export function App() {
   const [bildirim, bildir] = useState('');
   const [baslangicHatasi, baslangicHatasiYaz] = useState('');
   const [mesgul, mesgulYaz] = useState(false);
+  const [yerelSunucu, yerelSunucuYaz] = useState(false);
+  const [kapandi, kapandiYaz] = useState(false);
   const aktif = ihtimaller.find(i => i.id === aktifId)!;
   const form = aktif.form;
   const degerlendirmeler = useMemo(() => ihtimaller.map(i => degerlendir(i.form, belgeler)), [ihtimaller, belgeler]);
@@ -50,11 +52,26 @@ export function App() {
     }).catch(e => baslangicHatasiYaz(HATA(e)));
   }, []);
   useEffect(() => {
-    const ayrilirken = (e: BeforeUnloadEvent) => { if (ihtimaller.some(i => i.form.hesapTarihi || (i.form.dosya as Nesne).mahkeme)) e.preventDefault(); };
+    // Yalnız npm run arayuz ile açılan yerel sunucuda kapatma ucu vardır; statik yayında düğme gizli kalır.
+    fetch('/__mizan/durum').then(r => r.ok && r.headers.get('content-type')?.includes('json') ? r.json() : null)
+      .then(d => yerelSunucuYaz(Boolean(d?.yerel))).catch(() => yerelSunucuYaz(false));
+  }, []);
+  useEffect(() => {
+    const ayrilirken = (e: BeforeUnloadEvent) => { if (!kapandi && ihtimaller.some(i => i.form.hesapTarihi || (i.form.dosya as Nesne).mahkeme)) e.preventDefault(); };
     window.addEventListener('beforeunload', ayrilirken);
     return () => window.removeEventListener('beforeunload', ayrilirken);
-  }, [ihtimaller]);
+  }, [ihtimaller, kapandi]);
 
+  const sunucuyuKapat = async () => {
+    const veriVar = ihtimaller.some(i => i.dokunuldu);
+    if (veriVar && !window.confirm('Sunucu kapanınca formdaki girdiler silinir. Saklamak istediğiniz hesabı YAML olarak indirdiyseniz devam edin.')) return;
+    try {
+      const yanit = await fetch('/__mizan/kapat', { method: 'POST' });
+      if (!yanit.ok) throw new Error(`sunucu ${yanit.status} döndü`);
+      kapandiYaz(true);
+      window.close();
+    } catch (e) { bildir(`Sunucu kapatılamadı: ${HATA(e)}`); }
+  };
   const hatayaGit = () => {
     const yol = hata?.yol ?? 'girdi';
     adimYaz(yol.startsWith('girdi.hizmet') ? 1 : yol.startsWith('girdi.ucret') ? 2 : yol.startsWith('girdi.parametreler') ? 3 : yol.startsWith('girdi.kalemler') || yol.startsWith('girdi.tablolar') ? 4 : 0);
@@ -124,10 +141,14 @@ export function App() {
     {hata?.yol === 'girdi.tablolar.mevduatFaizi' && <p class="alan-hatasi">{hataAciklamasi(hata.mesaj)}</p>}
   </div>;
 
+  if (kapandi) return <main class="kapandi" id="ana-icerik"><span class="marka-adi">mizan<span class="marka-nokta">.</span></span>
+    <h1>Sunucu kapatıldı</h1><p>Bu sekmeyi kapatabilirsiniz. Arayüzü yeniden açmak için depo klasöründe <code>npm run arayuz</code> komutunu çalıştırın.</p></main>;
+
   return <>
     <a class="atla" href="#ana-icerik">İçeriğe geç</a>
     <header class="ust-serit"><div class="marka"><span class="marka-adi">mizan<span class="marka-nokta">.</span></span><span class="marka-tanim">İşçilik alacakları<br />hesap çalışma alanı</span></div>
-      <div class="gizlilik"><span class="durum-noktasi" /> Veriler bu tarayıcıda kalır</div></header>
+      <div class="ust-sag"><div class="gizlilik"><span class="durum-noktasi" /> Veriler bu tarayıcıda kalır</div>
+        {yerelSunucu && <button class="kapat-dugmesi" onClick={() => void sunucuyuKapat()} title="Yerel sunucuyu kapatır">Kapat</button>}</div></header>
     <nav class="ana-sekmeler" aria-label="Ana gezinme">{[['hesap', 'Hesap kurma'], ['ihtimaller', 'İhtimaller'], ['rapor', 'Rapor ve kayıt'], ['tablolar', 'Tablolar']].map(([kod, ad]) => <button key={kod} aria-current={sayfa === kod ? 'page' : undefined} onClick={() => sayfaYaz(kod!)}>{ad}</button>)}</nav>
     <main id="ana-icerik">
       <div role="status" aria-live="polite" class={`bildirim ${bildirim ? '' : 'bos'}`}>{bildirim}</div>
