@@ -19,6 +19,7 @@ export default defineConfig({
   plugins: [preact()],
   define: { __MIZAN_SURUM__: JSON.stringify({ surum: paket.version, commit, degisiklikVar }) },
   build: { outDir: 'dist', emptyOutDir: true },
-  server: { host: '127.0.0.1', fs: { allow: [fileURLToPath(new URL('..', import.meta.url))] } },
-  preview: { host: '127.0.0.1' },
+  // Sunucu ayağa kalkınca arayüz varsayılan tarayıcıda kendiliğinden açılır.
+  server: { host: '127.0.0.1', open: true, fs: { allow: [fileURLToPath(new URL('..', import.meta.url))] } },
+  preview: { host: '127.0.0.1', open: true },
 });

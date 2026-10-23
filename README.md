@@ -52,9 +52,10 @@ rapor ve tablolar komut satırıyla aynı çekirdekten gelir (`src/index.ts`). A
 [`web/README.md`](web/README.md).
 
 ```bash
-npm run web:dev       # geliştirme sunucusu (127.0.0.1)
+npm run arayuz        # sunucuyu başlatır, arayüzü tarayıcıda kendiliğinden açar
+npm run web:dev       # aynı geliştirme sunucusu (127.0.0.1)
 npm run web:build     # web/dist/ altına derler
-npm run web:preview
+npm run web:preview   # derlenmiş sürümü sunar, tarayıcıda açar
 ```
 
 ## Girdi dosyası
