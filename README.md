@@ -1,5 +1,7 @@
 # mizan
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23603691.svg)](https://doi.org/10.5281/zenodo.23603691)
+
 İşçilik alacaklarını bilirkişi raporu düzeyinde hesaplayan komut satırı aracı. Her hesap için
 girdileri, formülü, dayanak maddeyi ve kullanılan resmi tablo satırının kaynağını gösteren tarihli
 bir PDF rapor üretir; yanına bilirkişilik hesap kayıt defterine yapıştırılacak satır önerisini
