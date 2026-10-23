@@ -1,0 +1,27 @@
+{
+  "title": "mizan: court expert level calculation of Turkish employment receivables",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Sözer, Alpaslan Fatih"
+    }
+  ],
+  "description": "<p>mizan calculates Turkish employment receivables at the level of a court expert report. For each calculation it produces a dated PDF report that shows the inputs, the formula, the statutory provision relied on and the source of every official table row used. The first phase covers severance pay (with periodic ceilings), notice pay, annual leave pay, overtime, weekly rest and public holiday pay; gross to net conversion (social security and unemployment insurance employee shares, income tax, stamp tax); and interest (highest deposit rate for severance pay, statutory interest for the other items). Legal choices are explicit parameters and appear in the report. It runs as a command line tool and as a serverless web interface in which case data does not leave the device; both use the same calculation core. The report is a calculation output, not a legal opinion or decision.</p><p>mizan, işçilik alacaklarını bilirkişi raporu düzeyinde hesaplayan bir araçtır. Her hesap için girdileri, formülü, dayanak maddeyi ve kullanılan resmi tablo satırının kaynağını gösteren tarihli bir PDF rapor üretir. Kıdem ve ihbar tazminatı, yıllık izin, fazla çalışma, hafta tatili ve UBGT ücretleri, brütten nete dönüşüm ve faiz hesaplanır; hukuki tercihler açık parametredir. Komut satırı ve sunucusuz web arayüzü aynı çekirdeği kullanır. Rapor bir hesap çıktısıdır, hukuki görüş ya da karar değildir.</p>",
+  "keywords": [
+    "turkish-law",
+    "employment-law",
+    "labour-receivables",
+    "severance-pay",
+    "court-expert-report",
+    "legal-calculation",
+    "bilirkisi"
+  ],
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/afsozer/mizan",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

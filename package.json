@@ -1,6 +1,6 @@
 {
   "name": "mizan",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bilirkişi raporu düzeyinde işçilik alacakları hesabı: kaynaklı tablolar, parametreli hukuki tercihler, tarihli PDF rapor.",
   "type": "module",
   "license": "AGPL-3.0-only",
