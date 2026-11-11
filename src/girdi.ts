@@ -4,9 +4,11 @@ import { parse } from 'yaml';
 import { d, Decimal } from './para.ts';
 import { gecerliTarih, karsilastir } from './tarih.ts';
 
-export type KalemKodu = 'kidem' | 'ihbar' | 'yillikIzin' | 'fazlaCalisma' | 'haftaTatili' | 'ubgt';
+export type KalemKodu = 'kidem' | 'ihbar' | 'yillikIzin' | 'ucretAlacagi' | 'ikramiye' | 'fazlaCalisma' | 'haftaTatili' | 'ubgt';
 export type FaizTuru = 'mevduat' | 'yasal';
 export type UcretYontemi = 'asgari' | 'asgari-orani' | 'sabit' | 'donemsel';
+export type UcretGunKurali = 'takvim' | 'tam-ay';
+export type IkramiyeHesapSekli = 'tutar' | 'gunluk' | 'aylik-oran';
 
 export interface FaizGirdisi {
   tur: FaizTuru;
@@ -62,6 +64,43 @@ export interface YillikIzinGirdisi extends OrtakKalem {
   kullanilanGun: Decimal;
   hakEdilenGun?: Decimal;
   ucretTuru: 'ciplak' | 'giydirilmis';
+}
+
+export interface UcretAlacagiDonemi {
+  baslangic: string;
+  bitis: string;
+  /** Verilmezse dönem takvim günü veya gunKurali/tamAy esasına göre bulunur. */
+  gunSayisi?: Decimal;
+  /** Satır bazında tam ay (30 gün) kuralı. */
+  tamAy?: boolean;
+  /** Verilmezse Ucret motorundan o dönemin çıplak brütü (değişim günlerinde bölünerek) alınır. */
+  brutAylik?: Decimal;
+  /** Satırda kısmen ödenmiş brüt ücret varsa düşülür. */
+  odenenBrut?: Decimal;
+  aciklama?: string;
+}
+
+export interface UcretAlacagiGirdisi extends OrtakKalem {
+  donemler: UcretAlacagiDonemi[];
+  gunKurali?: UcretGunKurali;
+}
+
+export interface IkramiyeSatiri {
+  ad: string;
+  donem?: string | { baslangic: string; bitis: string };
+  tarih?: string;
+  hesapSekli: IkramiyeHesapSekli;
+  /** Sabit brüt tutar (TL), gün sayısı ya da aylık ücret oranı. */
+  deger: Decimal;
+  /** Kıstelyevm (TBK m.405/2): dönem tamamlanmadan fesihte çalışılan süre oranı (0-1). */
+  calisilanOran?: Decimal;
+  brutAylik?: Decimal;
+  odenenBrut?: Decimal;
+  aciklama?: string;
+}
+
+export interface IkramiyeGirdisi extends OrtakKalem {
+  satirlar: IkramiyeSatiri[];
 }
 
 export interface CalismaDonemi {
@@ -140,6 +179,8 @@ export interface Girdi {
     kidem?: KidemGirdisi;
     ihbar?: IhbarGirdisi;
     yillikIzin?: YillikIzinGirdisi;
+    ucretAlacagi?: UcretAlacagiGirdisi;
+    ikramiye?: IkramiyeGirdisi;
     fazlaCalisma?: FazlaCalismaGirdisi;
     haftaTatili?: HaftaTatiliGirdisi;
     ubgt?: UbgtGirdisi;
@@ -418,7 +459,7 @@ export function girdiCoz(veri: unknown): Girdi {
   }
 
   const km = k.alt('kalemler');
-  km.izinli(['kidem', 'ihbar', 'yillikIzin', 'fazlaCalisma', 'haftaTatili', 'ubgt']);
+  km.izinli(['kidem', 'ihbar', 'yillikIzin', 'ucretAlacagi', 'ikramiye', 'fazlaCalisma', 'haftaTatili', 'ubgt']);
   const kalemler: Girdi['kalemler'] = {};
   if (km.var('kidem')) {
     const o = km.alt('kidem');
@@ -470,6 +511,96 @@ export function girdiCoz(veri: unknown): Girdi {
       ...ortakOku(o),
     };
   }
+  if (km.var('ucretAlacagi')) {
+    const o = km.alt('ucretAlacagi');
+    o.izinli(['donemler', 'gunKurali', ...ORTAK]);
+    const ucretDonemleri = o.liste('donemler').map((x) => {
+      x.izinli(['baslangic', 'bitis', 'gunSayisi', 'tamAy', 'brutAylik', 'odenenBrut', 'aciklama']);
+      const baslangic = x.tarih('baslangic');
+      const bitis = x.tarih('bitis');
+      if (karsilastir(bitis, baslangic) < 0) throw alanHatasi(x.yer, 'bitiş başlangıçtan önce');
+      if (x.var('gunSayisi') && x.var('tamAy')) {
+        throw alanHatasi(x.yer, 'gunSayisi verilince tamAy kullanılmaz');
+      }
+      const gunSayisi = x.var('gunSayisi') ? x.sayi('gunSayisi') : undefined;
+      if (gunSayisi && gunSayisi.lte(0)) throw alanHatasi(`${x.yer}.gunSayisi`, "0'dan büyük olmalı");
+      return {
+        baslangic,
+        bitis,
+        gunSayisi,
+        tamAy: x.var('tamAy') ? x.mantiksal('tamAy') : undefined,
+        brutAylik: x.var('brutAylik') ? x.tutar('brutAylik') : undefined,
+        odenenBrut: x.var('odenenBrut') ? x.tutar('odenenBrut') : undefined,
+        aciklama: x.var('aciklama') ? x.metin('aciklama') : undefined,
+      };
+    });
+    if (ucretDonemleri.length === 0) throw alanHatasi(`${o.yer}.donemler`, 'en az bir dönem gerekli');
+    kalemler.ucretAlacagi = {
+      ...ortakOku(o),
+      donemler: ucretDonemleri,
+      gunKurali: o.var('gunKurali') ? o.secenek('gunKurali', ['takvim', 'tam-ay'] as const) : undefined,
+    };
+  }
+  if (km.var('ikramiye')) {
+    const o = km.alt('ikramiye');
+    o.izinli(['satirlar', ...ORTAK]);
+    const satirlar = o.liste('satirlar').map((s) => {
+      s.izinli(['ad', 'donem', 'tarih', 'hesapSekli', 'deger', 'calisilanOran', 'brutAylik', 'odenenBrut', 'aciklama']);
+      if (!s.var('donem') && !s.var('tarih')) {
+        throw alanHatasi(s.yer, 'donem ya da tarih alanlarından en az biri verilmeli');
+      }
+      let donem: IkramiyeSatiri['donem'];
+      if (s.var('donem')) {
+        const ham = s.n.donem;
+        if (ham instanceof Date) {
+          donem = s.tarih('donem');
+        } else if (typeof ham === 'object' && !Array.isArray(ham)) {
+          const dnm = s.alt('donem');
+          dnm.izinli(['baslangic', 'bitis']);
+          const baslangic = dnm.tarih('baslangic');
+          const bitis = dnm.tarih('bitis');
+          if (karsilastir(bitis, baslangic) < 0) throw alanHatasi(dnm.yer, 'bitiş başlangıçtan önce');
+          donem = { baslangic, bitis };
+        } else {
+          donem = s.metin('donem');
+        }
+      }
+      const hesapSekli = s.secenek('hesapSekli', ['tutar', 'gunluk', 'aylik-oran'] as const);
+      const deger = hesapSekli === 'tutar' ? s.tutar('deger') : s.sayi('deger');
+      const tarih = s.var('tarih') ? s.tarih('tarih') : undefined;
+      const brutAylik = s.var('brutAylik') ? s.tutar('brutAylik') : undefined;
+      const donemTarihVar =
+        typeof donem === 'object' ||
+        (typeof donem === 'string' &&
+          (gecerliTarih(donem) ||
+            (() => {
+              const m = /^(\d{4}-\d{2}-\d{2})\s*-\s*(\d{4}-\d{2}-\d{2})$/.exec(donem);
+              return Boolean(m && gecerliTarih(m[1]!) && gecerliTarih(m[2]!));
+            })()));
+      if (hesapSekli !== 'tutar' && !brutAylik && !tarih && !donemTarihVar) {
+        throw alanHatasi(
+          `${s.yer}.tarih`,
+          `hesapSekli "${hesapSekli}" iken brutAylik verilmemişse ücretin alınacağı tarih (veya YYYY-AA-GG dönem aralığı) yazılmalı`,
+        );
+      }
+      return {
+        ad: s.metin('ad'),
+        donem,
+        tarih,
+        hesapSekli,
+        deger,
+        calisilanOran: s.var('calisilanOran') ? s.oran('calisilanOran') : undefined,
+        brutAylik,
+        odenenBrut: s.var('odenenBrut') ? s.tutar('odenenBrut') : undefined,
+        aciklama: s.var('aciklama') ? s.metin('aciklama') : undefined,
+      };
+    });
+    if (satirlar.length === 0) throw alanHatasi(`${o.yer}.satirlar`, 'en az bir satır gerekli');
+    kalemler.ikramiye = {
+      ...ortakOku(o),
+      satirlar,
+    };
+  }
   if (km.var('fazlaCalisma')) {
     const o = km.alt('fazlaCalisma');
     o.izinli(['donemler', 'carpan', ...ORTAK]);
@@ -507,7 +638,7 @@ export function girdiCoz(veri: unknown): Girdi {
 
   const icinde = (bas: string, bit: string) =>
     donemler.some((p) => karsilastir(p.giris, bas) <= 0 && karsilastir(bit, p.cikis) <= 0);
-  for (const kod of ['fazlaCalisma', 'haftaTatili'] as const) {
+  for (const kod of ['ucretAlacagi', 'fazlaCalisma', 'haftaTatili'] as const) {
     const liste = [...(kalemler[kod]?.donemler ?? [])].sort((a, b) => karsilastir(a.baslangic, b.baslangic));
     liste.forEach((p, i) => {
       if (!icinde(p.baslangic, p.bitis)) {
@@ -516,6 +647,26 @@ export function girdiCoz(veri: unknown): Girdi {
       const onceki = liste[i - 1];
       if (onceki && karsilastir(p.baslangic, onceki.bitis) <= 0) throw alanHatasi(`girdi.kalemler.${kod}`, 'dönemler çakışıyor');
     });
+  }
+  for (const s of kalemler.ikramiye?.satirlar ?? []) {
+    if (s.tarih && !icinde(s.tarih, s.tarih)) {
+      throw alanHatasi('girdi.kalemler.ikramiye', `${s.tarih} hizmet dönemlerinin dışında`);
+    }
+    if (typeof s.donem === 'object' && !icinde(s.donem.baslangic, s.donem.bitis)) {
+      throw alanHatasi('girdi.kalemler.ikramiye', `${s.donem.baslangic} - ${s.donem.bitis} dönemi tek bir hizmet döneminin içinde değil`);
+    }
+    if (typeof s.donem === 'string') {
+      if (gecerliTarih(s.donem) && !icinde(s.donem, s.donem)) {
+        throw alanHatasi('girdi.kalemler.ikramiye', `${s.donem} hizmet dönemlerinin dışında`);
+      }
+      const aralik = /^(\d{4}-\d{2}-\d{2})\s*-\s*(\d{4}-\d{2}-\d{2})$/.exec(s.donem);
+      if (aralik && gecerliTarih(aralik[1]!) && gecerliTarih(aralik[2]!)) {
+        if (karsilastir(aralik[2]!, aralik[1]!) < 0) throw alanHatasi('girdi.kalemler.ikramiye', 'bitiş başlangıçtan önce');
+        if (!icinde(aralik[1]!, aralik[2]!)) {
+          throw alanHatasi('girdi.kalemler.ikramiye', `${aralik[1]} - ${aralik[2]} dönemi tek bir hizmet döneminin içinde değil`);
+        }
+      }
+    }
   }
   for (const g of kalemler.ubgt?.gunler ?? []) {
     if (!icinde(g.tarih, g.tarih)) throw alanHatasi('girdi.kalemler.ubgt', `${g.tarih} hizmet dönemlerinin dışında`);

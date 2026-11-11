@@ -48,6 +48,34 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 - Ücret = (hak edilen - kullanılan) × son çıplak (ya da girdiye göre giydirilmiş) brüt / 30.
 - Kesinti: SGK, işsizlik, gelir vergisi, damga vergisi.
 
+## Ücret alacağı
+
+- Dayanak: 4857 s.K. m.32 (ücretin tanımı ve en geç ayda bir ödenmesi), m.34/1 (gününde ödenmeyen
+  ücretler için mevduata uygulanan en yüksek faiz).
+- Her dönem satırında `baslangic` ve `bitis` tek bir hizmet döneminin içinde olmalı, dönemler
+  çakışmamalı. Satırda `brutAylik` verilmezse `Ucret` motorundan o dönemin çıplak brüt ücreti
+  alınır ve dönem ücret değişim günlerinde kesitlere bölünür.
+- Gün sayısı: satırda `gunSayisi` verilirse o sayı (ücret kesitlerine gün sayısıyla orantılı
+  dağıtılarak); verilmezse varsayılan olarak dönem takvim günü (iki uç dahil), `gunKurali: tam-ay`
+  ya da satırda `tamAy: true` seçilirse 1 ay 30 gün esası.
+- Tutar = kuruş(kesit günü × çıplak brüt aylık / günlük bölen) - satırda ödenen brüt (`odenenBrut`).
+- Kesinti: SGK, işsizlik, gelir vergisi, damga vergisi.
+- Faiz: 4857 s.K. m.34/1 uyarınca `mevduat` (en yüksek mevduat faizi) ya da talebe göre `yasal`.
+
+## İkramiye ve ilave tediye / prim alacağı
+
+- Dayanak: 4857 s.K. m.32/2 (ücret, prim, ikramiye ve bu nitelikteki her çeşit istihkak), 6098 s.K.
+  TBK m.405/1 (anlaşma, çalışma şartı veya işverenin tek taraflı taahhüdü), TBK m.405/2 (sözleşme
+  ikramiye döneminden önce sona ermişse çalışılan süreye yansıyan bölümün ödenmesi, kıstelyevm).
+- Satır bazlı hesap (`hesapSekli`):
+  - `tutar`: kuruş(sabit brüt tutar × `calisilanOran`).
+  - `gunluk`: kuruş((çıplak brüt aylık / günlük bölen) × gün sayısı × `calisilanOran`).
+  - `aylik-oran`: kuruş(çıplak brüt aylık × oran × `calisilanOran`).
+- `calisilanOran` verilmezse 1 (tam dönem) alınır. Satıra özel `brutAylik` verilmezse satırın
+  `tarih` (veya `donem` bitiş) günündeki çıplak brüt ücret kullanılır.
+- Kesinti: SGK, işsizlik, gelir vergisi, damga vergisi.
+- Faiz: 4857 s.K. m.34/1 uyarınca `mevduat` ya da `yasal`.
+
 ## Fazla çalışma
 
 - Dayanak: 4857 m.41. Haftalık 45 saati aşan çalışma; saat ücretinin yüzde elli fazlası.
@@ -95,10 +123,12 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
   365 (360 gün esası Yargıtay'ca hatalı sayılıyor: 8. HD 2014/9167 E., 12. HD 2010/10090 E.).
 - Yasal faiz: oran tablosunun değiştiği günlerde bölünür. Temerrüt yoksa dava dilekçesindeki kısım için
   dava tarihi, ıslahla artan kısım için ıslah tarihi (7. HD 2014/70 E., 2014/9237 K.).
-- Mevduat faizi (kıdem): başlangıç tarihindeki oran ilk yıl, her yıldönümündeki oran o yıl için sabit
+- Mevduat faizi (kıdemde 1475 m.14, gününde ödenmeyen ücret ve ikramiye alacaklarında 4857 m.34/1):
+  başlangıç tarihindeki oran ilk yıl, her yıldönümündeki oran o yıl için sabit
   (9. HD 06.11.2025, 2025/6610 E., 2025/8609 K.; 9. HD 2021/4782 E., 2021/9481 K.). Ölçüt bir yıllık
   mevduata fiilen uygulanan en yüksek oran, özel-kamu ayrımı yok; "kamu bankalarınca" istendiyse
-  taleple bağlılık (22. HD 2016/16498 E.). Başlangıç fesih tarihi.
+  taleple bağlılık (22. HD 2016/16498 E.). Kıdemde başlangıç fesih tarihi, ücret ve ikramiyede
+  temerrüt ya da dava/ıslah tarihidir.
 - Mevduat tablosu TCMB EVDS `TP.TRY.MT04.S` (vekil seri). Neden bu seri: "fiilen uygulanan", "en
   yüksek" ve vade kırılımı olan tek kamuya açık resmi seri. Elenenler: ağırlıklı ortalama serileri
   (ortalama), "uygulanacağı bildirilen" azami oranlar (bildirilen, fiilen uygulanan değil; 2023'te

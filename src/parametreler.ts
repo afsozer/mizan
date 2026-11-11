@@ -138,7 +138,7 @@ export function esaslariBelirle(g: Girdi): Esaslar {
           : v === 'kamu'
             ? 'TCMB, kamu bankalarınca fiilen uygulanan azami faiz, 1 yıla kadar vadeli (vekil seri)'
             : `girdi tablosu: ${v}`,
-      '1475 s.K. m.14; bir yıllık mevduata fiilen uygulanan en yüksek oran, özel-kamu banka ayrımı yok ' +
+      '1475 s.K. m.14 ve 4857 s.K. m.34; bir yıllık mevduata fiilen uygulanan en yüksek oran, özel-kamu banka ayrımı yok ' +
         '(Yargıtay 9. HD 2025/6610 E., 2025/8609 K.); "kamu bankalarınca" talep edilmişse taleple bağlılık (22. HD 2016/16498 E.)',
     );
     liste.push({

@@ -78,6 +78,8 @@ export function hataYolu(hata: unknown): string {
   const yol = mesaj.match(/^girdi(?:\.[a-zA-Z0-9_]+|\[\d+\])*/)?.[0];
   if (yol) return yol;
   if (mesaj.includes('parametreler.indirimMahsupSirasi')) return 'girdi.parametreler.indirimMahsupSirasi';
+  if (mesaj.startsWith('Ücret alacağı:')) return 'girdi.kalemler.ucretAlacagi';
+  if (mesaj.startsWith('İkramiye ve ilave tediye / prim alacağı:')) return 'girdi.kalemler.ikramiye';
   return 'girdi';
 }
 

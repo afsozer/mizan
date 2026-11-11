@@ -7,10 +7,11 @@ girdileri, formülü, dayanak maddeyi ve kullanılan resmi tablo satırının ka
 bir PDF rapor üretir; yanına bilirkişilik hesap kayıt defterine yapıştırılacak satır önerisini
 yazar.
 
-Faz 1 kapsamı: kıdem tazminatı (dönemsel tavanla), ihbar tazminatı, yıllık izin ücreti, fazla
-çalışma, hafta tatili ve ulusal bayram-genel tatil (UBGT) ücretleri; brütten nete dönüşüm (SGK ve
-işsizlik sigortası işçi payı, gelir vergisi, damga vergisi); faiz (kıdemde mevduata uygulanan en
-yüksek faiz, diğer kalemlerde yasal faiz).
+Faz 1 kapsamı: kıdem tazminatı (dönemsel tavanla), ihbar tazminatı, yıllık izin ücreti, ödenmeyen
+ücret alacağı (bakiye maaş), ikramiye ve ilave tediye / prim alacağı, fazla çalışma, hafta tatili ve
+ulusal bayram-genel tatil (UBGT) ücretleri; brütten nete dönüşüm (SGK ve işsizlik sigortası işçi payı,
+gelir vergisi, damga vergisi); faiz (kıdemde 1475 s.K. m.14 ve gününde ödenmeyen ücret/ikramiye
+alacaklarında 4857 s.K. m.34 uyarınca mevduata uygulanan en yüksek faiz, diğer kalemlerde yasal faiz).
 
 ## Kurulum
 
@@ -75,8 +76,8 @@ açılmasını da engeller.
 
 ### Ücret yöntemi
 
-Fazla çalışma, hafta tatili ve UBGT dönem dönem, o dönemin ücretiyle hesaplanır. Dönem ücretinin
-nasıl bulunacağı bir hukuki tercihtir ve rapora yazılır:
+Ücret alacağı, ikramiye ve ilave tediye / prim, fazla çalışma, hafta tatili ve UBGT dönem dönem, o
+dönemin ücretiyle hesaplanır. Dönem ücretinin nasıl bulunacağı bir hukuki tercihtir ve rapora yazılır:
 
 - `asgari`: her dönemde o dönemin brüt asgari ücreti.
 - `asgari-orani`: son ücretin son ücret tarihindeki asgari ücrete oranı, her dönemin asgari ücretine
@@ -113,6 +114,13 @@ bölümünde "girdi" ya da "varsayılan" diye, dayanağıyla görünür.
   `gun` esasında `hizmet.dislanacakGun` ve gerekçesiyle hizmetten gün düşülebilir (ör. ücretsiz izin).
 - Fazla çalışma ve hafta tatili dönemlerinde `haftaSayisi`: puantajda ya da raporda kabul edilen hafta
   sayısı elle verilir, gün / 7 hesabının yerine geçer.
+- Ücret alacağında (`kalemler.ucretAlacagi`): dönem bazlı ödenmeyen maaş ve bakiye ücret hesabı (4857
+  s.K. m.32). Satırda `gunSayisi` elle verilebilir ya da `gunKurali: takvim | tam-ay` ile dönem günü /
+  30 gün kuralı seçilir; `brutAylik` verilmezse dönem ücreti değişim günlerinde bölünerek alınır; kısmi
+  ödemeler `odenenBrut` ile satırdan düşülür.
+- İkramiye ve ilave tediye / prim alacağında (`kalemler.ikramiye`): satır bazında `hesapSekli: tutar |
+  gunluk | aylik-oran`, `deger` ve dönem tamamlanmadan sona eren sözleşmelerde TBK m.405/2 kıstelyevm
+  oranı (`calisilanOran`).
 
 - Asgari ücret gelir ve damga vergisi istisnası (`parametreler.vergi.asgariUcretIstisnasi`): verilirse
   hesap tarihinin ayında bir kez, o ay başka ücret ödenmediği varsayımıyla uygulanır; önce ücret
@@ -129,7 +137,8 @@ Hepsi girdiyle değiştirilebilir.
 - **Yasal faiz** (ihbar, izin, fazla çalışma, hafta tatili, UBGT): oran tablosunun değiştiği günlerde
   bölünür. 01.06.2024'ten %24 (CBK 8485), 31.07.2026'dan 7589 s.K. ile değişen 3095 m.1 formülüyle
   %31 (31.12.2025 reeskont oranı %38,75 × 0,80).
-- **Mevduat faizi** (kıdem, 1475 m.14): Yargıtay yöntemiyle başlangıç tarihindeki oran ilk yıl, her
+- **Mevduat faizi** (kıdemde 1475 s.K. m.14; gününde ödenmeyen ücret ve ikramiye alacaklarında 4857
+  s.K. m.34): Yargıtay yöntemiyle başlangıç tarihindeki oran ilk yıl, her
   yıldönümündeki oran o yıl boyunca sabit uygulanır; yıl içi değişiklikler dikkate alınmaz (9. HD
   06.11.2025, 2025/6610 E., 2025/8609 K.). Varsayılan tablo TCMB'nin "Bankalarca Mevduatlara Fiilen
   Uygulanan Azami Faiz Oranları" serisidir (`TP.TRY.MT04.S`, 1 yıla kadar vadeli). Bu bir **vekil

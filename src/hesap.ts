@@ -10,6 +10,7 @@ import type { Baglam, KalemHesabi } from './kalemler/ortak.ts';
 import { kidemHesapla } from './kalemler/kidem.ts';
 import { ihbarHesapla } from './kalemler/ihbar.ts';
 import { yillikIzinHesapla } from './kalemler/yillik-izin.ts';
+import { ucretAlacagiHesapla, ikramiyeHesapla } from './kalemler/ucret-alacagi.ts';
 import { fazlaCalismaHesapla, haftaTatiliHesapla, ubgtHesapla } from './kalemler/donemsel.ts';
 
 export interface KalemSonucu extends KalemHesabi {
@@ -37,6 +38,8 @@ const SIRA: [KalemKodu, (b: Baglam) => KalemHesabi][] = [
   ['kidem', kidemHesapla],
   ['ihbar', ihbarHesapla],
   ['yillikIzin', yillikIzinHesapla],
+  ['ucretAlacagi', ucretAlacagiHesapla],
+  ['ikramiye', ikramiyeHesapla],
   ['fazlaCalisma', fazlaCalismaHesapla],
   ['haftaTatili', haftaTatiliHesapla],
   ['ubgt', ubgtHesapla],
@@ -142,8 +145,9 @@ export function hesapla(girdi: Girdi, t: Tablolar): HesapSonucu {
     const kg = girdi.kalemler[k.kod]!;
     k.faizler = faizleriHesapla(k, kg.faiz, esaslar.faizMatrahi === 'brut' ? k.brut : k.net, esaslar, t, kayit);
     if (k.faizler.some((f) => f.tur === 'mevduat') && t.mevduatFaizi.kod.startsWith('mevduat-faizi')) {
+      const dayanak = k.kod === 'kidem' ? '1475 s.K. m.14' : '4857 s.K. m.34';
       k.notlar.push(
-        'Mevduat faizi oranları TCMB serisinden alındı (vekil seri: değer ayın en yüksek oranı, vade dilimi 1 yıla kadar). ' +
+        `Mevduat faizi oranları (${dayanak}) TCMB serisinden alındı (vekil seri: değer ayın en yüksek oranı, vade dilimi 1 yıla kadar). ` +
           'Yargıtay oranın bankalara müzekkere yazılarak tespitini istiyor (9. HD 2025/6610 E.); banka yazısı varsa oranları ' +
           'girdide tablolar.mevduatFaizi ile ayrı tablo olarak verin.',
       );

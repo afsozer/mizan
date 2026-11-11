@@ -44,6 +44,8 @@ export const KALEM_ADLARI: Record<KalemKodu, string> = {
   kidem: 'Kıdem tazminatı',
   ihbar: 'İhbar tazminatı',
   yillikIzin: 'Yıllık izin ücreti',
+  ucretAlacagi: 'Ücret alacağı',
+  ikramiye: 'İkramiye ve ilave tediye / prim alacağı',
   fazlaCalisma: 'Fazla çalışma ücreti',
   haftaTatili: 'Hafta tatili ücreti',
   ubgt: 'Ulusal bayram ve genel tatil ücreti',

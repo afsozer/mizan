@@ -1,7 +1,18 @@
 // mizan çekirdeği: dosya sistemi, ağ ya da Node modülü kullanmaz; komut satırı ve tarayıcı aynı
 // hesabı buradan yapar. Arayüz yalnız bu dosyanın dışa aktardıklarını kullanır.
 export { GirdiHatasi, girdiCoz, girdiMetindenCoz } from './girdi.ts';
-export type { Girdi, KalemKodu, FaizTuru, UcretYontemi } from './girdi.ts';
+export type {
+  Girdi,
+  KalemKodu,
+  FaizTuru,
+  UcretYontemi,
+  UcretGunKurali,
+  UcretAlacagiDonemi,
+  UcretAlacagiGirdisi,
+  IkramiyeHesapSekli,
+  IkramiyeSatiri,
+  IkramiyeGirdisi,
+} from './girdi.ts';
 export { tablolariKur, TABLO_DOSYALARI, KaynakKaydi } from './tablolar.ts';
 export type { HamTablo, HamTablolar, Tablolar, Kaynak, KaynakSatiri } from './tablolar.ts';
 export { hesapla } from './hesap.ts';

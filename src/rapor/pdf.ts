@@ -3,6 +3,7 @@
 // üretir; yazım Node'da src/node/pdf-yaz.ts, tarayıcıda pdfmake'in tarayıcı paketiyle yapılır.
 // Tanım "Roboto" yazı tipini kullanır.
 import type { HesapSonucu, KalemSonucu } from '../hesap.ts';
+import type { KalemKodu } from '../girdi.ts';
 import { Decimal, tl, topla, yuzde } from '../para.ts';
 import { trTarih } from '../tarih.ts';
 import type { Kaynak } from '../tablolar.ts';
@@ -70,8 +71,9 @@ function kaynakYaz(k: Kaynak): string {
   return parca.join(' · ');
 }
 
-function faizTuruAdi(tur: string): string {
-  return tur === 'mevduat' ? 'en yüksek mevduat faizi' : 'yasal faiz';
+function faizTuruAdi(tur: string, kod?: KalemKodu): string {
+  if (tur !== 'mevduat') return 'yasal faiz';
+  return kod && kod !== 'kidem' ? 'en yüksek mevduat faizi (4857 s.K. m.34)' : 'en yüksek mevduat faizi';
 }
 
 function kalemBolumu(k: KalemSonucu, no: number): Icerik[] {
@@ -85,7 +87,9 @@ function kalemBolumu(k: KalemSonucu, no: number): Icerik[] {
   ]) {
     if (!d) continue;
     if (baslikMetni) parca.push({ text: baslikMetni, style: 'etiket' });
-    const sag = d.basliklar.map((_, i) => i).filter((i) => i > 0 && !/Açıklama|Dönem|Dolum|Ödeme tarihi/.test(d.basliklar[i]!));
+    const sag = d.basliklar
+      .map((_, i) => i)
+      .filter((i) => i > 0 && !/Açıklama|Dönem|Dolum|Ödeme tarihi|Hesap şekli|^Hesap$/.test(d.basliklar[i]!));
     parca.push(tablo(d.basliklar, d.satirlar, { sag, toplam: d.toplam }));
   }
 
@@ -102,7 +106,7 @@ function kalemBolumu(k: KalemSonucu, no: number): Icerik[] {
 
   for (const f of k.faizler) {
     parca.push({
-      text: `Faiz: ${faizTuruAdi(f.tur)}, ${tl(f.matrah)} TL üzerine ${trTarih(f.baslangic)} - ${trTarih(f.bitis)} (girdi: ${f.gerekce})`,
+      text: `Faiz: ${faizTuruAdi(f.tur, k.kod)}, ${tl(f.matrah)} TL üzerine ${trTarih(f.baslangic)} - ${trTarih(f.bitis)} (girdi: ${f.gerekce})`,
       style: 'etiket',
     });
     if (f.kesitler.length === 0) {
@@ -153,7 +157,7 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
     tl(k.brut),
     tl(k.brut.minus(k.net)),
     tl(k.net),
-    k.faizler.length ? k.faizler.map((f) => `${faizTuruAdi(f.tur)}, ${trTarih(f.baslangic)}`).join('; ') : '-',
+    k.faizler.length ? k.faizler.map((f) => `${faizTuruAdi(f.tur, k.kod)}, ${trTarih(f.baslangic)}`).join('; ') : '-',
     tl(topla(k.faizler.map((f) => f.toplam))),
   ]);
 
@@ -177,6 +181,9 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
     const kg = g.kalemler[k.kod]!;
     if ('hakVar' in kg) kalemTercihleri.push([k.ad, 'Hak varlığı', kg.hakVar ? 'var' : 'yok', kg.gerekce]);
     if ('ucretTuru' in kg) kalemTercihleri.push([k.ad, 'İzin ücretine esas ücret', kg.ucretTuru === 'ciplak' ? 'çıplak' : 'giydirilmiş', '-']);
+    if ('gunKurali' in kg && kg.gunKurali) {
+      kalemTercihleri.push([k.ad, 'Gün hesabı kuralı', kg.gunKurali === 'tam-ay' ? 'tam ay (30 gün)' : 'takvim günü', '-']);
+    }
     if (kg.takdiriIndirim) kalemTercihleri.push([k.ad, 'Takdiri indirim', yuzde(kg.takdiriIndirim.oran), kg.takdiriIndirim.gerekce]);
     if (kg.mahsup) kalemTercihleri.push([k.ad, 'Mahsup', `${tl(kg.mahsup.tutar)} TL`, kg.mahsup.aciklama]);
     if ('oncekiOdemeler' in kg && kg.oncekiOdemeler) {
@@ -190,7 +197,7 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
       kalemTercihleri.push([k.ad, 'Kullandırılan bildirim süresi', `${kg.kullandirilanGun.toString()} gün`, '-']);
     }
     for (const f of kg.faiz ?? []) {
-      kalemTercihleri.push([k.ad, 'Faiz', `${faizTuruAdi(f.tur)}, ${trTarih(f.baslangic)}${f.tutar ? `, ${tl(f.tutar)} TL` : ''}`, f.gerekce]);
+      kalemTercihleri.push([k.ad, 'Faiz', `${faizTuruAdi(f.tur, k.kod)}, ${trTarih(f.baslangic)}${f.tutar ? `, ${tl(f.tutar)} TL` : ''}`, f.gerekce]);
     }
   }
 
