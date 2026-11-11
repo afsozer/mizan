@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { girdiOku } from '../src/node/girdi-dosya.ts';
+import { GirdiHatasi, girdiCoz } from '../src/index.ts';
 import { hesapla } from '../src/hesap.ts';
 import { defterSatiri, kanitDosyaAdi, kisaltma } from '../src/rapor/defter.ts';
 import { raporTanimi } from '../src/rapor/pdf.ts';
@@ -39,6 +40,146 @@ test('oran yüzde olarak yazılırsa uyarır', () => {
       }),
     /0 ile 1 arasında/,
   );
+});
+
+test('GirdiHatasi örneği ve alanYolu doğruluğu (kök, iç içe alanlar, dizi elemanları ve hesapla hataları)', () => {
+  const yakala = (fn: () => unknown): GirdiHatasi => {
+    try {
+      fn();
+      assert.fail('GirdiHatasi bekleniyordu');
+    } catch (e) {
+      assert.ok(e instanceof Error);
+      assert.ok(e instanceof GirdiHatasi);
+      assert.equal(e.name, 'GirdiHatasi');
+      return e;
+    }
+  };
+
+  const kokHata = yakala(() => girdiCoz(null));
+  assert.equal(kokHata.alanYolu, 'girdi');
+  assert.match(kokHata.message, /YAML nesnesi olmalı/);
+
+  const taninmayanKok = yakala(() => girdi({ muvekkil: 'Ad Soyad' }));
+  assert.equal(taninmayanKok.alanYolu, 'girdi');
+  assert.match(taninmayanKok.message, /tanınmayan alan "muvekkil"/);
+
+  const taninmayanAlt = yakala(() =>
+    girdi({ dosya: { mahkeme: 'X', esasNo: '1', kaynak: 'k', altAlan: '60.02', isciAdi: 'Ad Soyad' } }),
+  );
+  assert.equal(taninmayanAlt.alanYolu, 'girdi.dosya');
+
+  const diziElemanAlani = yakala(() =>
+    girdi({
+      hizmet: {
+        donemler: [{ giris: '2020-01-01', cikis: 'gecersiz-tarih' }],
+        fesihTarihi: '2021-09-15',
+        fesihSekli: 'fesih',
+      },
+    }),
+  );
+  assert.equal(diziElemanAlani.alanYolu, 'girdi.hizmet.donemler[0].cikis');
+  assert.match(diziElemanAlani.message, /YYYY-AA-GG tarih bekleniyor/);
+
+  const diziElemanSirasi = yakala(() =>
+    girdi({
+      hizmet: {
+        donemler: [{ giris: '2021-09-15', cikis: '2020-01-01' }],
+        fesihTarihi: '2021-09-15',
+        fesihSekli: 'fesih',
+      },
+    }),
+  );
+  assert.equal(diziElemanSirasi.alanYolu, 'girdi.hizmet.donemler[0]');
+  assert.match(diziElemanSirasi.message, /çıkış girişten önce/);
+
+  const icIceAlan = yakala(() =>
+    girdi({
+      kalemler: {
+        fazlaCalisma: {
+          donemler: [{ baslangic: '2021-01-01', bitis: '2021-01-28', haftalikFazlaSaat: 5 }],
+          takdiriIndirim: { oran: 30, gerekce: 'tanık' },
+        },
+      },
+    }),
+  );
+  assert.equal(icIceAlan.alanYolu, 'girdi.kalemler.fazlaCalisma.takdiriIndirim.oran');
+  assert.match(icIceAlan.message, /0 ile 1 arasında/);
+
+  const eksikIndirim = yakala(() =>
+    girdi({
+      kalemler: {
+        fazlaCalisma: {
+          donemler: [{ baslangic: '2021-01-01', bitis: '2021-01-28', haftalikFazlaSaat: 5 }],
+        },
+      },
+    }),
+  );
+  assert.equal(eksikIndirim.alanYolu, 'girdi.kalemler.fazlaCalisma.takdiriIndirim');
+
+  const oncekiOdemeSatiri = yakala(() =>
+    girdi({
+      kalemler: {
+        kidem: {
+          hakVar: true,
+          gerekce: 'x',
+          oncekiOdemeler: {
+            faiz: 'yok',
+            gerekce: 'avans',
+            liste: [{ tarih: '2021-01-15', netTutar: 500, brutTutar: 600 }],
+          },
+        },
+      },
+    }),
+  );
+  assert.equal(oncekiOdemeSatiri.alanYolu, 'girdi.kalemler.kidem.oncekiOdemeler.liste[0]');
+
+  const tablolar = testTablolari();
+
+  const siraHatasi = yakala(() =>
+    hesapla(
+      girdi({
+        kalemler: {
+          fazlaCalisma: {
+            donemler: [{ baslangic: '2021-01-01', bitis: '2021-01-28', haftalikFazlaSaat: 10 }],
+            takdiriIndirim: { oran: 0.3, gerekce: 'tanık' },
+            mahsup: { tutar: 100, aciklama: 'bordro' },
+          },
+        },
+      }),
+      tablolar,
+    ),
+  );
+  assert.equal(siraHatasi.alanYolu, 'girdi.parametreler.indirimMahsupSirasi');
+  assert.match(siraHatasi.message, /indirimMahsupSirasi/);
+
+  const istisnaHatasi = yakala(() =>
+    hesapla(
+      girdi({
+        hesapTarihi: '2021-12-31',
+        parametreler: { vergi: { yontem: 'dilim', asgariUcretIstisnasi: true } },
+      }),
+      tablolar,
+    ),
+  );
+  assert.equal(istisnaHatasi.alanYolu, 'girdi.parametreler.vergi.asgariUcretIstisnasi');
+  assert.match(istisnaHatasi.message, /01\.01\.2022/);
+
+  const faizAsimHatasi = yakala(() =>
+    hesapla(
+      girdi({
+        kalemler: {
+          kidem: {
+            hakVar: true,
+            gerekce: 'x',
+            faiz: [{ tur: 'yasal', baslangic: '2021-09-15', gerekce: 'dava', tutar: 50000 }],
+          },
+        },
+      }),
+      tablolar,
+    ),
+  );
+  assert.equal(faizAsimHatasi.alanYolu, 'girdi.kalemler.kidem.faiz');
+  assert.match(faizAsimHatasi.message, /faiz matrahını/);
 });
 
 test('kanıt dosyası adı ve defter satırı', () => {

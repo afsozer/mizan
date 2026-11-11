@@ -94,9 +94,10 @@ aydınlık/karanlık temalarda, klavyeyle ve açık uzun tablolarla kontrol edin
 
 ## Çekirdek API notları
 
-Hesap ve rapor için gerekli dışa aktarımlar yeterliydi; çekirdeğe ekleme yapılmadı. Alan tabanlı
-arayüz için iki geliştirme yararlı olur: `girdiCoz` hatalarının serbest metin yerine yapılandırılmış
-alan yolu ve hata listesi döndürmesi; alanların zorunluluk, seçenek ve varsayılan açıklamalarının
-arayüzce okunabilir şema metadatası olarak sunulması. Şu an alan yolu mevcut hata metninden
-çıkarılıyor; yol taşımayan hesap hataları sonuç panelinde gösteriliyor. UI şeması çekirdekteki
-alanlarla birlikte güncel tutulmalı.
+Çekirdek (`src/index.ts`), şema ve alan bağlantılı hesap doğrulama hatalarını (`indirimMahsupSirasi`,
+`asgariUcretIstisnasi`, kalem `faiz` tutar aşımı vb.) `alanYolu` alanı taşıyan `GirdiHatasi` sınıfıyla
+fırlatır; arayüz `GirdiHatasi` yakaladığında alan yolunu doğrudan `e.alanYolu` üzerinden okur,
+`hataYolu` yardımcısını yalnız beklenmeyen hatalar için yedek olarak tutar. Alan tabanlı arayüz için
+gelecekte iki ek geliştirme yararlı olur: tek hata yerine çoklu hata listesi döndürülmesi ve alanların
+zorunluluk, seçenek ve varsayılan açıklamalarının arayüzce okunabilir şema metadatası olarak
+sunulması. UI şeması çekirdekteki alanlarla birlikte güncel tutulmalı.

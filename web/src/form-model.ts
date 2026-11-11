@@ -1,4 +1,4 @@
-import { girdiCoz, girdiMetindenCoz } from '../../src/index.ts';
+import { GirdiHatasi, girdiCoz, girdiMetindenCoz } from '../../src/index.ts';
 import { parse, stringify } from 'yaml';
 
 export type Deger = string | number | boolean | null | Nesne | Deger[];
@@ -72,8 +72,10 @@ export function alanDegistir(form: Nesne, yol: Yol, deger: Deger | undefined): N
   return sonuc;
 }
 
-export function hataYolu(mesaj: string): string {
-  const yol = mesaj.match(/^girdi(?:\.[a-zA-Z]+|\[\d+\])*/)?.[0];
+export function hataYolu(hata: unknown): string {
+  if (hata instanceof GirdiHatasi) return hata.alanYolu;
+  const mesaj = hata instanceof Error ? hata.message : String(hata);
+  const yol = mesaj.match(/^girdi(?:\.[a-zA-Z0-9_]+|\[\d+\])*/)?.[0];
   if (yol) return yol;
   if (mesaj.includes('parametreler.indirimMahsupSirasi')) return 'girdi.parametreler.indirimMahsupSirasi';
   return 'girdi';
@@ -81,7 +83,7 @@ export function hataYolu(mesaj: string): string {
 
 /** Çekirdeğin "girdi.dosya.mahkeme: ..." biçimindeki mesajından yalnız açıklamayı bırakır. */
 export function hataAciklamasi(mesaj: string): string {
-  return mesaj.replace(/^girdi(?:\.[a-zA-Z]+|\[\d+\])*:\s*/, '');
+  return mesaj.replace(/^girdi(?:\.[a-zA-Z0-9_]+|\[\d+\])*:\s*/, '');
 }
 
 export function yolYaz(yol: Yol): string {

@@ -21,8 +21,7 @@ function degerlendir(form: Nesne, belgeler: TabloBelgesi[]): Degerlendirme {
     if (!belgeler.length) return { sonuc: null, hata: null };
     return { sonuc: hesapla(girdi, hesapTablolari(belgeler, girdi.tablolar?.mevduatFaizi)), hata: null };
   } catch (e) {
-    const mesaj = HATA(e);
-    return { sonuc: null, hata: { yol: hataYolu(mesaj), mesaj } };
+    return { sonuc: null, hata: { yol: hataYolu(e), mesaj: HATA(e) } };
   }
 }
 

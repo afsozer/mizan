@@ -148,6 +148,20 @@ export interface Girdi {
 
 // --- Küçük şema yardımcıları ---
 
+export class GirdiHatasi extends Error {
+  readonly alanYolu: string;
+
+  constructor(alanYolu: string, mesaj: string) {
+    super(mesaj);
+    this.name = 'GirdiHatasi';
+    this.alanYolu = alanYolu;
+  }
+}
+
+function alanHatasi(alanYolu: string, aciklama: string): GirdiHatasi {
+  return new GirdiHatasi(alanYolu, `${alanYolu}: ${aciklama}`);
+}
+
 type Nesne = Record<string, unknown>;
 
 class Okuyucu {
@@ -160,14 +174,16 @@ class Okuyucu {
   }
 
   static kok(veri: unknown): Okuyucu {
-    if (!veri || typeof veri !== 'object' || Array.isArray(veri)) throw new Error('Girdi dosyası bir YAML nesnesi olmalı');
+    if (!veri || typeof veri !== 'object' || Array.isArray(veri)) {
+      throw new GirdiHatasi('girdi', 'Girdi dosyası bir YAML nesnesi olmalı');
+    }
     return new Okuyucu('girdi', veri as Nesne);
   }
 
   izinli(alanlar: string[]): void {
     for (const k of Object.keys(this.n)) {
       if (!alanlar.includes(k)) {
-        throw new Error(`${this.yer}: tanınmayan alan "${k}". İzinli alanlar: ${alanlar.join(', ')}`);
+        throw alanHatasi(this.yer, `tanınmayan alan "${k}". İzinli alanlar: ${alanlar.join(', ')}`);
       }
     }
   }
@@ -178,65 +194,65 @@ class Okuyucu {
 
   alt(alan: string): Okuyucu {
     const v = this.n[alan];
-    if (!v || typeof v !== 'object' || Array.isArray(v)) throw new Error(`${this.yer}.${alan}: nesne bekleniyor`);
+    if (!v || typeof v !== 'object' || Array.isArray(v)) throw alanHatasi(`${this.yer}.${alan}`, 'nesne bekleniyor');
     return new Okuyucu(`${this.yer}.${alan}`, v as Nesne);
   }
 
   liste(alan: string): Okuyucu[] {
     const v = this.n[alan];
-    if (!Array.isArray(v)) throw new Error(`${this.yer}.${alan}: liste bekleniyor`);
+    if (!Array.isArray(v)) throw alanHatasi(`${this.yer}.${alan}`, 'liste bekleniyor');
     return v.map((o, i) => {
-      if (!o || typeof o !== 'object' || Array.isArray(o)) throw new Error(`${this.yer}.${alan}[${i}]: nesne bekleniyor`);
+      if (!o || typeof o !== 'object' || Array.isArray(o)) throw alanHatasi(`${this.yer}.${alan}[${i}]`, 'nesne bekleniyor');
       return new Okuyucu(`${this.yer}.${alan}[${i}]`, o as Nesne);
     });
   }
 
   metin(alan: string): string {
     const v = this.n[alan];
-    if (typeof v !== 'string' || !v.trim()) throw new Error(`${this.yer}.${alan}: boş olmayan metin bekleniyor`);
+    if (typeof v !== 'string' || !v.trim()) throw alanHatasi(`${this.yer}.${alan}`, 'boş olmayan metin bekleniyor');
     return v.trim();
   }
 
   tarih(alan: string): string {
     const v = this.n[alan];
     const t = v instanceof Date ? v.toISOString().slice(0, 10) : v;
-    if (typeof t !== 'string' || !gecerliTarih(t)) throw new Error(`${this.yer}.${alan}: YYYY-AA-GG tarih bekleniyor`);
+    if (typeof t !== 'string' || !gecerliTarih(t)) throw alanHatasi(`${this.yer}.${alan}`, 'YYYY-AA-GG tarih bekleniyor');
     return t;
   }
 
   sayi(alan: string, enAz = 0): Decimal {
     const v = this.n[alan];
     if (typeof v !== 'number' && (typeof v !== 'string' || !/^-?\d+(\.\d+)?$/.test(v.trim()))) {
-      throw new Error(`${this.yer}.${alan}: sayı bekleniyor (ondalık ayırıcı nokta)`);
+      throw alanHatasi(`${this.yer}.${alan}`, 'sayı bekleniyor (ondalık ayırıcı nokta)');
     }
     const s = d(typeof v === 'number' ? String(v) : v.trim());
-    if (s.lt(enAz)) throw new Error(`${this.yer}.${alan}: ${enAz} ya da daha büyük olmalı`);
+    if (s.lt(enAz)) throw alanHatasi(`${this.yer}.${alan}`, `${enAz} ya da daha büyük olmalı`);
     return s;
   }
 
   /** TL tutarı: en fazla iki ondalık (kuruş). */
   tutar(alan: string): Decimal {
     const s = this.sayi(alan);
-    if (s.decimalPlaces() > 2) throw new Error(`${this.yer}.${alan}: tutar en fazla iki ondalık (kuruş) olmalı`);
+    if (s.decimalPlaces() > 2) throw alanHatasi(`${this.yer}.${alan}`, 'tutar en fazla iki ondalık (kuruş) olmalı');
     return s;
   }
 
   oran(alan: string): Decimal {
     const s = this.sayi(alan);
-    if (s.gt(1)) throw new Error(`${this.yer}.${alan}: oran 0 ile 1 arasında yazılır (%30 → 0.30)`);
+    if (s.gt(1)) throw alanHatasi(`${this.yer}.${alan}`, 'oran 0 ile 1 arasında yazılır (%30 → 0.30)');
     return s;
   }
 
   mantiksal(alan: string): boolean {
     const v = this.n[alan];
-    if (typeof v !== 'boolean') throw new Error(`${this.yer}.${alan}: true/false bekleniyor`);
+    if (typeof v !== 'boolean') throw alanHatasi(`${this.yer}.${alan}`, 'true/false bekleniyor');
     return v;
   }
 
   secenek<T extends string>(alan: string, secenekler: readonly T[]): T {
     const v = this.n[alan];
     if (typeof v !== 'string' || !secenekler.includes(v as T)) {
-      throw new Error(`${this.yer}.${alan}: ${secenekler.join(' | ')} değerlerinden biri olmalı`);
+      throw alanHatasi(`${this.yer}.${alan}`, `${secenekler.join(' | ')} değerlerinden biri olmalı`);
     }
     return v as T;
   }
@@ -254,9 +270,9 @@ function faizOku(o: Okuyucu): FaizGirdisi[] | undefined {
     };
   });
   const kalanli = liste.filter((f) => f.tutar === undefined);
-  if (kalanli.length > 1) throw new Error(`${o.yer}.faiz: tutarı boş bırakılan (kalan) en fazla bir satır olabilir`);
+  if (kalanli.length > 1) throw alanHatasi(`${o.yer}.faiz`, 'tutarı boş bırakılan (kalan) en fazla bir satır olabilir');
   if (kalanli.length === 1 && liste[liste.length - 1]!.tutar !== undefined) {
-    throw new Error(`${o.yer}.faiz: tutarı boş satır (kalan) listenin sonunda olmalı`);
+    throw alanHatasi(`${o.yer}.faiz`, 'tutarı boş satır (kalan) listenin sonunda olmalı');
   }
   return liste;
 }
@@ -273,7 +289,7 @@ function ortakOku(o: Okuyucu): OrtakKalem {
 
 function indirimOku(o: Okuyucu): TakdiriIndirim {
   if (!o.var('takdiriIndirim')) {
-    throw new Error(`${o.yer}.takdiriIndirim: bu kalemde açıkça yazılmalı (indirim yoksa oran: 0 ve gerekçe)`);
+    throw alanHatasi(`${o.yer}.takdiriIndirim`, 'bu kalemde açıkça yazılmalı (indirim yoksa oran: 0 ve gerekçe)');
   }
   const t = o.alt('takdiriIndirim');
   t.izinli(['oran', 'gerekce']);
@@ -284,9 +300,9 @@ function donemOku<A extends string>(o: Okuyucu, ekAlan: A): CalismaDonemi & Reco
   o.izinli(['baslangic', 'bitis', 'dislanacakGun', 'haftaSayisi', ekAlan]);
   const baslangic = o.tarih('baslangic');
   const bitis = o.tarih('bitis');
-  if (karsilastir(bitis, baslangic) < 0) throw new Error(`${o.yer}: bitiş başlangıçtan önce`);
+  if (karsilastir(bitis, baslangic) < 0) throw alanHatasi(o.yer, 'bitiş başlangıçtan önce');
   if (o.var('haftaSayisi') && o.var('dislanacakGun')) {
-    throw new Error(`${o.yer}: haftaSayisi verilince dislanacakGun kullanılmaz (hafta sayısı zaten net)`);
+    throw alanHatasi(o.yer, 'haftaSayisi verilince dislanacakGun kullanılmaz (hafta sayısı zaten net)');
   }
   return {
     baslangic,
@@ -320,13 +336,13 @@ export function girdiCoz(veri: unknown): Girdi {
     p.izinli(['giris', 'cikis']);
     const giris = p.tarih('giris');
     const cikis = p.tarih('cikis');
-    if (karsilastir(cikis, giris) < 0) throw new Error(`${p.yer}: çıkış girişten önce`);
+    if (karsilastir(cikis, giris) < 0) throw alanHatasi(p.yer, 'çıkış girişten önce');
     return { giris, cikis };
   });
-  if (donemler.length === 0) throw new Error('girdi.hizmet.donemler: en az bir dönem gerekli');
+  if (donemler.length === 0) throw alanHatasi('girdi.hizmet.donemler', 'en az bir dönem gerekli');
   for (let i = 1; i < donemler.length; i++) {
     if (karsilastir(donemler[i]!.giris, donemler[i - 1]!.cikis) <= 0) {
-      throw new Error('girdi.hizmet.donemler: dönemler sıralı ve çakışmasız olmalı');
+      throw alanHatasi('girdi.hizmet.donemler', 'dönemler sıralı ve çakışmasız olmalı');
     }
   }
   const hizmet = {
@@ -337,8 +353,8 @@ export function girdiCoz(veri: unknown): Girdi {
     dislanacakGun: h.var('dislanacakGun') ? h.sayi('dislanacakGun') : undefined,
     dislanacakGerekce: h.var('dislanacakGerekce') ? h.metin('dislanacakGerekce') : undefined,
   };
-  if (hizmet.dislanacakGun && !hizmet.dislanacakGerekce) throw new Error('girdi.hizmet.dislanacakGerekce: düşülen günlerin gerekçesi yazılmalı');
-  if (hizmet.dislanacakGun && !hizmet.dislanacakGun.isInteger()) throw new Error('girdi.hizmet.dislanacakGun: tam gün olmalı');
+  if (hizmet.dislanacakGun && !hizmet.dislanacakGerekce) throw alanHatasi('girdi.hizmet.dislanacakGerekce', 'düşülen günlerin gerekçesi yazılmalı');
+  if (hizmet.dislanacakGun && !hizmet.dislanacakGun.isInteger()) throw alanHatasi('girdi.hizmet.dislanacakGun', 'tam gün olmalı');
 
   const u = k.alt('ucret');
   u.izinli(['sonBrutAylik', 'sonUcretTarihi', 'yontem', 'donemsel', 'yanHaklar']);
@@ -360,15 +376,15 @@ export function girdiCoz(veri: unknown): Girdi {
         })
       : [],
   };
-  if (yontem === 'donemsel' && !ucret.donemsel?.length) throw new Error('girdi.ucret.donemsel: yöntem "donemsel" ise dönem listesi gerekli');
-  if (yontem !== 'donemsel' && ucret.donemsel) throw new Error('girdi.ucret.donemsel: yalnız yöntem "donemsel" iken kullanılır');
+  if (yontem === 'donemsel' && !ucret.donemsel?.length) throw alanHatasi('girdi.ucret.donemsel', 'yöntem "donemsel" ise dönem listesi gerekli');
+  if (yontem !== 'donemsel' && ucret.donemsel) throw alanHatasi('girdi.ucret.donemsel', 'yalnız yöntem "donemsel" iken kullanılır');
 
   const p = k.alt('parametreler');
   p.izinli(['gunlukBolen', 'aylikCalismaSaati', 'haftaHesabi', 'faizGunEsasi', 'faizMatrahi', 'indirimMahsupSirasi', 'sureHesabi', 'vergi']);
   const v = p.alt('vergi');
   v.izinli(['yontem', 'sabitOran', 'yil', 'oncekiKumulatifMatrah', 'asgariUcretIstisnasi', 'birikim']);
   const vergiYontem = v.secenek('yontem', ['dilim', 'sabit'] as const);
-  if (vergiYontem === 'dilim' && v.var('sabitOran')) throw new Error('girdi.parametreler.vergi.sabitOran: yalnız yöntem "sabit" iken kullanılır');
+  if (vergiYontem === 'dilim' && v.var('sabitOran')) throw alanHatasi('girdi.parametreler.vergi.sabitOran', 'yalnız yöntem "sabit" iken kullanılır');
   const vergi: VergiParametresi = {
     yontem: vergiYontem,
     sabitOran: vergiYontem === 'sabit' ? v.oran('sabitOran') : undefined,
@@ -377,7 +393,7 @@ export function girdiCoz(veri: unknown): Girdi {
     asgariUcretIstisnasi: v.var('asgariUcretIstisnasi') ? v.mantiksal('asgariUcretIstisnasi') : undefined,
     birikim: v.var('birikim') ? v.secenek('birikim', ['kalemler-arasi', 'kalem-bazinda'] as const) : undefined,
   };
-  if (vergi.birikim && vergiYontem !== 'dilim') throw new Error('girdi.parametreler.vergi.birikim: yalnız yöntem "dilim" iken kullanılır');
+  if (vergi.birikim && vergiYontem !== 'dilim') throw alanHatasi('girdi.parametreler.vergi.birikim', 'yalnız yöntem "dilim" iken kullanılır');
   const parametreler = {
     gunlukBolen: p.var('gunlukBolen') ? p.sayi('gunlukBolen', 1) : undefined,
     aylikCalismaSaati: p.var('aylikCalismaSaati') ? p.sayi('aylikCalismaSaati', 1) : undefined,
@@ -391,7 +407,7 @@ export function girdiCoz(veri: unknown): Girdi {
     vergi,
   };
   if (hizmet.dislanacakGun && parametreler.sureHesabi !== 'gun') {
-    throw new Error('girdi.hizmet.dislanacakGun: yalnız parametreler.sureHesabi "gun" iken kullanılır');
+    throw alanHatasi('girdi.hizmet.dislanacakGun', 'yalnız parametreler.sureHesabi "gun" iken kullanılır');
   }
 
   let tablolar: Girdi['tablolar'];
@@ -409,7 +425,7 @@ export function girdiCoz(veri: unknown): Girdi {
     o.izinli(['hakVar', 'gerekce', 'oncekiOdemeler', ...ORTAK]);
     kalemler.kidem = { hakVar: o.mantiksal('hakVar'), gerekce: o.metin('gerekce'), ...ortakOku(o) };
     if (o.var('oncekiOdemeler')) {
-      if (kalemler.kidem.mahsup) throw new Error(`${o.yer}: mahsup ve oncekiOdemeler birlikte kullanılmaz`);
+      if (kalemler.kidem.mahsup) throw alanHatasi(o.yer, 'mahsup ve oncekiOdemeler birlikte kullanılmaz');
       const op = o.alt('oncekiOdemeler');
       op.izinli(['faiz', 'faizBitis', 'gerekce', 'liste']);
       kalemler.kidem.oncekiOdemeler = {
@@ -418,7 +434,7 @@ export function girdiCoz(veri: unknown): Girdi {
         gerekce: op.metin('gerekce'),
         liste: op.liste('liste').map((x) => {
           x.izinli(['tarih', 'netTutar', 'brutTutar', 'aciklama']);
-          if (x.var('netTutar') === x.var('brutTutar')) throw new Error(`${x.yer}: netTutar ya da brutTutar alanlarından biri verilmeli`);
+          if (x.var('netTutar') === x.var('brutTutar')) throw alanHatasi(x.yer, 'netTutar ya da brutTutar alanlarından biri verilmeli');
           return {
             tarih: x.tarih('tarih'),
             netTutar: x.var('netTutar') ? x.tutar('netTutar') : undefined,
@@ -441,7 +457,7 @@ export function girdiCoz(veri: unknown): Girdi {
       ...ortakOku(o),
     };
     if (donemler.length > 1 && !kalemler.ihbar.donemEsasi) {
-      throw new Error(`${o.yer}.donemEsasi: birden fazla hizmet döneminde yazılmalı (son | tumu)`);
+      throw alanHatasi(`${o.yer}.donemEsasi`, 'birden fazla hizmet döneminde yazılmalı (son | tumu)');
     }
   }
   if (km.var('yillikIzin')) {
@@ -487,7 +503,7 @@ export function girdiCoz(veri: unknown): Girdi {
       takdiriIndirim: indirimOku(o),
     };
   }
-  if (Object.keys(kalemler).length === 0) throw new Error('girdi.kalemler: en az bir kalem gerekli');
+  if (Object.keys(kalemler).length === 0) throw alanHatasi('girdi.kalemler', 'en az bir kalem gerekli');
 
   const icinde = (bas: string, bit: string) =>
     donemler.some((p) => karsilastir(p.giris, bas) <= 0 && karsilastir(bit, p.cikis) <= 0);
@@ -495,18 +511,18 @@ export function girdiCoz(veri: unknown): Girdi {
     const liste = [...(kalemler[kod]?.donemler ?? [])].sort((a, b) => karsilastir(a.baslangic, b.baslangic));
     liste.forEach((p, i) => {
       if (!icinde(p.baslangic, p.bitis)) {
-        throw new Error(`girdi.kalemler.${kod}: ${p.baslangic} - ${p.bitis} dönemi tek bir hizmet döneminin içinde değil`);
+        throw alanHatasi(`girdi.kalemler.${kod}`, `${p.baslangic} - ${p.bitis} dönemi tek bir hizmet döneminin içinde değil`);
       }
       const onceki = liste[i - 1];
-      if (onceki && karsilastir(p.baslangic, onceki.bitis) <= 0) throw new Error(`girdi.kalemler.${kod}: dönemler çakışıyor`);
+      if (onceki && karsilastir(p.baslangic, onceki.bitis) <= 0) throw alanHatasi(`girdi.kalemler.${kod}`, 'dönemler çakışıyor');
     });
   }
   for (const g of kalemler.ubgt?.gunler ?? []) {
-    if (!icinde(g.tarih, g.tarih)) throw new Error(`girdi.kalemler.ubgt: ${g.tarih} hizmet dönemlerinin dışında`);
+    if (!icinde(g.tarih, g.tarih)) throw alanHatasi('girdi.kalemler.ubgt', `${g.tarih} hizmet dönemlerinin dışında`);
   }
   const mevduatVar = Object.values(kalemler).some((kg) => kg?.faiz?.some((f) => f.tur === 'mevduat'));
   if (tablolar?.mevduatFaizi && !mevduatVar) {
-    throw new Error('girdi.tablolar.mevduatFaizi: hiçbir kalemde mevduat faizi yok; alan kullanılmıyor');
+    throw alanHatasi('girdi.tablolar.mevduatFaizi', 'hiçbir kalemde mevduat faizi yok; alan kullanılmıyor');
   }
 
   return {

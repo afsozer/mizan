@@ -1,4 +1,5 @@
 import { d, kurus, sayi, tl } from '../para.ts';
+import { GirdiHatasi } from '../girdi.ts';
 import type { YilAyGun } from '../tarih.ts';
 import { hizmetSuresi, KALEM_ADLARI, sureAciklamasi, type Baglam, type KalemHesabi } from './ortak.ts';
 
@@ -73,7 +74,9 @@ export function ihbarHesapla(b: Baglam): KalemHesabi {
   const gunluk = giydirilmis.div(b.esaslar.gunlukBolen);
   const tumGun = hafta.times(7);
   const kullandirilan = k.kullandirilanGun ?? d(0);
-  if (kullandirilan.gt(tumGun)) throw new Error('İhbar: kullandırılan gün bildirim süresinden uzun olamaz');
+  if (kullandirilan.gt(tumGun)) {
+    throw new GirdiHatasi('girdi.kalemler.ihbar.kullandirilanGun', 'İhbar: kullandırılan gün bildirim süresinden uzun olamaz');
+  }
   const gun = tumGun.minus(kullandirilan);
   sonuc.bilgiler.push(
     ['Bildirim süresi', `${sayi(hafta)} hafta${k.haftaSayisi ? ' (girdi ile verildi)' : ''} = ${sayi(tumGun)} gün`],

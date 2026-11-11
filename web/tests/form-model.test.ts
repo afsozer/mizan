@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { girdiCoz, girdiMetindenCoz } from '../../src/index.ts';
-import { alanDegistir, bosForm, degerOku, formdanGirdiKur, formYamli, formuDogrula, hataYolu, yamlForma } from '../src/form-model.ts';
+import { GirdiHatasi, girdiCoz, girdiMetindenCoz, hesapla, TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
+import { alanDegistir, bosForm, degerOku, formdanGirdiKur, formYamli, formuDogrula, hataAciklamasi, hataYolu, yamlForma } from '../src/form-model.ts';
 import type { Nesne } from '../src/form-model.ts';
 import { alanAdi, KALEMLER, kalemYeni } from '../src/schema.ts';
 const ornek = readFileSync(new URL('../../ornekler/ornek-iscilik.yaml', import.meta.url), 'utf8');
@@ -53,4 +53,70 @@ test('hata yolundan formdaki alan adı bulunur', () => {
   assert.equal(alanAdi('girdi.kalemler.ihbar.faiz[0].baslangic'), 'Faiz başlangıcı');
   assert.equal(alanAdi('girdi.kalemler.fazlaCalisma.takdiriIndirim'), 'Takdiri indirim');
   assert.equal(alanAdi('girdi.hizmet.donemler[1].cikis'), 'İşten çıkış');
+});
+
+test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndürür', () => {
+  const yakala = (fn: () => unknown): GirdiHatasi => {
+    try {
+      fn();
+      assert.fail('GirdiHatasi bekleniyordu');
+    } catch (e) {
+      assert.ok(e instanceof GirdiHatasi);
+      return e;
+    }
+  };
+
+  const hataliCikis = alanDegistir(yamlForma(ornek), ['hizmet', 'donemler', 0, 'cikis'], '2026-13-40');
+  const eCikis = yakala(() => formuDogrula(hataliCikis));
+  assert.equal(eCikis.alanYolu, 'girdi.hizmet.donemler[0].cikis');
+  assert.equal(hataYolu(eCikis), 'girdi.hizmet.donemler[0].cikis');
+  assert.equal(alanAdi(eCikis.alanYolu), 'İşten çıkış');
+
+  const hataliOran = alanDegistir(yamlForma(ornek), ['kalemler', 'fazlaCalisma', 'takdiriIndirim', 'oran'], '30');
+  const eOran = yakala(() => formuDogrula(hataliOran));
+  assert.equal(eOran.alanYolu, 'girdi.kalemler.fazlaCalisma.takdiriIndirim.oran');
+  assert.equal(hataYolu(eOran), 'girdi.kalemler.fazlaCalisma.takdiriIndirim.oran');
+  assert.equal(alanAdi(eOran.alanYolu), 'İndirim oranı');
+
+  const f = TABLO_DOSYALARI;
+  const ham = (ad: string) => ({ dosya: JSON.parse(readFileSync(new URL(`../../data/${ad}`, import.meta.url), 'utf8')) });
+  const tablolar = tablolariKur({
+    asgariUcret: ham(f.asgariUcret),
+    kidemTavani: ham(f.kidemTavani),
+    sgk: ham(f.sgk),
+    damga: ham(f.damga),
+    yasalFaiz: ham(f.yasalFaiz),
+    mevduatFaizi: ham(f.mevduatFaizi),
+    gelirVergisi: ham(f.gelirVergisi),
+  });
+
+  const mahsuplu = alanDegistir(yamlForma(ornek), ['kalemler', 'fazlaCalisma', 'mahsup'], { tutar: '500', aciklama: 'bordro' });
+  const eSira = yakala(() => hesapla(formuDogrula(mahsuplu), tablolar));
+  assert.equal(eSira.alanYolu, 'girdi.parametreler.indirimMahsupSirasi');
+  assert.equal(hataYolu(eSira), 'girdi.parametreler.indirimMahsupSirasi');
+  assert.equal(alanAdi(eSira.alanYolu), 'İndirim ve mahsup sırası');
+
+  const eskiVergiYili = alanDegistir(
+    alanDegistir(yamlForma(ornek), ['parametreler', 'vergi', 'yil'], '2021'),
+    ['parametreler', 'vergi', 'asgariUcretIstisnasi'],
+    true,
+  );
+  const eIstisna = yakala(() => hesapla(formuDogrula(eskiVergiYili), tablolar));
+  assert.equal(eIstisna.alanYolu, 'girdi.parametreler.vergi.asgariUcretIstisnasi');
+  assert.equal(hataYolu(eIstisna), 'girdi.parametreler.vergi.asgariUcretIstisnasi');
+  assert.equal(alanAdi(eIstisna.alanYolu), 'Asgari ücret vergi istisnası');
+
+  const asiriFaiz = alanDegistir(yamlForma(ornek), ['kalemler', 'kidem', 'faiz', 0, 'tutar'], '999999');
+  const eFaiz = yakala(() => hesapla(formuDogrula(asiriFaiz), tablolar));
+  assert.equal(eFaiz.alanYolu, 'girdi.kalemler.kidem.faiz');
+  assert.equal(hataYolu(eFaiz), 'girdi.kalemler.kidem.faiz');
+  assert.equal(alanAdi(eFaiz.alanYolu), 'Faiz satırları');
+
+  assert.equal(hataYolu(new Error('girdi.tablolar.mevduatFaizi: tablo yüklü değil')), 'girdi.tablolar.mevduatFaizi');
+  assert.equal(hataYolu(new Error('Beklenmeyen hata')), 'girdi');
+
+  const rakamliMesaj = 'girdi.kalemler.yillikIzin.eskiKanun4857Oncesi: true/false bekleniyor';
+  assert.equal(hataYolu(new GirdiHatasi('girdi.kalemler.yillikIzin.eskiKanun4857Oncesi', rakamliMesaj)), 'girdi.kalemler.yillikIzin.eskiKanun4857Oncesi');
+  assert.equal(hataYolu(rakamliMesaj), 'girdi.kalemler.yillikIzin.eskiKanun4857Oncesi');
+  assert.equal(hataAciklamasi(rakamliMesaj), 'true/false bekleniyor');
 });

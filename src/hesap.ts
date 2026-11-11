@@ -1,6 +1,6 @@
 // Hesabın tamamı: kalemler → takdiri indirim ve mahsup → brüt-net → faiz.
 import { d, Decimal, kurus, tl, topla, yuzde } from './para.ts';
-import type { FaizGirdisi, Girdi, KalemKodu, Mahsup, TakdiriIndirim } from './girdi.ts';
+import { GirdiHatasi, type FaizGirdisi, type Girdi, type KalemKodu, type Mahsup, type TakdiriIndirim } from './girdi.ts';
 import { esaslariBelirle, type Esaslar, type Parametre } from './parametreler.ts';
 import { KaynakKaydi, type Tablolar } from './tablolar.ts';
 import { Ucret } from './ucret.ts';
@@ -44,7 +44,8 @@ const SIRA: [KalemKodu, (b: Baglam) => KalemHesabi][] = [
 
 function indirimVeMahsup(k: KalemHesabi, indirim: TakdiriIndirim | undefined, mahsup: Mahsup | undefined, es: Esaslar) {
   if (indirim && !indirim.oran.isZero() && mahsup && !es.indirimMahsupSirasi) {
-    throw new Error(
+    throw new GirdiHatasi(
+      'girdi.parametreler.indirimMahsupSirasi',
       `${k.ad}: hem takdiri indirim hem mahsup var; sıra hukuki tercih olduğu için parametreler.indirimMahsupSirasi yazılmalı ` +
         '(once-indirim | once-mahsup)',
     );
@@ -85,7 +86,10 @@ function faizleriHesapla(
   if (!girdiler?.length) return [];
   const belirli = topla(girdiler.filter((f) => f.tutar).map((f) => f.tutar!));
   if (belirli.gt(matrah)) {
-    throw new Error(`${k.ad}: faiz satırlarındaki tutarların toplamı (${tl(belirli)}) faiz matrahını (${tl(matrah)}) aşıyor`);
+    throw new GirdiHatasi(
+      `girdi.kalemler.${k.kod}.faiz`,
+      `${k.ad}: faiz satırlarındaki tutarların toplamı (${tl(belirli)}) faiz matrahını (${tl(matrah)}) aşıyor`,
+    );
   }
   if (girdiler.every((f) => f.tutar) && belirli.lt(matrah)) {
     k.notlar.push(`Faiz satırlarında toplam ${tl(belirli)} TL için faiz istendi; kalan ${tl(matrah.minus(belirli))} TL faize konu edilmedi.`);
@@ -124,7 +128,12 @@ export function hesapla(girdi: Girdi, t: Tablolar): HesapSonucu {
   }
 
   if (esaslar.asgariUcretIstisnasi) {
-    if (esaslar.vergiYili < 2022) throw new Error('Asgari ücret istisnası 01.01.2022\'den itibaren yapılan ödemelere uygulanır (7349 s.K.)');
+    if (esaslar.vergiYili < 2022) {
+      throw new GirdiHatasi(
+        'girdi.parametreler.vergi.asgariUcretIstisnasi',
+        'Asgari ücret istisnası 01.01.2022\'den itibaren yapılan ödemelere uygulanır (7349 s.K.)',
+      );
+    }
     istisnaUygula(kalemler, asgariUcretIstisnasi(girdi.hesapTarihi, esaslar.vergiYili, t, kayit));
   }
 

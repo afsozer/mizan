@@ -1,7 +1,7 @@
 // Bir tarihteki çıplak brüt aylık ücreti seçilen yönteme göre belirler. Yöntem hukuki
 // tercihtir (ör. son ücretin asgari ücrete oranıyla geriye yürütülmesi) ve rapora yazılır.
 import { d, Decimal, sayi, tl, topla } from './para.ts';
-import type { Girdi } from './girdi.ts';
+import { GirdiHatasi, type Girdi } from './girdi.ts';
 import type { KaynakKaydi, Tablolar } from './tablolar.ts';
 import { gunEkle, karsilastir, trTarih } from './tarih.ts';
 
@@ -50,7 +50,7 @@ export class Ucret {
         return d(this.tablolar.asgariUcret.bul(tarih, this.kayit).brutAylik).times(this.oran!);
       case 'donemsel': {
         const satir = u.donemsel!.find((p) => karsilastir(p.baslangic, tarih) <= 0 && karsilastir(tarih, p.bitis) <= 0);
-        if (!satir) throw new Error(`Dönemsel ücret listesinde ${trTarih(tarih)} tarihini kapsayan satır yok`);
+        if (!satir) throw new GirdiHatasi('girdi.ucret.donemsel', `Dönemsel ücret listesinde ${trTarih(tarih)} tarihini kapsayan satır yok`);
         return satir.brutAylik;
       }
     }
@@ -70,7 +70,7 @@ export class Ucret {
     const sonuc: UcretKesiti[] = [];
     for (let gun = bas; karsilastir(gun, bit) <= 0; ) {
       const satir = u.donemsel!.find((p) => karsilastir(p.baslangic, gun) <= 0 && karsilastir(gun, p.bitis) <= 0);
-      if (!satir) throw new Error(`Dönemsel ücret listesinde ${trTarih(gun)} tarihini kapsayan satır yok`);
+      if (!satir) throw new GirdiHatasi('girdi.ucret.donemsel', `Dönemsel ücret listesinde ${trTarih(gun)} tarihini kapsayan satır yok`);
       const son = karsilastir(satir.bitis, bit) < 0 ? satir.bitis : bit;
       sonuc.push({ baslangic: gun, bitis: son, aylik: satir.brutAylik });
       gun = gunEkle(son, 1);
