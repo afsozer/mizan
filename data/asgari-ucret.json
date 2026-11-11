@@ -1,8 +1,8 @@
 {
   "tablo": "asgari-ucret",
   "ad": "Asgari ücret (brüt)",
-  "aciklama": "Asgari Ücret Tespit Komisyonu kararları (4857 s.K. m.39). 2014'ten beri yaş, 1989'dan beri sektör ayrımı yok; her dönem tek satır. Kararlar günlük brüt tutarı belirler; aylık brüt tutar ÇSGB'nin dönem belgelerinden alınmıştır (günlük × 30). 2022 ve 2023'te yıl ortası artış vardır; 2024, 2025 ve 2026'da yoktur (01.12.2015-22.10.2026 RG fihristleri tarandı). 2026 kararı 01.01.2026-31.12.2026 dönemi içindir (ÇSGB); yıl içinde yeni karar çıkarsa satır bölünür.",
-  "dogrulamaTarihi": "2026-10-22",
+  "aciklama": "Asgari Ücret Tespit Komisyonu kararları (4857 s.K. m.39). 2014'ten beri yaş, 1989'dan beri sektör ayrımı yok; her dönem tek satır. Kararlar günlük brüt tutarı belirler; aylık brüt tutar ÇSGB'nin dönem belgelerinden alınmıştır (günlük × 30). 2022 ve 2023'te yıl ortası artış vardır; 2024, 2025 ve 2026'da yoktur (01.12.2015-11.11.2026 RG fihristleri tarandı). 2026 kararı 01.01.2026-31.12.2026 dönemi içindir (ÇSGB); yıl içinde yeni karar çıkarsa satır bölünür.",
+  "dogrulamaTarihi": "2026-11-11",
   "satirlar": [
     {
       "baslangic": "2016-01-01",

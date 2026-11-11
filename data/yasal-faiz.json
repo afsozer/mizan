@@ -2,7 +2,7 @@
   "tablo": "yasal-faiz",
   "ad": "Yasal faiz (3095 s.K. m.1)",
   "aciklama": "Ticari olmayan işçilik alacaklarında (ihbar, yıllık izin, fazla çalışma, hafta tatili, UBGT) değişen oranlarla uygulanır. 31.07.2026'dan itibaren oran kanundaki formülle bulunur: önceki yılın 31 Aralık günü TCMB reeskont oranının %80'i; 30 Haziran oranı 31 Aralık oranından 5 puan ya da daha fazla farklıysa yılın ikinci yarısında 30 Haziran oranının %80'i. 2027 için satır, 31.12.2026 reeskont oranı belli olunca eklenir.",
-  "dogrulamaTarihi": "2026-10-22",
+  "dogrulamaTarihi": "2026-11-11",
   "satirlar": [
     {
       "baslangic": "2005-01-01",

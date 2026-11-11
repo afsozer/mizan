@@ -2,7 +2,7 @@
   "tablo": "gelir-vergisi",
   "ad": "Gelir vergisi tarifesi (ücret)",
   "aciklama": "GVK m.103 tarifesinin ücret gelirleri için olanı. 2016'dan beri ücret ve ücret dışı tarifeler yalnız %27 diliminin üst sınırında ayrışır. Tutarlar her yıl GVK mükerrer m.123 uyarınca yeniden değerleme oranıyla belirlenip Gelir Vergisi Genel Tebliğinde yayımlanır.",
-  "dogrulamaTarihi": "2026-10-22",
+  "dogrulamaTarihi": "2026-11-11",
   "satirlar": [
     {
       "yil": 2016,
