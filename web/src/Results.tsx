@@ -45,7 +45,6 @@ export function Sonuclar({ sonuc: s, tam = false }: { sonuc: HesapSonucu; tam?: 
     <div class="toplamlar"><div><span>Brüt alacak</span><strong>{tl(s.toplam.brut)} <small>TL</small></strong></div>
       <div class="ana-toplam"><span>Net alacak</span><strong>{tl(s.toplam.net)} <small>TL</small></strong></div>
       <div><span>İşlemiş faiz</span><strong>{tl(s.toplam.faiz)} <small>TL</small></strong></div></div>
-    <p class="soluk sonuc-aciklama">Faiz ayrı gösterilir; matrahı hukuki tercihler tablosunda yer alır. Ayrıntı için kalemi açın.</p>
     <div class="kalem-listesi">{s.kalemler.map(k => <details key={k.kod} class="sonuc-kalemi" open={tam || undefined}>
       <summary><span class="kalem-adi">{k.ad}</span><span class="kalem-net">{tl(k.net)} <small>TL net</small></span><span class="ac-isareti" aria-hidden="true">+</span>
         <span class="kalem-ozeti"><span>Brüt <b>{tl(k.brut)}</b></span>

@@ -26,7 +26,7 @@ function FormAlani({ alan, yol, form, degistir, hata }: FormProps & { alan: Alan
     degistir(sonuc);
   };
   const aciklama = <>{alan.ipucu && <span class="ipucu">{alan.ipucu}</span>}
-    {alan.varsayilan && <span class="ipucu"><span class="kaynak-etiket">{deger === undefined ? 'Varsayılan' : 'Girdi'}</span> {deger === undefined ? alan.varsayilan : `Boş bırakılırsa ${alan.varsayilan}`} · {alan.dayanak}</span>}
+    {alan.varsayilan && <span class="ipucu"><span class="kaynak-etiket">{deger === undefined ? 'Varsayılan' : 'Girdi'}</span> {alan.varsayilan}{alan.dayanak ? ` · ${alan.dayanak}` : ''}</span>}
   </>;
   const hataMetni = hataVar ? <p class="alan-hatasi" id={`${id}-hata`}>{hataAciklamasi(hata.mesaj)}</p> : null;
   if (alan.alanlar) {
@@ -44,8 +44,9 @@ function FormAlani({ alan, yol, form, degistir, hata }: FormProps & { alan: Alan
       </fieldset>;
     }
     const aktif = deger !== undefined;
-    return <fieldset class={`alan-grubu ${hataVar ? 'hatali' : ''}`} id={id} tabIndex={-1}>
-      <legend>{alan.istegeBagli ? <label class="secim"><input type="checkbox" checked={aktif} onChange={() => guncelle(aktif ? undefined : formdanGirdiKur(alan.yeni ?? {}))} />{alan.ad}</label> : alan.ad}</legend>
+    const baslikGoster = Boolean(alan.istegeBagli || yol.length > 1);
+    return <fieldset class={`alan-grubu ${hataVar ? 'hatali' : ''}`} id={id} tabIndex={-1} aria-label={!baslikGoster ? alan.ad : undefined}>
+      {baslikGoster && <legend>{alan.istegeBagli ? <label class="secim"><input type="checkbox" checked={aktif} onChange={() => guncelle(aktif ? undefined : formdanGirdiKur(alan.yeni ?? {}))} />{alan.ad}</label> : alan.ad}</legend>}
       {aciklama}{hataMetni}
       {(aktif || !alan.istegeBagli) && <Alanlar form={form} degistir={degistir} hata={hata} alanlar={alan.alanlar} yol={yol} />}
     </fieldset>;
@@ -62,7 +63,7 @@ function FormAlani({ alan, yol, form, degistir, hata }: FormProps & { alan: Alan
       {alan.secenekler.map(s => <option key={String(s.deger)} value={String(s.deger)}>{s.ad}</option>)}
     </select> : alan.tur === 'textarea' ? <textarea {...ortak} rows={3} onInput={e => degerDegisti(e.currentTarget.value)} /> :
       <input {...ortak} type={alan.tur === 'date' ? 'date' : 'text'} inputMode={alan.tur === 'number' ? 'decimal' : undefined} placeholder={alan.varsayilan} autoComplete="off" onInput={e => degerDegisti(e.currentTarget.value)} />}
-    <span id={`${id}-bilgi`}>{aciklama}{alan.istegeBagli && !alan.varsayilan && <span class="istege-bagli">İsteğe bağlı</span>}</span>
+    <span id={`${id}-bilgi`}>{aciklama}</span>
     {hataMetni}
   </div>;
 }

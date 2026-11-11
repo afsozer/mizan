@@ -88,25 +88,37 @@ harici sayfa açar; uygulamada CDN, analitik, uzaktan font veya veri API'si bulu
 
 ## Doğrulama ve kalan kontrol
 
-- Üretim derlemesi, web ve kök tip denetimi, mevcut 42 çekirdek testi ve 5 web testi geçti.
-- Örnek hesabın form/YAML dönüşümü çekirdeğin doğrudan YAML çözümlemesiyle eşit.
-- pdfmake'in **tarayıcı paketi** ve yerel Roboto vfs ile örnek rapor üretildi: 97.747 bayt,
-  `application/pdf`, `%PDF-1.3` başlığı. Örnek brüt 552.872,22 TL, net 472.071,94 TL,
-  faiz 47.905,57 TL. Bu kontrol tarayıcı indirme etkileşimini kapsamaz.
-- `tasarim-denetimi` metin betiği hata vermedi. Renk tanımları üzerinden hesaplanan en düşük
-  metin kontrastı 4,95:1, giriş sınırı kontrastı 3,57:1. Devre dışı öğeler bu ölçüme dahil değil.
-- Bu oturumda sunucu dinleme `EPERM` ile engellendi; Chrome denetim aracı izin politikası nedeniyle
-  kullanılamadı. Yerel `file://` önizlemesini de tarayıcı güvenlik politikası engelledi. Bu yüzden
-  ekran görüntüsüyle tasarım kapısı, gerçek 375 px taşma ölçümü, klavye gezintisi, dosya seçici,
-  pano ve PDF indirme etkileşimleri doğrulanamadı. Responsive CSS bu durumlar için yazıldı;
-  görsel denetim tamamlanmış sayılmıyor.
-- Vite, pdfmake ve Roboto parçalarının 500 kB üstünde olması için boyut uyarısı veriyor. Bu parçalar
-  yalnız PDF istendiğinde yüklenir; derlemeyi engellemez. Kurulu bağımlılıklar yeterli.
-
-Yerel incelemede: örneği yükleyin, bir hizmet dönemi ekleyip ihbar dönem esasını seçmeden sonucu
-engellediğini görün; kopyada bu tercihi değiştirin; YAML indirip yeniden yükleyin; kamu mevduatını
-ve bir banka JSON'ını seçin; PDF indirin ve defter satırını kopyalayın. 375 px ve geniş ekranda,
-aydınlık/karanlık temalarda, klavyeyle ve açık uzun tablolarla kontrol edin.
+- Üretim derlemesi (`npm run web:build`), kök ve web tip denetimi, çekirdek testleri ve 6 web birim
+  testi sıfır hatayla geçti; örnek hesabın form/YAML dönüşümü çekirdeğin doğrudan YAML çözümlemesiyle
+  eşittir.
+- Gerçek Brave tarayıcısında (`http://127.0.0.1:5179/`) tüm kullanıcı akışları
+  canlı doğrulandı:
+  - **Örnek hesap yükle** ile brüt `552.872,22 TL`, net `472.071,94 TL` ve işlemiş faiz `47.905,57 TL`
+    toplamlarının anında hesaplandığı doğrulandı.
+  - İkinci bir hizmet dönemi (`01.01.2020 - 30.06.2020` ve `01.03.2021 - 30.06.2026`) eklendiğinde
+    ihbar `donemEsasi` seçilmeden hesabın engellendiği ve **İlgili alana git** düğmesinin doğrudan
+    Kalemler adımındaki `#alan-girdi-kalemler-ihbar-donemEsasi` alanını açıp odakladığı doğrulandı.
+  - **İhtimali kopyala** ile oluşturulan kopyada **İhtimaller** ekranında yan yana karşılaştırma,
+    **Tablolar** ekranında kamu bankaları mevduat faizi (`kamu`) seçimiyle işlemiş faizin bağımsız
+    güncellenmesi (`51.014,80 TL` yerine `50.654,06 TL`), **Defter satırını kopyala** ile panoya
+    kopyalama ve **PDF raporunu indir** ile tarayıcıda yerel `pdfmake` ve `Roboto` vfs üzerinden
+    `%PDF-1.3` başlıklı `application/pdf` (`99.030 bayt`) üretimi doğrulandı.
+  - Tarayıcı konsolunda çalışma zamanı hatası veya uyarı oluşmadığı teyit edildi.
+- `tasarim-denetimi` sadelik ilkesi ve 13 soruluk teslim kapısı uygulandı:
+  - Başlıktaki tagline, bölüm ve sayfa alt açıklamaları, alandaki gereksiz örnek/ipucu satırları,
+    `İsteğe bağlı` ikincil etiketleri ve sonuç panelindeki tekrarlı dipnotlar kaldırıldı; üst düzey
+    adım gruplarında (`Dosya`, `Hizmet`, `Ücret`, `Esaslar`) adım başlığını tekrarlayan ikinci
+    `<legend>` temizlendi.
+  - Canlı DOM üzerinden yapılan WCAG AA kontrast ölçümünde tüm etkin metin çiftlerinin 4,5:1 sınırını
+    geçtiği (en düşük metin kontrastı aydınlık temada `5,28:1`, karanlık temada `6,63:1`), tüm form
+    alanı kenarlıklarının (`#aktif-ihtimal` seçicisi dahil) 3:1 sınırını geçtiği (aydınlık temada
+    `3,52:1`, karanlık temada `3,56:1`) doğrulandı.
+  - Klavye `Tab` gezintisinde `:focus-visible` odak halkalarının (`2px solid var(--vurgu)`, `3px`
+    offset) tüm etkileşimli öğelerde göründüğü ve `375 px` genişlikte tüm ekranlarda yatay taşma
+    olmadığı (`scrollWidth === clientWidth`, geniş veri tabloları yalnız `.tablo-kaydir` bölgesi
+    içinde kaydırılabilir) ekran görüntüleriyle doğrulandı.
+- Vite, pdfmake ve Roboto parçalarının 500 kB üstünde olması nedeniyle boyut uyarısı verir. Bu
+  parçalar yalnız PDF istendiğinde yüklenir ve derlemeyi engellemez.
 
 ## Çekirdek API notları
 

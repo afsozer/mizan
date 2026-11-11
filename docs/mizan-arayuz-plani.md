@@ -1,25 +1,25 @@
 # mizan arayüz planı
 
-23 Ekim 2026'da plana eklendi. Hesap yöntemi: [[mizan-hesap-yontemi]]. Bu not bir plandır; henüz kod yok.
+23 Ekim 2026'da plana eklendi; Faz 1b arayüzü Preact ve Vite ile `web/` dizininde uygulandı (`npm run arayuz`). Hesap yöntemi: [[mizan-hesap-yontemi]].
 
 ## Amaç
 
-Bugün hesap YAML dosyası yazılıp komut satırından çalıştırılıyor. Arayüz, aynı hesabı formdan
-kurmayı, sonucu anında görmeyi ve PDF raporu tek tıkla almayı sağlayacak; kurulum gerektirmediği için
+Hesap yalnız YAML dosyası yazılıp komut satırından çalıştırılmak yerine aynı hesabı formdan
+kurmayı, sonucu anında görmeyi ve PDF raporu tek tıkla almayı sağlar; kurulum gerektirmediği için
 başka avukatlar da kullanabilir.
 
-## Önerilen yapı
+## Mimari ve yapı
 
-- **Tarayıcıda çalışan, sunucusuz uygulama.** Hesap motoru bugünkü TypeScript kodunun aynısı olur ve
+- **Tarayıcıda çalışan, sunucusuz uygulama.** Hesap motoru çekirdek TypeScript kodunun aynısıdır ve
   tarayıcıda çalışır; girilen dosya bilgileri cihazdan çıkmaz. Müvekkil verisi içeren hesaplarda bu,
-  sunuculu bir çözüme göre en temiz yol. Açık kaynakla birlikte GitHub Pages'te yayımlanabilir;
+  sunuculu bir çözüme göre en temiz yoldur. Açık kaynakla birlikte GitHub Pages'te yayımlanabilir;
   gerekirse sonra masaüstü kabuğuna (Tauri) sarılır.
-- **Motorun ayrılması.** Bugün dosya okuma, SHA-256 ve git bilgisi Node'a bağlı. Bunlar ince bir
-  katmana çekilir; tablolar JSON modülü olarak paketlenir, girdi denetimi (`girdiCoz`) ve hesap
-  (`hesapla`) olduğu gibi kullanılır. pdfmake tarayıcıda da çalıştığı için PDF, komut satırıyla aynı
-  raporu üretir. Sürüm ve commit bilgisi derleme sırasında gömülür.
-- **Teknoloji:** Vite ve TypeScript. Arayüz çerçevesi (Svelte, Preact ya da çerçevesiz) başlarken
-  seçilecek; ölçüt küçük paket ve uzun ömür.
+- **Motorun ayrılması.** Dosya okuma, SHA-256 ve git bilgisi Node katmanına (`src/node/`) ayrıldı;
+  tablolar JSON modülü olarak paketlenir, girdi denetimi (`girdiCoz`) ve hesap (`hesapla`) olduğu
+  gibi kullanılır. pdfmake tarayıcıda da çalıştığı için PDF, komut satırıyla aynı raporu üretir.
+  Sürüm ve commit bilgisi derleme sırasında gömülür.
+- **Teknoloji:** Vite, TypeScript ve Preact (`web/`). Küçük paket boyutu ve uzun ömür ölçütüyle
+  ek çalışma zamanı bağımlılığı eklemeden kuruldu.
 
 ## Ekranlar ve işlevler
 
@@ -43,7 +43,7 @@ başka avukatlar da kullanabilir.
 - Okuyucuya dönük her metin ve ekran, teslimden önce `tasarim-denetimi` skill'iyle denetlenir.
 - Hukuki tercihler hiçbir zaman gizli bir varsayılanla geçilmez; seçilmemiş tercih hesabı durdurur.
 
-## Zamanlama (öneri)
+## Durum ve yol haritası
 
-Faz 1b olarak Kasım 2026 - Şubat 2027 arasında, faz 2'den önce: faz 2 kalemleri (icra, AAÜT, aile)
-aynı arayüze eklenir.
+Faz 1b işçilik alacakları arayüzü Kasım 2026 itibarıyla tamamlandı ve canlı tarayıcı denetiminden
+geçirildi; Faz 2 kalemleri (icra, AAÜT, aile) aynı arayüze eklenir.

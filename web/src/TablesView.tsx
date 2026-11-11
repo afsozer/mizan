@@ -19,9 +19,8 @@ function degerYaz(key: string, deger: unknown): string {
 export function TablolarEkrani({ belgeler, yukle, mesgul }: { belgeler: TabloBelgesi[]; yukle: (file: File) => void; mesgul: boolean }) {
   const paketAdlari: string[] = Object.values(TABLO_DOSYALARI);
   return <div class="tablolar-ekrani">
-    <div class="sayfa-basligi"><div><h1>Hesabın kaynak tabloları</h1><p>Pakete gömülü veriler ve doğrulama kayıtları. Kaynak bağlantıları yalnız siz açtığınızda ziyaret edilir.</p></div>
+    <div class="sayfa-basligi"><h1>Hesabın kaynak tabloları</h1>
       <label class={`buton dosya-buton ${mesgul ? 'devre-disi' : ''}`}>Banka yazısı JSON yükle<input type="file" accept=".json,application/json" disabled={mesgul} onChange={e => { const f = e.currentTarget.files?.[0]; if (f) yukle(f); e.currentTarget.value = ''; }} /></label></div>
-    <p class="not">Kendi banka yazınızı yüklediğinizde mevduat tablosunu hesapta ayrıca seçin. Bu tablo da bellekte tutulur; hesabı yeniden açarken JSON dosyasını tekrar yükleyin. Aynı dosyayı saklamak için tablo başlığındaki JSON indir düğmesini kullanabilirsiniz.</p>
     {belgeler.map(b => {
       const t = b.ham.dosya as GorunenTablo;
       return <details class="tablo-belgesi" key={b.dosyaAdi}><summary><span>{t.ad}<small>{b.dosyaAdi}{!paketAdlari.includes(b.dosyaAdi) ? ' · Kullanıcı tablosu' : ''}</small></span><span class="tablo-tarih">{t.satirlar.length} satır<br />{trTarih(t.dogrulamaTarihi)}</span></summary>

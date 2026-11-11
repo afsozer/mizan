@@ -78,7 +78,7 @@ test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndür�
   const eOran = yakala(() => formuDogrula(hataliOran));
   assert.equal(eOran.alanYolu, 'girdi.kalemler.fazlaCalisma.takdiriIndirim.oran');
   assert.equal(hataYolu(eOran), 'girdi.kalemler.fazlaCalisma.takdiriIndirim.oran');
-  assert.equal(alanAdi(eOran.alanYolu), 'İndirim oranı');
+  assert.equal(alanAdi(eOran.alanYolu), 'İndirim oranı (0 - 1)');
 
   const f = TABLO_DOSYALARI;
   const ham = (ad: string) => ({ dosya: JSON.parse(readFileSync(new URL(`../../data/${ad}`, import.meta.url), 'utf8')) });
