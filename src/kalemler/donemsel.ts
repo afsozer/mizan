@@ -163,10 +163,84 @@ export function haftaTatiliHesapla(b: Baglam): KalemHesabi {
 export function ubgtHesapla(b: Baglam): KalemHesabi {
   const k = b.girdi.kalemler.ubgt!;
   const { gunlukBolen, ubgtCarpani: carpan, zamanasimi } = b.esaslar;
-  const elenenler = zamanasimi ? k.gunler.filter((g) => karsilastir(g.tarih, zamanasimi.sinirTarihi) < 0) : [];
-  const gunler = zamanasimi ? k.gunler.filter((g) => karsilastir(g.tarih, zamanasimi.sinirTarihi) >= 0) : k.gunler;
+  const notlar: string[] = [];
+  let gunListesi: { tarih: string; gun: Decimal; aciklama?: string }[];
+
+  if (k.takvim) {
+    const donemler = k.takvim.donemler?.length
+      ? k.takvim.donemler
+      : b.girdi.hizmet.donemler.map((p) => ({ baslangic: p.giris, bitis: p.cikis }));
+    const turetilen = b.tablolar.ubgtTakvimi.turet(
+      {
+        donemler,
+        diniBayramlarDahil: k.takvim.diniBayramlarDahil,
+        haricTarihler: k.takvim.haricTarihler,
+      },
+      b.kayit,
+    );
+    notlar.push(
+      `Çalışılan tatil günleri UBGT takvim tablosundan (${k.takvim.diniBayramlarDahil === false ? 'yalnız ulusal ve resmi tatiller' : 'ulusal, resmi ve dini tatiller'}) türetildi.`,
+      ...turetilen.notlar,
+    );
+    if (k.gunler.length > 0) {
+      const birlesik = new Map<string, { tarih: string; gun: Decimal; aciklama?: string }>();
+      for (const g of turetilen.gunler) birlesik.set(g.tarih, g);
+      let mukerrerSayisi = 0;
+      for (const g of k.gunler) {
+        const mevcut = birlesik.get(g.tarih);
+        if (mevcut) {
+          mukerrerSayisi++;
+          const yuksek = Decimal.max(mevcut.gun, g.gun);
+          const aciklama =
+            g.aciklama && mevcut.aciklama && g.aciklama !== mevcut.aciklama
+              ? `${mevcut.aciklama} / ${g.aciklama}`
+              : (g.aciklama ?? mevcut.aciklama);
+          birlesik.set(g.tarih, { tarih: g.tarih, gun: yuksek, aciklama });
+        } else {
+          birlesik.set(g.tarih, g);
+        }
+      }
+      if (mukerrerSayisi > 0) {
+        notlar.push(
+          `Takvimden türetilen günler ile elle girilen günler birleştirildi; aynı tarihe denk gelen ${mukerrerSayisi} gün mükerrer sayılmadı (yüksek katsayı esas alındı).`,
+        );
+      }
+      gunListesi = [...birlesik.values()].sort((a, b) => karsilastir(a.tarih, b.tarih));
+    } else {
+      gunListesi = turetilen.gunler;
+    }
+  } else {
+    const birlesik = new Map<string, { tarih: string; gun: Decimal; aciklama?: string }>();
+    for (const g of k.gunler) {
+      const mevcut = birlesik.get(g.tarih);
+      if (mevcut) {
+        const yuksek = Decimal.max(mevcut.gun, g.gun);
+        const aciklama =
+          g.aciklama && mevcut.aciklama && g.aciklama !== mevcut.aciklama
+            ? `${mevcut.aciklama} / ${g.aciklama}`
+            : (mevcut.aciklama ?? g.aciklama);
+        notlar.push(
+          `${trTarih(g.tarih)} tarihi birden fazla kez girildiğinden çift sayım yapılmadı; tek tatil günü olarak yüksek katsayı (${sayi(yuksek)} gün) alındı.`,
+        );
+        birlesik.set(g.tarih, { tarih: g.tarih, gun: yuksek, aciklama });
+      } else {
+        birlesik.set(g.tarih, g);
+      }
+    }
+    gunListesi = [...birlesik.values()];
+    notlar.push('Çalışılan bayram ve tatil günleri girdi dosyasında tek tek verilir; araç takvimden gün türetmez.');
+  }
+
+  const elenenler = zamanasimi ? gunListesi.filter((g) => karsilastir(g.tarih, zamanasimi.sinirTarihi) < 0) : [];
+  const aktifGunler = zamanasimi ? gunListesi.filter((g) => karsilastir(g.tarih, zamanasimi.sinirTarihi) >= 0) : gunListesi;
+  if (elenenler.length > 0 && zamanasimi) {
+    notlar.push(
+      `Zamanaşımı sınır tarihi (${trTarih(zamanasimi.sinirTarihi)}; girdi: ${zamanasimi.gerekce}) öncesinde kalan ${elenenler.length} tatil günü (${elenenler.map((g) => trTarih(g.tarih)).join(', ')}) hesap dışı bırakıldı.`,
+    );
+  }
+
   const tutarlar: Decimal[] = [];
-  const satirlar = gunler.map((g) => {
+  const satirlar = aktifGunler.map((g) => {
     const aylik = b.ucret.ciplak(g.tarih);
     const gunluk = aylik.div(gunlukBolen);
     const tutar = kurus(g.gun.times(gunluk).times(carpan));
@@ -174,13 +248,7 @@ export function ubgtHesapla(b: Baglam): KalemHesabi {
     return [trTarih(g.tarih), g.aciklama ?? '', sayi(g.gun), tl(aylik), tl(gunluk, 4), tl(tutar)];
   });
   const hamBrut = topla(tutarlar);
-  const toplamGun = topla(gunler.map((g) => g.gun));
-  const notlar = ['Çalışılan bayram ve tatil günleri girdi dosyasında tek tek verilir; araç takvimden gün türetmez.'];
-  if (elenenler.length > 0 && zamanasimi) {
-    notlar.push(
-      `Zamanaşımı sınır tarihi (${trTarih(zamanasimi.sinirTarihi)}; girdi: ${zamanasimi.gerekce}) öncesinde kalan ${elenenler.length} tatil günü (${elenenler.map((g) => trTarih(g.tarih)).join(', ')}) hesap dışı bırakıldı.`,
-    );
-  }
+  const toplamGun = topla(aktifGunler.map((g) => g.gun));
   return {
     kod: 'ubgt',
     ad: KALEM_ADLARI.ubgt,

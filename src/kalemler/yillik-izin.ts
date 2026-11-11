@@ -36,8 +36,26 @@ export function yilDolumlari(donemler: Girdi['hizmet']['donemler']): string[] {
   return sonuc;
 }
 
-/** 4857 m.53/4-5: 1-5 yıl (dahil) 14, 5-15 yıl 20, 15 yıl (dahil) ve üstü 26 gün; 18 ve altı ile 50 ve üstü yaşta en az 20. */
-export function izinGunu(sira: number, yas?: number): { gun: number; aciklama: string } {
+/**
+ * Yıllık ücretli izin süreleri:
+ * - 4857 m.53/4-5 (varsayılan): 1-5 yıl (dahil) 14, 5-15 yıl 20, 15 yıl (dahil) ve üstü 26 gün; 18 ve altı ile 50 ve üstü yaşta en az 20.
+ * - Mülga 1475 m.49 (10.06.2003 öncesi): 1-5 yıl (dahil) 12, 5-15 yıl 18, 15 yıl (dahil) ve üstü 24 gün; 18 ve küçük yaşta en az 18.
+ */
+export function izinGunu(sira: number, yas?: number, kanun: '1475' | '4857' = '4857'): { gun: number; aciklama: string } {
+  if (kanun === '1475') {
+    let gun = sira <= 5 ? 12 : sira < 15 ? 18 : 24;
+    let aciklama =
+      sira <= 5
+        ? '1-5 yıl: 12 gün (1475 s.K. m.49)'
+        : sira < 15
+          ? '5-15 yıl: 18 gün (1475 s.K. m.49)'
+          : '15 yıl ve üstü: 24 gün (1475 s.K. m.49)';
+    if (yas !== undefined && yas <= 18 && gun < 18) {
+      gun = 18;
+      aciklama += `; ${yas} yaş, en az 18 gün (1475 s.K. m.49)`;
+    }
+    return { gun, aciklama };
+  }
   let gun = sira <= 5 ? 14 : sira < 15 ? 20 : 26;
   let aciklama = sira <= 5 ? '1-5 yıl: 14 gün' : sira < 15 ? '5-15 yıl: 20 gün' : '15 yıl ve üstü: 26 gün';
   if (yas !== undefined && (yas <= 18 || yas >= 50) && gun < 20) {
@@ -45,6 +63,10 @@ export function izinGunu(sira: number, yas?: number): { gun: number; aciklama: s
     aciklama += `; ${yas} yaş, en az 20 gün`;
   }
   return { gun, aciklama };
+}
+
+export function izinGunu1475(sira: number, yas?: number): { gun: number; aciklama: string } {
+  return izinGunu(sira, yas, '1475');
 }
 
 function yasHesapla(dogum: string, tarih: string): number {
@@ -55,19 +77,34 @@ export function yillikIzinHesapla(b: Baglam): KalemHesabi {
   const g = b.girdi;
   const k = g.kalemler.yillikIzin!;
   const notlar: string[] = [];
+  const eskiKanunSecili = k.eskiKanun4857Oncesi === true || k.donemKanunu === '1475-4857';
   const dolumlar = yilDolumlari(g.hizmet.donemler);
   const hakEdisler: HakEdis[] = dolumlar.map((tarih, i) => {
     const yas = g.hizmet.dogumTarihi ? yasHesapla(g.hizmet.dogumTarihi, tarih) : undefined;
-    const { gun, aciklama } = izinGunu(i + 1, yas);
+    const kanun = eskiKanunSecili && karsilastir(tarih, IS_KANUNU_YURURLUK) < 0 ? '1475' : '4857';
+    const { gun, aciklama } = izinGunu(i + 1, yas, kanun);
     return { sira: i + 1, tarih, yas, gun, aciklama };
   });
-  if (hakEdisler.some((h) => karsilastir(h.tarih, IS_KANUNU_YURURLUK) < 0)) {
+  const eskiDonemVar = hakEdisler.some((h) => karsilastir(h.tarih, IS_KANUNU_YURURLUK) < 0);
+  if (eskiDonemVar) {
+    if (eskiKanunSecili) {
+      notlar.push(
+        '10.06.2003 öncesinde dolan hizmet yılları için mülga 1475 s.K. m.49 izin süreleri (12 / 18 / 24 gün; 18 ve küçük yaşta en az 18 gün), bu tarihten itibaren dolan yıllarda 4857 s.K. m.53 süreleri uygulandı.',
+      );
+    } else {
+      notlar.push(
+        '10.06.2003 öncesinde dolan hizmet yılları var; o yıllar için 1475 s.K. dönemindeki izin süreleri ayrıca değerlendirilmeli ' +
+          '(araç 4857 s.K. m.53 sürelerini uyguladı).',
+      );
+    }
+  }
+  if (!g.hizmet.dogumTarihi) {
     notlar.push(
-      '10.06.2003 öncesinde dolan hizmet yılları var; o yıllar için 1475 s.K. dönemindeki izin süreleri ayrıca değerlendirilmeli ' +
-        '(araç 4857 s.K. m.53 sürelerini uyguladı).',
+      eskiKanunSecili && eskiDonemVar
+        ? 'Doğum tarihi girilmedi; mülga 1475 s.K. m.49 (18 ve küçük yaşta en az 18 gün) ve 4857 s.K. m.53 (18 ve altı ile 50 ve üstü yaşta en az 20 gün) yaş kuralları uygulanmadı.'
+        : 'Doğum tarihi girilmedi; 4857 s.K. m.53 yaş kuralı (en az 20 gün) uygulanmadı.',
     );
   }
-  if (!g.hizmet.dogumTarihi) notlar.push('Doğum tarihi girilmedi; 4857 s.K. m.53 yaş kuralı (en az 20 gün) uygulanmadı.');
 
   const hesaplanan = topla(hakEdisler.map((h) => d(h.gun)));
   const hakEdilen = k.hakEdilenGun ?? hesaplanan;
@@ -88,6 +125,11 @@ export function yillikIzinHesapla(b: Baglam): KalemHesabi {
     kod: 'yillikIzin',
     ad: KALEM_ADLARI.yillikIzin,
     dayanak: [
+      ...(eskiKanunSecili
+        ? [
+            'Mülga 1475 s.K. m.49: 10.06.2003 öncesinde dolan hizmet yılları için izin süreleri (1-5 yıl 12, 5-15 yıl 18, 15 yıl ve üstü 24 gün; 18 ve küçük yaşta en az 18 gün)',
+          ]
+        : []),
       '4857 s.K. m.53: izin süreleri (1-5 yıl 14, 5-15 yıl 20, 15 yıl ve üstü 26 gün; 18 ve altı, 50 ve üstü yaşta en az 20 gün)',
       '4857 s.K. m.59: kullanılmayan izin ücreti sözleşmenin sona erdiği tarihteki ücret üzerinden ödenir',
     ],

@@ -75,10 +75,17 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 
 ## Yıllık izin ücreti
 
-- Dayanak: 4857 m.53 (süreler), m.59 (sona ermede son ücret üzerinden ödeme).
+- Dayanak: 4857 m.53 (süreler), m.59 (sona ermede son ücret üzerinden ödeme); seçimli olarak
+  10.06.2003 öncesinde dolan hizmet yılları için mülga 1475 s.K. m.49.
 - Hizmet yılı dolumları ilk girişten itibaren yıl yıl; dönemler arası boşluk dolumu ileri kaydırır.
-  n. yıl: n ≤ 5 ise 14, 5 < n < 15 ise 20, n ≥ 15 ise 26 gün. Dolum gününde yaş 18 ve altı ya da
-  50 ve üstüyse en az 20 gün.
+  4857 s.K. m.53'e göre n. yıl: n ≤ 5 ise 14, 5 < n < 15 ise 20, n ≥ 15 ise 26 gün; dolum gününde yaş
+  18 ve altı ya da 50 ve üstüyse en az 20 gün.
+- `eskiKanun4857Oncesi: true` (veya `donemKanunu: '1475-4857'`) seçilirse 10.06.2003 tarihinden önce
+  dolan hizmet yıllarında mülga 1475 s.K. m.49 basamakları uygulanır: n ≤ 5 ise 12, 5 < n < 15 ise 18,
+  n ≥ 15 ise 24 gün; dolum gününde yaş 18 ve altıysa en az 18 gün (1475 s.K. m.49'da 50 yaş ve üstü
+  kuralı yoktur). Dayanak: 9. HD 14.12.2020, 2017/14806 E., 2020/18319 K.; 9. HD 16.12.2014,
+  2013/7058 E., 2014/38457 K. Seçilmezse tüm yıllarda 4857 s.K. m.53 uygulanır ve 10.06.2003 öncesi
+  dolum varsa uyarı verilir.
 - Ücret = (hak edilen - kullanılan) × son çıplak (ya da girdiye göre giydirilmiş) brüt / 30.
 - Kesinti: SGK, işsizlik, gelir vergisi, damga vergisi.
 
@@ -127,7 +134,19 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 
 ## UBGT
 
-- Dayanak: 2429 s.K. (günler), 4857 m.47 (çalışılan her gün için ayrıca bir günlük ücret).
+- Dayanak: 2429 s.K. m.1-2 (günler), 4857 m.47 (çalışılan her gün için ayrıca bir günlük ücret).
+- Günler `gunler` listesiyle tek tek verilebilir ya da `takvim` seçeneğiyle `data/ubgt-takvimi.json`
+  tablosundan (2016-2026) otomatik türetilebilir; ikisi birlikte verilirse birleştirilir ve aynı tarih
+  mükerrer sayılmaz.
+- 2429 s.K. m.1-2 tatil günleri: 29 Ekim Cumhuriyet Bayramı (28 Ekim 13:00'ten itibaren 1,5 gün),
+  1 Ocak (1 gün), 23 Nisan (1 gün), 1 Mayıs (1 gün), 19 Mayıs (1 gün), 15 Temmuz (1 gün; 6752 s.K.
+  29.10.2016'da yürürlüğe girdiğinden 2016 Temmuz'da genel tatil değildir, 2017'den itibaren 1 gündür),
+  30 Ağustos (1 gün), Ramazan Bayramı (arife 13:00'ten itibaren 0,5 + 3 gün = 3,5 gün), Kurban Bayramı
+  (arife 13:00'ten itibaren 0,5 + 4 gün = 4,5 gün).
+- Aynı miladi güne hem sabit (ulusal/resmi) tatil hem dini bayram/arife denk geldiğinde (ör. 01.05.2022
+  1 Mayıs + Ramazan Bayramı arifesi; 23.04.2023 23 Nisan + Ramazan Bayramı 3. gün) çift sayım yapılmaz;
+  tek tatil günü (yüksek olan katsayı) esas alınır ve kalem notunda belirtilir (9. HD 29.02.2016,
+  2015/30408 E., 2016/4301 K.).
 - Tutar = Σ gün × o tarihteki aylık / 30 × 1.
 
 ## Zamanaşımı kırpması (`parametreler.zamanasimi`)
@@ -201,6 +220,9 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
   19.12.2025/33112).
 - Yasal faiz: %9 (BKK 2005/9831), 01.06.2024 %24 (CBK 8485), 31.07.2026 %31 (7589 s.K. m.10 formülü).
   AYM E.2024/24, K.2025/164 iptali madde 31.07.2026'da değiştiği için işçilik alacaklarını etkilemiyor.
+- UBGT takvimi: 2016-2026 yılları, 2429 s.K. m.1-2 (6752 s.K. m.2 ile 29.10.2016'da eklenen 15 Temmuz
+  dahil) ve Diyanet İşleri Başkanlığı dini günler takviminden doğrulanan Ramazan ve Kurban Bayramı
+  miladi tarihleri.
 
 ## Yuvarlama
 

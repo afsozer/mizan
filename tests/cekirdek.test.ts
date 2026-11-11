@@ -33,6 +33,7 @@ test('tarayıcı yolu: JSON tablolar ve YAML metniyle çekirdek API aynı sonucu
     yasalFaiz: ham(f.yasalFaiz),
     mevduatFaizi: ham(f.mevduatFaizi),
     gelirVergisi: ham(f.gelirVergisi),
+    ubgtTakvimi: ham(f.ubgtTakvimi),
   });
   const metin = readFileSync(join(import.meta.dirname, '..', 'ornekler', 'ornek-iscilik.yaml'), 'utf8');
   const s = mizan.hesapla(mizan.girdiMetindenCoz(metin), tablolar);

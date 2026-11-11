@@ -53,6 +53,8 @@ test('hata yolundan formdaki alan adı bulunur', () => {
   assert.equal(alanAdi('girdi.kalemler.ihbar.faiz[0].baslangic'), 'Faiz başlangıcı');
   assert.equal(alanAdi('girdi.kalemler.fazlaCalisma.takdiriIndirim'), 'Takdiri indirim');
   assert.equal(alanAdi('girdi.hizmet.donemler[1].cikis'), 'İşten çıkış');
+  assert.equal(alanAdi('girdi.kalemler.ubgt.takvim.haricTarihler'), 'Hariç tutulacak tarihler');
+  assert.equal(alanAdi('girdi.kalemler.ubgt.takvim.haricTarihler[0].tarih'), 'Hariç tutulacak tarih');
 });
 
 test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndürür', () => {
@@ -119,4 +121,22 @@ test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndür�
   assert.equal(hataYolu(new GirdiHatasi('girdi.kalemler.yillikIzin.eskiKanun4857Oncesi', rakamliMesaj)), 'girdi.kalemler.yillikIzin.eskiKanun4857Oncesi');
   assert.equal(hataYolu(rakamliMesaj), 'girdi.kalemler.yillikIzin.eskiKanun4857Oncesi');
   assert.equal(hataAciklamasi(rakamliMesaj), 'true/false bekleniyor');
+
+  const ubgtYaml = [
+    'dosya: { mahkeme: Örnek İş Mahkemesi, esasNo: 2026/1, kaynak: örnek hesap, altAlan: "60.02" }',
+    'hesapTarihi: 2026-06-30',
+    'hizmet: { donemler: [{ giris: 2021-01-01, cikis: 2021-12-31 }], fesihTarihi: 2021-12-31, fesihSekli: fesih }',
+    'ucret: { sonBrutAylik: 9000, yontem: sabit }',
+    'parametreler: { vergi: { yontem: sabit, sabitOran: 0.15 } }',
+    'kalemler:',
+    '  ubgt:',
+    '    takvim: { haricTarihler: ["2021-05-19", 2021-10-29] }',
+    '    takdiriIndirim: { oran: 0, gerekce: yok }',
+  ].join('\n');
+  const ubgtForm = yamlForma(ubgtYaml);
+  assert.deepEqual(degerOku(ubgtForm, ['kalemler', 'ubgt', 'takvim', 'haricTarihler']), [
+    { tarih: '2021-05-19' },
+    { tarih: '2021-10-29' },
+  ]);
+  assert.deepEqual(formuDogrula(ubgtForm), girdiMetindenCoz(ubgtYaml));
 });

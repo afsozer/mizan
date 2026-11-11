@@ -180,9 +180,23 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
   for (const k of s.kalemler) {
     const kg = g.kalemler[k.kod]!;
     if ('hakVar' in kg) kalemTercihleri.push([k.ad, 'Hak varlığı', kg.hakVar ? 'var' : 'yok', kg.gerekce]);
-    if ('ucretTuru' in kg) kalemTercihleri.push([k.ad, 'İzin ücretine esas ücret', kg.ucretTuru === 'ciplak' ? 'çıplak' : 'giydirilmiş', '-']);
+    if ('ucretTuru' in kg) {
+      kalemTercihleri.push([k.ad, 'İzin ücretine esas ücret', kg.ucretTuru === 'ciplak' ? 'çıplak' : 'giydirilmiş', '-']);
+      if (kg.eskiKanun4857Oncesi !== undefined || kg.donemKanunu !== undefined) {
+        const eskiSecili = kg.eskiKanun4857Oncesi === true || kg.donemKanunu === '1475-4857';
+        kalemTercihleri.push([k.ad, '10.06.2003 öncesi kanun', eskiSecili ? '1475 s.K. m.49 (12/18/24 gün)' : '4857 s.K. m.53 (14/20/26 gün)', '-']);
+      }
+    }
     if ('gunKurali' in kg && kg.gunKurali) {
       kalemTercihleri.push([k.ad, 'Gün hesabı kuralı', kg.gunKurali === 'tam-ay' ? 'tam ay (30 gün)' : 'takvim günü', '-']);
+    }
+    if ('takvim' in kg && kg.takvim) {
+      kalemTercihleri.push([
+        k.ad,
+        'Takvim türetmesi',
+        kg.takvim.diniBayramlarDahil === false ? 'yalnız sabit tatiller' : 'sabit ve dini tatiller',
+        '2429 s.K. ve Diyanet takvimi',
+      ]);
     }
     if (kg.takdiriIndirim) kalemTercihleri.push([k.ad, 'Takdiri indirim', yuzde(kg.takdiriIndirim.oran), kg.takdiriIndirim.gerekce]);
     if (kg.mahsup) kalemTercihleri.push([k.ad, 'Mahsup', `${tl(kg.mahsup.tutar)} TL`, kg.mahsup.aciklama]);

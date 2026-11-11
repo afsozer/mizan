@@ -36,6 +36,7 @@ export function hesapTablolari(belgeler: TabloBelgesi[], secim: string | undefin
     damga: dosyaBul(TABLO_DOSYALARI.damga),
     yasalFaiz: dosyaBul(TABLO_DOSYALARI.yasalFaiz),
     gelirVergisi: dosyaBul(TABLO_DOSYALARI.gelirVergisi),
+    ubgtTakvimi: dosyaBul(TABLO_DOSYALARI.ubgtTakvimi),
     mevduatFaizi: dosyaBul(mevduatAdi),
   };
   return tablolariKur(ham);

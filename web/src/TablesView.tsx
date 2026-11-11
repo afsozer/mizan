@@ -5,7 +5,7 @@ import { indir } from './exports.ts';
 import type { TabloBelgesi } from './tables.ts';
 
 interface GorunenTablo { ad: string; aciklama?: string; dogrulamaTarihi: string; satirlar: Record<string, unknown>[] }
-const ALANLAR: Record<string, string> = { baslangic: 'Başlangıç', bitis: 'Bitiş', yil: 'Yıl', tutar: 'Tutar (TL)', brutAylik: 'Aylık brüt (TL)', brutGunluk: 'Günlük brüt (TL)', oran: 'Oran', sgkIsci: 'SGK işçi payı', issizlikIsci: 'İşsizlik işçi payı', ustSinirKati: 'Üst sınır katı', dilimler: 'Vergi dilimleri' };
+const ALANLAR: Record<string, string> = { baslangic: 'Başlangıç', bitis: 'Bitiş', yil: 'Yıl', tutar: 'Tutar (TL)', brutAylik: 'Aylık brüt (TL)', brutGunluk: 'Günlük brüt (TL)', oran: 'Oran', sgkIsci: 'SGK işçi payı', issizlikIsci: 'İşsizlik işçi payı', ustSinirKati: 'Üst sınır katı', dilimler: 'Vergi dilimleri', gunler: 'Tatil günleri' };
 function degerYaz(key: string, deger: unknown): string {
   if (deger === null) return 'Devam ediyor';
   if ((key === 'baslangic' || key === 'bitis') && typeof deger === 'string') return trTarih(deger);
@@ -13,6 +13,7 @@ function degerYaz(key: string, deger: unknown): string {
   if (typeof deger === 'string' && /^(tutar|brutAylik|brutGunluk)$/.test(key)) return tl(new Decimal(deger));
   if (key === 'ustSinirKati' && typeof deger === 'string') return `${sayi(new Decimal(deger))} kat`;
   if (key === 'dilimler' && Array.isArray(deger)) return deger.map((d: { ustSinir: string | null; oran: string }) => `${d.ustSinir === null ? 'Üst sınır yok' : `${tl(new Decimal(d.ustSinir))} TL üst sınıra kadar`}: ${yuzde(new Decimal(d.oran))}`).join('; ');
+  if (key === 'gunler' && Array.isArray(deger)) return deger.map((g: { tarih: string; gun: string; ad: string }) => `${trTarih(g.tarih)} ${g.ad} (${sayi(new Decimal(g.gun))} gün)`).join('; ');
   return typeof deger === 'object' ? JSON.stringify(deger) : String(deger);
 }
 export function TablolarEkrani({ belgeler, yukle, mesgul }: { belgeler: TabloBelgesi[]; yukle: (file: File) => void; mesgul: boolean }) {

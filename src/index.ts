@@ -7,6 +7,8 @@ export type {
   FaizTuru,
   UcretYontemi,
   ZamanasimiParametresi,
+  IzinDonemKanunu,
+  UbgtTakvimGirdisi,
   KotuniyetGirdisi,
   BostaGecenSureGirdisi,
   IseBaslatmamaGirdisi,
@@ -17,8 +19,8 @@ export type {
   IkramiyeSatiri,
   IkramiyeGirdisi,
 } from './girdi.ts';
-export { tablolariKur, TABLO_DOSYALARI, KaynakKaydi } from './tablolar.ts';
-export type { HamTablo, HamTablolar, Tablolar, Kaynak, KaynakSatiri } from './tablolar.ts';
+export { tablolariKur, TABLO_DOSYALARI, KaynakKaydi, UbgtTakvimi } from './tablolar.ts';
+export type { HamTablo, HamTablolar, Tablolar, Kaynak, KaynakSatiri, UbgtTakvimGunu, UbgtTakvimYili } from './tablolar.ts';
 export { hesapla } from './hesap.ts';
 export type { HesapSonucu, KalemSonucu } from './hesap.ts';
 export { raporTanimi } from './rapor/pdf.ts';

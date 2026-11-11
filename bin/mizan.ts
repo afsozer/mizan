@@ -66,6 +66,9 @@ function tablolarKomutu(): void {
     console.log(`${x.ad}\n  ${x.satirlar.length} satır, başlangıç ${trTarih(ilk.baslangic)}, doğrulama ${trTarih(x.dogrulamaTarihi)}`);
   }
   console.log(`${t.gelirVergisi.ad}\n  yıllar: ${t.gelirVergisi.yillar.map((y) => y.yil).join(', ')}`);
+  console.log(
+    `${t.ubgtTakvimi.ad}\n  yıllar: ${t.ubgtTakvimi.yillar.map((y) => y.yil).join(', ')}, doğrulama ${trTarih(t.ubgtTakvimi.dogrulamaTarihi)}`,
+  );
 }
 
 async function main(): Promise<void> {

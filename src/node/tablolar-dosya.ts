@@ -33,5 +33,6 @@ export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): 
           ? tabloOku(resolve(yollar.mevduatFaizi))
           : oku(f.mevduatFaizi),
     gelirVergisi: oku(f.gelirVergisi),
+    ubgtTakvimi: oku(f.ubgtTakvimi),
   });
 }

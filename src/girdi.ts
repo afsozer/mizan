@@ -100,10 +100,15 @@ export interface IseBaslatmamaGirdisi extends OrtakKalem {
   esasBrutAylik?: Decimal;
 }
 
+export type IzinDonemKanunu = '1475-4857' | 'yalniz-4857';
+
 export interface YillikIzinGirdisi extends OrtakKalem {
   kullanilanGun: Decimal;
   hakEdilenGun?: Decimal;
   ucretTuru: 'ciplak' | 'giydirilmis';
+  /** 10.06.2003 öncesinde dolan hizmet yıllarında mülga 1475 s.K. m.49 süreleri (12/18/24 gün) uygulansın mı. */
+  eskiKanun4857Oncesi?: boolean;
+  donemKanunu?: IzinDonemKanunu;
 }
 
 export interface UcretAlacagiDonemi {
@@ -164,8 +169,15 @@ export interface HaftaTatiliGirdisi extends OrtakKalem {
   takdiriIndirim: TakdiriIndirim;
 }
 
+export interface UbgtTakvimGirdisi {
+  donemler?: { baslangic: string; bitis: string }[];
+  diniBayramlarDahil?: boolean;
+  haricTarihler?: string[];
+}
+
 export interface UbgtGirdisi extends OrtakKalem {
   gunler: { tarih: string; gun: Decimal; aciklama?: string }[];
+  takvim?: UbgtTakvimGirdisi;
   carpan?: Decimal;
   takdiriIndirim: TakdiriIndirim;
 }
@@ -311,6 +323,33 @@ class Okuyucu {
     const t = v instanceof Date ? v.toISOString().slice(0, 10) : v;
     if (typeof t !== 'string' || !gecerliTarih(t)) throw alanHatasi(`${this.yer}.${alan}`, 'YYYY-AA-GG tarih bekleniyor');
     return t;
+  }
+
+  tarihListesi(alan: string): string[] {
+    const v = this.n[alan];
+    if (typeof v === 'string') {
+      const parcalar = v
+        .split(/[\s,;]+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+      return parcalar.map((t, i) => {
+        if (!gecerliTarih(t)) throw alanHatasi(`${this.yer}.${alan}[${i}]`, 'YYYY-AA-GG tarih bekleniyor');
+        return t;
+      });
+    }
+    if (!Array.isArray(v)) throw alanHatasi(`${this.yer}.${alan}`, 'tarih listesi bekleniyor');
+    return v.map((o, i) => {
+      if (o && typeof o === 'object' && !Array.isArray(o) && !(o instanceof Date)) {
+        const alt = new Okuyucu(`${this.yer}.${alan}[${i}]`, o as Nesne);
+        alt.izinli(['tarih']);
+        return alt.tarih('tarih');
+      }
+      const t = o instanceof Date ? o.toISOString().slice(0, 10) : o;
+      if (typeof t !== 'string' || !gecerliTarih(t)) {
+        throw alanHatasi(`${this.yer}.${alan}[${i}]`, 'YYYY-AA-GG tarih bekleniyor');
+      }
+      return t;
+    });
   }
 
   sayi(alan: string, enAz = 0): Decimal {
@@ -634,11 +673,24 @@ export function girdiCoz(veri: unknown): Girdi {
   }
   if (km.var('yillikIzin')) {
     const o = km.alt('yillikIzin');
-    o.izinli(['kullanilanGun', 'hakEdilenGun', 'ucretTuru', ...ORTAK]);
+    o.izinli(['kullanilanGun', 'hakEdilenGun', 'ucretTuru', 'eskiKanun4857Oncesi', 'donemKanunu', ...ORTAK]);
+    const eskiKanun4857Oncesi = o.var('eskiKanun4857Oncesi') ? o.mantiksal('eskiKanun4857Oncesi') : undefined;
+    const donemKanunu = o.var('donemKanunu')
+      ? o.secenek('donemKanunu', ['1475-4857', 'yalniz-4857'] as const)
+      : undefined;
+    if (
+      eskiKanun4857Oncesi !== undefined &&
+      donemKanunu !== undefined &&
+      eskiKanun4857Oncesi !== (donemKanunu === '1475-4857')
+    ) {
+      throw alanHatasi(o.yer, 'eskiKanun4857Oncesi ve donemKanunu birbiriyle çelişiyor');
+    }
     kalemler.yillikIzin = {
       kullanilanGun: o.sayi('kullanilanGun'),
       hakEdilenGun: o.var('hakEdilenGun') ? o.sayi('hakEdilenGun') : undefined,
       ucretTuru: o.secenek('ucretTuru', ['ciplak', 'giydirilmis'] as const),
+      eskiKanun4857Oncesi,
+      donemKanunu,
       ...ortakOku(o),
     };
   }
@@ -754,13 +806,38 @@ export function girdiCoz(veri: unknown): Girdi {
   }
   if (km.var('ubgt')) {
     const o = km.alt('ubgt');
-    o.izinli(['gunler', 'carpan', ...ORTAK]);
+    o.izinli(['gunler', 'takvim', 'carpan', ...ORTAK]);
+    if (!o.var('gunler') && !o.var('takvim')) {
+      throw alanHatasi(o.yer, 'gunler ya da takvim alanlarından en az biri verilmeli');
+    }
+    let takvim: UbgtTakvimGirdisi | undefined;
+    if (o.var('takvim')) {
+      const tk = o.alt('takvim');
+      tk.izinli(['donemler', 'diniBayramlarDahil', 'haricTarihler']);
+      const tkDonemler = tk.var('donemler')
+        ? tk.liste('donemler').map((p) => {
+            p.izinli(['baslangic', 'bitis']);
+            const baslangic = p.tarih('baslangic');
+            const bitis = p.tarih('bitis');
+            if (karsilastir(bitis, baslangic) < 0) throw alanHatasi(p.yer, 'bitiş başlangıçtan önce');
+            return { baslangic, bitis };
+          })
+        : undefined;
+      takvim = {
+        donemler: tkDonemler && tkDonemler.length > 0 ? tkDonemler : undefined,
+        diniBayramlarDahil: tk.var('diniBayramlarDahil') ? tk.mantiksal('diniBayramlarDahil') : undefined,
+        haricTarihler: tk.var('haricTarihler') ? tk.tarihListesi('haricTarihler') : undefined,
+      };
+    }
     kalemler.ubgt = {
       ...ortakOku(o),
-      gunler: o.liste('gunler').map((g) => {
-        g.izinli(['tarih', 'gun', 'aciklama']);
-        return { tarih: g.tarih('tarih'), gun: g.sayi('gun'), aciklama: g.var('aciklama') ? g.metin('aciklama') : undefined };
-      }),
+      gunler: o.var('gunler')
+        ? o.liste('gunler').map((g) => {
+            g.izinli(['tarih', 'gun', 'aciklama']);
+            return { tarih: g.tarih('tarih'), gun: g.sayi('gun'), aciklama: g.var('aciklama') ? g.metin('aciklama') : undefined };
+          })
+        : [],
+      takvim,
       carpan: o.var('carpan') ? o.sayi('carpan') : undefined,
       takdiriIndirim: indirimOku(o),
     };
@@ -799,6 +876,18 @@ export function girdiCoz(veri: unknown): Girdi {
       }
     }
   }
+  const ubgtTakvimDonemleri = [...(kalemler.ubgt?.takvim?.donemler ?? [])].sort((a, b) =>
+    karsilastir(a.baslangic, b.baslangic),
+  );
+  ubgtTakvimDonemleri.forEach((p, i) => {
+    if (!icinde(p.baslangic, p.bitis)) {
+      throw alanHatasi('girdi.kalemler.ubgt.takvim', `${p.baslangic} - ${p.bitis} dönemi tek bir hizmet döneminin içinde değil`);
+    }
+    const onceki = ubgtTakvimDonemleri[i - 1];
+    if (onceki && karsilastir(p.baslangic, onceki.bitis) <= 0) {
+      throw alanHatasi('girdi.kalemler.ubgt.takvim', 'dönemler çakışıyor');
+    }
+  });
   for (const g of kalemler.ubgt?.gunler ?? []) {
     if (!icinde(g.tarih, g.tarih)) throw alanHatasi('girdi.kalemler.ubgt', `${g.tarih} hizmet dönemlerinin dışında`);
   }

@@ -30,7 +30,19 @@ export function formdanGirdiKur(form: Nesne): Nesne {
 
 export function yamlForma(metin: string): Nesne {
   girdiMetindenCoz(metin);
-  return parse(metin) as Nesne;
+  const parsed = parse(metin) as Nesne;
+  const kalemler = parsed.kalemler as Nesne | undefined;
+  const ubgt = kalemler?.ubgt as Nesne | undefined;
+  const takvim = ubgt?.takvim as Nesne | undefined;
+  if (takvim && Array.isArray(takvim.haricTarihler)) {
+    takvim.haricTarihler = takvim.haricTarihler.map((x) => {
+      if (typeof x === 'string') return { tarih: x };
+      const nesne = x as unknown;
+      if (nesne instanceof Date) return { tarih: nesne.toISOString().slice(0, 10) };
+      return x;
+    });
+  }
+  return parsed;
 }
 
 export function formYamli(form: Nesne): string {

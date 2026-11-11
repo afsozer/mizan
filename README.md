@@ -99,7 +99,11 @@ bölümünde "girdi" ya da "varsayılan" diye, dayanağıyla görünür.
 - Takdiri indirim: fazla çalışma, hafta tatili ve UBGT'de **zorunlu** alan. İndirim yapılmayacaksa
   `oran: 0` ve gerekçe yazılır.
 - Mahsup; indirimle birlikteyse sırası (`parametreler.indirimMahsupSirasi`) da zorunlu.
-- Yıllık izin ücretine esas ücret (`ciplak` / `giydirilmis`).
+- Yıllık izin ücretine esas ücret (`ciplak` / `giydirilmis`) ve 10.06.2003 öncesinde dolan hizmet
+  yıllarında mülga 1475 s.K. m.49 izin basamaklarının (12 / 18 / 24 gün ve <=18 yaş 18 gün) uygulanıp
+  uygulanmayacağı (`eskiKanun4857Oncesi: true` ya da `donemKanunu: 1475-4857`).
+- UBGT günlerinin `gunler` listesiyle tek tek verilmesi ya da `takvim` seçeneğiyle (`donemler`,
+  `diniBayramlarDahil`, `haricTarihler`) `ubgt-takvimi.json` tablosundan türetilmesi.
 - Faiz türü, başlangıcı ve gerekçesi; dava ve ıslah için ayrı satırlar (`tutar` verilen satırlar
   önce, tutarsız son satır kalanı alır).
 - Gelir vergisi yöntemi: `sabit` (girilen oran) ya da `dilim` (yılın ücret tarifesi). Dilimde
@@ -178,6 +182,7 @@ Hepsi girdiyle değiştirilebilir.
 | `yasal-faiz.json` | 3095 s.K. m.1 yasal faiz |
 | `mevduat-faizi.json` | kıdem faizi: bankalarca fiilen uygulanan azami faiz (TCMB, aylık) |
 | `mevduat-faizi-kamu.json` | aynı seri, kamu bankaları |
+| `ubgt-takvimi.json` | 2429 s.K. m.1-2 ulusal bayram ve genel tatil günleri takvimi (2016-2026) |
 
 Mevduat tabloları `node scripts/mevduat-guncelle.ts` ile TCMB EVDS'den yeniden çekilir. Diğer tablolar
 elle, resmi kaynaktan güncellenir.
@@ -207,15 +212,18 @@ satırının kaynak bağlantısı. Aynı girdi ve aynı commit ile hesap yeniden
   zaten tavanla sınırlar.
 - 2022 öncesi asgari geçim indirimi uygulanmaz.
 - Mevduat faizi tablosu vekil seridir (yukarıda "Faiz").
-- Yıllık izin süreleri 4857 s.K. m.53'e göredir; 10.06.2003 öncesinde dolan hizmet yılları için uyarı
-  verilir, 1475 s.K. dönemi süreleri ayrıca değerlendirilmelidir. Yer altı işlerindeki ek dört gün
-  uygulanmaz.
+- Yıllık izin süreleri varsayılan olarak 4857 s.K. m.53'e göredir; `eskiKanun4857Oncesi: true`
+  (veya `donemKanunu: 1475-4857`) seçilirse 10.06.2003 öncesinde dolan hizmet yıllarında mülga 1475 s.K.
+  m.49 basamakları (12 / 18 / 24 gün, <=18 yaş 18 gün) uygulanır, seçilmezse uyarı verilir. Yer altı
+  işlerindeki ek dört gün uygulanmaz.
 - İhbar süresi tam 1,5 yılda (4857 m.17/2 (b) ve (c) bentlerinin ortak sınırı) alt bentte, 4 haftada
   bırakılır ve not düşülür; diğer yorum için `haftaSayisi` verilir. Tam 6 ay 4 hafta, tam 3 yıl 6 hafta
   sayılır.
 - Fazla çalışma ve hafta tatili dönemleri tek bir hizmet döneminin içinde olmalı, birbiriyle
-  çakışmamalı; UBGT günleri hizmet dönemlerinin içinde olmalı. Aksi halde hesap durur.
-- UBGT günleri takvimden türetilmez, girdide tek tek yazılır.
+  çakışmamalı; UBGT günleri ve takvim dönemleri hizmet dönemlerinin içinde olmalı. Aksi halde hesap durur.
+- UBGT günleri `gunler` ile tek tek yazılabilir ya da `takvim` seçeneğiyle 2016-2026 yılları için
+  `ubgt-takvimi.json` tablosundan türetilebilir; aynı miladi güne sabit ve dini tatil çakıştığında
+  mükerrer sayım yapılmaz.
 - Hafta tatili çalışması ayrıca fazla çalışma hesabına katılırsa çift sayım olur; dönem girdileri buna
   göre kurulmalıdır.
 - Rapor bir hesap çıktısıdır, hukuki görüş ya da karar değildir.

@@ -2,8 +2,8 @@
 // kaynaksız, çakışan ya da boşluklu satır reddedilir. Bitişi belli son satırdan sonrası sorulursa
 // hesap durur. Açık uçlu son satır (kanunla belirlenen oranlar) doğrulama tarihinden sonra da
 // kullanılır ama rapora uyarı düşer; eski oran sessizce yürümez.
-import { d, Decimal, sayi, tl, yuzde } from './para.ts';
-import { gecerliTarih, gunEkle, karsilastir, trTarih, enBuyuk, enKucuk } from './tarih.ts';
+import { d, Decimal, sayi, tl, topla, yuzde } from './para.ts';
+import { gecerliTarih, gunEkle, karsilastir, trTarih, enBuyuk, enKucuk, yilAl } from './tarih.ts';
 
 export interface Kaynak {
   ad: string;
@@ -290,6 +290,133 @@ function toplamVergi(tarife: GelirVergisiYili, matrah: Decimal): Decimal {
   return vergi;
 }
 
+export interface UbgtTakvimGunu {
+  tarih: string;
+  gun: string;
+  ad: string;
+  tur: 'sabit' | 'dini';
+}
+
+export interface UbgtTakvimYili {
+  yil: number;
+  gunler: UbgtTakvimGunu[];
+  kaynak: Kaynak;
+}
+
+export class UbgtTakvimi {
+  readonly kod = 'ubgt-takvimi';
+  readonly ad = 'Ulusal bayram ve genel tatil takvimi (2429 s.K.)';
+  readonly aciklama?: string;
+  readonly dogrulamaTarihi: string;
+  readonly yillar: UbgtTakvimYili[];
+  readonly satirlar: UbgtTakvimYili[];
+  readonly ozet: string;
+
+  constructor(dosya: TabloDosyasi<UbgtTakvimYili>, ozet = '') {
+    this.yillar = dosya.satirlar;
+    this.satirlar = dosya.satirlar;
+    this.aciklama = dosya.aciklama;
+    this.dogrulamaTarihi = dosya.dogrulamaTarihi;
+    this.ozet = ozet;
+    if (!gecerliTarih(this.dogrulamaTarihi)) throw new Error('UBGT takvimi: dogrulamaTarihi geçersiz');
+    const yillar = this.yillar.map((y) => y.yil);
+    if (new Set(yillar).size !== yillar.length) throw new Error('UBGT takvimi: aynı yıl birden fazla kez yazılmış');
+    for (const y of this.yillar) {
+      const yer = `UBGT takvimi ${y.yil}`;
+      kaynakDenetle(y.kaynak, yer);
+      if (!Array.isArray(y.gunler) || y.gunler.length === 0) throw new Error(`${yer}: tatil günü yok`);
+      for (const g of y.gunler) {
+        if (!gecerliTarih(g.tarih) || yilAl(g.tarih) !== y.yil) {
+          throw new Error(`${yer}: "${g.tarih}" geçerli bir ${y.yil} tarihi olmalı`);
+        }
+        if (g.gun !== '1' && g.gun !== '0.5') {
+          throw new Error(`${yer}: "${g.tarih}" gün katsayısı "1" veya "0.5" olmalı`);
+        }
+        if (typeof g.ad !== 'string' || !g.ad.trim()) throw new Error(`${yer}: "${g.tarih}" tatil adı boş`);
+        if (g.tur !== 'sabit' && g.tur !== 'dini') throw new Error(`${yer}: "${g.tarih}" tür "sabit" veya "dini" olmalı`);
+      }
+    }
+  }
+
+  yil(yil: number, kayit?: KaynakKaydi): UbgtTakvimYili {
+    const y = this.yillar.find((t) => t.yil === yil);
+    if (!y) throw new Error(`${yil} yılı UBGT takvimi tabloda yok (data/ubgt-takvimi.json)`);
+    const sabitGun = topla(y.gunler.filter((g) => g.tur === 'sabit').map((g) => d(g.gun)));
+    const diniGun = topla(y.gunler.filter((g) => g.tur === 'dini').map((g) => d(g.gun)));
+    kayit?.ekle({
+      tablo: this.ad,
+      tabloAciklamasi: this.aciklama,
+      sira: String(yil),
+      aralik: String(yil),
+      deger: `sabit tatiller ${sayi(sabitGun)} gün, dini bayramlar ${sayi(diniGun)} gün`,
+      kaynak: y.kaynak,
+    });
+    return y;
+  }
+
+  /** Verilen dönemlerdeki UBGT günlerini türetir; aynı miladi günde sabit + dini tatil çakışırsa yüksek katsayıyı alır. */
+  turet(
+    secenek: {
+      donemler: { baslangic: string; bitis: string }[];
+      diniBayramlarDahil?: boolean;
+      haricTarihler?: string[];
+    },
+    kayit?: KaynakKaydi,
+  ): { gunler: { tarih: string; gun: Decimal; aciklama: string }[]; notlar: string[] } {
+    const diniDahil = secenek.diniBayramlarDahil ?? true;
+    const haric = new Set(secenek.haricTarihler ?? []);
+    const gruplar = new Map<string, UbgtTakvimGunu[]>();
+    const notlar: string[] = [];
+    let temmuz2016Notu = false;
+
+    for (const donem of secenek.donemler) {
+      const basYil = yilAl(donem.baslangic);
+      const bitYil = yilAl(donem.bitis);
+      for (let y = basYil; y <= bitYil; y++) {
+        const yilVerisi = this.yil(y, kayit);
+        if (
+          y === 2016 &&
+          !temmuz2016Notu &&
+          karsilastir(donem.baslangic, '2016-07-15') <= 0 &&
+          karsilastir('2016-07-15', donem.bitis) <= 0
+        ) {
+          notlar.push(
+            '15.07.2016 tarihi, 6752 s.K. (RG 29.10.2016/29872) yayımı tarihinde yürürlüğe girdiğinden 2016 yılında genel tatil değildir; 15 Temmuz 2017 yılından itibaren genel tatil olarak hesaba katılır.',
+          );
+          temmuz2016Notu = true;
+        }
+        for (const g of yilVerisi.gunler) {
+          if (karsilastir(g.tarih, donem.baslangic) < 0 || karsilastir(g.tarih, donem.bitis) > 0) continue;
+          if (!diniDahil && g.tur === 'dini') continue;
+          if (haric.has(g.tarih)) continue;
+          const liste = gruplar.get(g.tarih) ?? [];
+          if (!liste.some((x) => x.ad === g.ad && x.tur === g.tur)) {
+            liste.push(g);
+            gruplar.set(g.tarih, liste);
+          }
+        }
+      }
+    }
+
+    const gunler: { tarih: string; gun: Decimal; aciklama: string }[] = [];
+    for (const [tarih, grup] of [...gruplar.entries()].sort((a, b) => karsilastir(a[0], b[0]))) {
+      if (grup.length === 1) {
+        const tek = grup[0]!;
+        gunler.push({ tarih, gun: d(tek.gun), aciklama: tek.ad });
+      } else {
+        const yuksek = Decimal.max(...grup.map((x) => d(x.gun)));
+        const aciklama = grup.map((x) => x.ad).join(' / ');
+        notlar.push(
+          `${trTarih(tarih)} tarihinde ${grup.map((x) => `${x.ad} (${sayi(d(x.gun))} gün)`).join(' ile ')} çakıştığından çift sayım yapılmadı; Yargıtay uygulaması uyarınca tek tatil günü olarak yüksek katsayı (${sayi(yuksek)} gün) alındı (Yargıtay 9. HD 2015/30408 E., 2016/4301 K.).`,
+        );
+        gunler.push({ tarih, gun: yuksek, aciklama });
+      }
+    }
+
+    return { gunler, notlar };
+  }
+}
+
 export interface Tablolar {
   asgariUcret: DonemselTablo<AsgariUcretSatiri>;
   kidemTavani: DonemselTablo<KidemTavaniSatiri>;
@@ -298,6 +425,7 @@ export interface Tablolar {
   yasalFaiz: DonemselTablo<OranSatiri>;
   mevduatFaizi: DonemselTablo<OranSatiri>;
   gelirVergisi: GelirVergisiTarifesi;
+  ubgtTakvimi: UbgtTakvimi;
 }
 
 /** data/ altındaki tablo dosyalarının adları; Node katmanı ve tarayıcı paketi aynı adları kullanır. */
@@ -310,6 +438,7 @@ export const TABLO_DOSYALARI = {
   mevduatFaizi: 'mevduat-faizi.json',
   mevduatFaiziKamu: 'mevduat-faizi-kamu.json',
   gelirVergisi: 'gelir-vergisi.json',
+  ubgtTakvimi: 'ubgt-takvimi.json',
 } as const;
 
 /** Ayrıştırılmış bir tablo dosyası ve (varsa) ham metninin SHA-256 özeti. */
@@ -318,7 +447,9 @@ export interface HamTablo {
   ozet?: string;
 }
 
-export type HamTablolar = Record<keyof Tablolar, HamTablo>;
+export type HamTablolar = Omit<Record<keyof Tablolar, HamTablo>, 'ubgtTakvimi'> & {
+  ubgtTakvimi?: HamTablo;
+};
 
 /** Ayrıştırılmış JSON tablolarından denetlenmiş tablo nesnelerini kurar (dosya erişimi yok). */
 export function tablolariKur(h: HamTablolar): Tablolar {
@@ -332,5 +463,8 @@ export function tablolariKur(h: HamTablolar): Tablolar {
     yasalFaiz: kur<OranSatiri>(h.yasalFaiz, ['oran']),
     mevduatFaizi: kur<OranSatiri>(h.mevduatFaizi, ['oran']),
     gelirVergisi: new GelirVergisiTarifesi(h.gelirVergisi.dosya as TabloDosyasi<GelirVergisiYili>, h.gelirVergisi.ozet ?? ''),
+    ubgtTakvimi: h.ubgtTakvimi
+      ? new UbgtTakvimi(h.ubgtTakvimi.dosya as TabloDosyasi<UbgtTakvimYili>, h.ubgtTakvimi.ozet ?? '')
+      : new UbgtTakvimi({ tablo: 'ubgt-takvimi', ad: 'Ulusal bayram ve genel tatil takvimi (2429 s.K.)', dogrulamaTarihi: '2026-11-11', satirlar: [] }, ''),
   };
 }

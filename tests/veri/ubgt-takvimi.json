@@ -1,0 +1,352 @@
+{
+  "tablo": "ubgt-takvimi",
+  "ad": "Ulusal bayram ve genel tatil takvimi (2429 s.K.)",
+  "aciklama": "2429 s.K. m.1-2 uyarınca ulusal bayram (29 Ekim, 28 Ekim 13.00'ten itibaren 1,5 gün), resmi bayram ve genel tatil günleri (1 Ocak, 23 Nisan, 1 Mayıs, 19 Mayıs, 2017'den itibaren 15 Temmuz, 30 Ağustos) ile Diyanet İşleri Başkanlığı dini günler takvimine göre Ramazan Bayramı (arife 13.00'ten itibaren 3,5 gün) ve Kurban Bayramı (arife 13.00'ten itibaren 4,5 gün) miladi tarihleri. 15 Temmuz Demokrasi ve Milli Birlik Günü 6752 s.K. (RG 29.10.2016/29872) ile eklendiğinden 2016 yılında genel tatil değildir.",
+  "dogrulamaTarihi": "2026-11-11",
+  "satirlar": [
+    {
+      "yil": 2016,
+      "gunler": [
+        { "tarih": "2016-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2016-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2016-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2016-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2016-07-04", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2016-07-05", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2016-07-06", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2016-07-07", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2016-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2016-09-11", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2016-09-12", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2016-09-13", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2016-09-14", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2016-09-15", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2016-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2016-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2016 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 metni (mevzuat.gov.tr) ve Diyanet İşleri Başkanlığı Vakit Hesaplama Dini Günler takviminden (vakithesaplama.diyanet.gov.tr/dinigunler.php) 2016 yılı Ramazan (04-07.07.2016) ve Kurban (11-15.09.2016) Bayramı miladi tarihleri doğrulandı.",
+        "not": "6752 s.K. m.2 (RG 29.10.2016/29872) yayımı tarihinde (29.10.2016) yürürlüğe girdiğinden 15.07.2016 tarihi genel tatil değildir (sabit tatiller 6,5 gün, dini bayramlar 8 gün, toplam 14,5 gün)."
+      }
+    },
+    {
+      "yil": 2017,
+      "gunler": [
+        { "tarih": "2017-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2017-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2017-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2017-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2017-06-24", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2017-06-25", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2017-06-26", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2017-06-27", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2017-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2017-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2017-08-31", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2017-09-01", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2017-09-02", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2017-09-03", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2017-09-04", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2017-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2017-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 (6752 s.K. ile değişik) ve Diyanet İşleri Başkanlığı 2017 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "2016-10-29",
+          "sayi": "29872"
+        },
+        "dogrulama": "2429 s.K. m.1-2 (6752 s.K. m.2 değişikliği dahil) ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2017 yılı Ramazan (24-27.06.2017) ve Kurban (31.08-04.09.2017) Bayramı miladi tarihleri doğrulandı.",
+        "not": "6752 s.K. m.2 uyarınca 15 Temmuz Demokrasi ve Milli Birlik Günü 2017 yılından itibaren 1 gün genel tatildir (sabit tatiller 7,5 gün, dini bayramlar 8 gün, toplam 15,5 gün)."
+      }
+    },
+    {
+      "yil": 2018,
+      "gunler": [
+        { "tarih": "2018-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2018-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2018-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2018-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2018-06-14", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2018-06-15", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2018-06-16", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2018-06-17", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2018-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2018-08-20", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2018-08-21", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2018-08-22", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2018-08-23", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2018-08-24", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2018-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2018-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2018-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2018 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2018 yılı Ramazan (14-17.06.2018) ve Kurban (20-24.08.2018) Bayramı miladi tarihleri doğrulandı."
+      }
+    },
+    {
+      "yil": 2019,
+      "gunler": [
+        { "tarih": "2019-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2019-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2019-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2019-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2019-06-03", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2019-06-04", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2019-06-05", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2019-06-06", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2019-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2019-08-10", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2019-08-11", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2019-08-12", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2019-08-13", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2019-08-14", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2019-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2019-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2019-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2019 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2019 yılı Ramazan (03-06.06.2019) ve Kurban (10-14.08.2019) Bayramı miladi tarihleri doğrulandı."
+      }
+    },
+    {
+      "yil": 2020,
+      "gunler": [
+        { "tarih": "2020-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2020-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2020-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2020-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2020-05-23", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2020-05-24", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2020-05-25", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2020-05-26", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2020-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2020-07-30", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2020-07-31", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2020-08-01", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2020-08-02", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2020-08-03", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2020-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2020-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2020-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2020 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2020 yılı Ramazan (23-26.05.2020) ve Kurban (30.07-03.08.2020) Bayramı miladi tarihleri doğrulandı."
+      }
+    },
+    {
+      "yil": 2021,
+      "gunler": [
+        { "tarih": "2021-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2021-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2021-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2021-05-12", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2021-05-13", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2021-05-14", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2021-05-15", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2021-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2021-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2021-07-19", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2021-07-20", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2021-07-21", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2021-07-22", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2021-07-23", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2021-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2021-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2021-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2021 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2021 yılı Ramazan (12-15.05.2021) ve Kurban (19-23.07.2021) Bayramı miladi tarihleri doğrulandı."
+      }
+    },
+    {
+      "yil": 2022,
+      "gunler": [
+        { "tarih": "2022-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2022-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2022-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2022-05-01", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2022-05-02", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2022-05-03", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2022-05-04", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2022-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2022-07-08", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2022-07-09", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2022-07-10", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2022-07-11", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2022-07-12", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2022-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2022-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2022-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2022-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2022 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2022 yılı Ramazan (01-04.05.2022) ve Kurban (08-12.07.2022) Bayramı miladi tarihleri doğrulandı.",
+        "not": "01.05.2022 tarihinde Emek ve Dayanışma Günü (1 gün) ile Ramazan Bayramı arifesi (0,5 gün) çakışmaktadır; Yargıtay uygulaması uyarınca aynı miladi günde çift sayım yapılmaz, yüksek olan 1 gün esas alınır (Yargıtay 9. HD 2015/30408 E., 2016/4301 K.)."
+      }
+    },
+    {
+      "yil": 2023,
+      "gunler": [
+        { "tarih": "2023-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2023-04-20", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2023-04-21", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2023-04-22", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2023-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2023-04-23", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2023-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2023-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2023-06-27", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2023-06-28", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2023-06-29", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2023-06-30", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2023-07-01", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2023-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2023-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2023-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2023-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2023 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2023 yılı Ramazan (20-23.04.2023) ve Kurban (27.06-01.07.2023) Bayramı miladi tarihleri doğrulandı.",
+        "not": "23.04.2023 tarihinde Ulusal Egemenlik ve Çocuk Bayramı (1 gün) ile Ramazan Bayramı 3. günü (1 gün) çakışmaktadır; Yargıtay uygulaması uyarınca aynı miladi günde çift sayım yapılmaz, tek tatil günü (1 gün) esas alınır (Yargıtay 9. HD 2015/30408 E., 2016/4301 K.)."
+      }
+    },
+    {
+      "yil": 2024,
+      "gunler": [
+        { "tarih": "2024-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2024-04-09", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2024-04-10", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2024-04-11", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2024-04-12", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2024-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2024-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2024-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2024-06-15", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2024-06-16", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2024-06-17", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2024-06-18", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2024-06-19", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2024-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2024-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2024-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2024-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2024 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2024 yılı Ramazan (09-12.04.2024) ve Kurban (15-19.06.2024) Bayramı miladi tarihleri doğrulandı."
+      }
+    },
+    {
+      "yil": 2025,
+      "gunler": [
+        { "tarih": "2025-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2025-03-29", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2025-03-30", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2025-03-31", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2025-04-01", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2025-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2025-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2025-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2025-06-05", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2025-06-06", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2025-06-07", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2025-06-08", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2025-06-09", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2025-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2025-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2025-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2025-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2025 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2025 yılı Ramazan (29.03-01.04.2025) ve Kurban (05-09.06.2025) Bayramı miladi tarihleri doğrulandı."
+      }
+    },
+    {
+      "yil": 2026,
+      "gunler": [
+        { "tarih": "2026-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2026-03-19", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2026-03-20", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2026-03-21", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2026-03-22", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2026-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2026-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2026-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2026-05-26", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2026-05-27", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2026-05-28", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2026-05-29", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2026-05-30", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2026-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2026-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2026-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2026-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2026 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2026 yılı Ramazan (19-22.03.2026) ve Kurban (26-30.05.2026) Bayramı miladi tarihleri doğrulandı."
+      }
+    }
+  ]
+}

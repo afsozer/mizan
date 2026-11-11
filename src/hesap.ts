@@ -175,6 +175,9 @@ export function hesapla(girdi: Girdi, t: Tablolar): HesapSonucu {
     ozet: x.ozet,
   }));
   tabloOzetleri.push({ ad: t.gelirVergisi.ad, dogrulamaTarihi: t.gelirVergisi.dogrulamaTarihi, ozet: t.gelirVergisi.ozet });
+  if (t.ubgtTakvimi.yillar.length > 0) {
+    tabloOzetleri.push({ ad: t.ubgtTakvimi.ad, dogrulamaTarihi: t.ubgtTakvimi.dogrulamaTarihi, ozet: t.ubgtTakvimi.ozet });
+  }
 
   return {
     girdi,
