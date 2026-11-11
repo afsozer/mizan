@@ -126,6 +126,8 @@ export const BOLUMLER: { ad: string; aciklama: string; alanlar: Alan[] }[] = [
       sayi('faizGunEsasi', 'Faiz gün esası', { ...ops, varsayilan: '365', dayanak: 'Basit faiz, yıllık oran / 365 × gün.' }),
       sec('faizMatrahi', 'Faiz matrahı', [['brut', 'Brüt alacak'], ['net', 'Net alacak']], { ...ops, varsayilan: 'Brüt alacak', dayanak: 'Hesap esası.' }),
       sec('indirimMahsupSirasi', 'İndirim ve mahsup sırası', [['once-indirim', 'Önce indirim, sonra mahsup'], ['once-mahsup', 'Önce mahsup, sonra indirim']], { ...ops, ipucu: 'İndirim ve mahsup birlikteyse seçilmesi zorunludur; varsayılanı yoktur.' }),
+      sec('sgkUstSiniri', 'SGK prime esas kazanç üst sınırı', [[true, 'Üst sınırı uygula'], [false, 'Uygulama']], { ...ops, varsayilan: 'Uygulanmaz', dayanak: '5510 s.K. m.82/1-2; 2016: 6,5 kat, 2017-2025: 7,5 kat, 2026: 9 kat.' }),
+      { key: 'zamanasimi', ad: 'Zamanaşımı def\'i kırpması', ...ops, yeni: { sinirTarihi: '', gerekce: '' }, ipucu: 'Zamanaşımı def\'i ileri sürüldüğünde kabul edilen sınır tarihinden önceki ücret alacağı, ikramiye, fazla çalışma, hafta tatili ve UBGT dönem/satır/günleri kırpılır.', alanlar: [tarih('sinirTarihi', 'Zamanaşımı sınır tarihi'), gerekce] },
     ] },
   ] },
   { ad: 'Kalemler', aciklama: 'Hesaba katılacak kalemleri açın; her kalemin tercih ve gerekçelerini doldurun.', alanlar: [] },

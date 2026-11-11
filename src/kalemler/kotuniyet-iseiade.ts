@@ -93,6 +93,7 @@ export function bostaGecenSureHesapla(b: Baglam): KalemHesabi {
     bilgiler: [['Hak durumu', `${k.hakVar ? 'Var' : 'Yok'} (girdi: ${k.gerekce})`]],
     hamBrut: d(0),
     kesintiTuru: 'ucret',
+    sgkAySayisi: aySayisi,
     notlar,
   };
   if (k.faiz?.some((f) => f.tur === 'mevduat')) {

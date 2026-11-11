@@ -2,7 +2,7 @@
 // işaretlenir; varsayılanın dayanağı yanında yazar. Takdiri indirim, hak varlığı, vergi
 // yöntemi gibi tercihlerin varsayılanı yoktur, girdi dosyasında açıkça yazılmak zorundadır.
 import { d, Decimal, yuzde, sayi } from './para.ts';
-import type { Girdi } from './girdi.ts';
+import type { Girdi, ZamanasimiParametresi } from './girdi.ts';
 import { trTarih, yilAl } from './tarih.ts';
 
 export interface Parametre {
@@ -21,6 +21,8 @@ export interface Esaslar {
   indirimMahsupSirasi?: 'once-indirim' | 'once-mahsup';
   vergiYili: number;
   asgariUcretIstisnasi: boolean;
+  sgkUstSiniri: boolean;
+  zamanasimi?: ZamanasimiParametresi;
   fazlaCalismaCarpani: Decimal;
   haftaTatiliCarpani: Decimal;
   ubgtCarpani: Decimal;
@@ -106,6 +108,21 @@ export function esaslariBelirle(g: Girdi): Esaslar {
     'GVK m.23/1-18 ve 488 s.K. (2) sayılı tablo IV-34 (7349 s.K., 01.01.2022\'den); GVGT Seri 319 m.4/5: ayın ücret ödemelerine bir kez; ' +
       'GİB özelgesi 13.12.2023 (gib.gov.tr/mevzuat/kanun/433/ozelge/23152): kalan istisna ihbar ve kıdeme de uygulanır',
   );
+  const sgkUstSiniri = sec(
+    'SGK prime esas kazanç üst sınırı',
+    p.sgkUstSiniri,
+    false,
+    (x) => (x ? 'ödeme tarihindeki aylık asgari ücret × üst sınır katı ile sınırlanır' : 'uygulanmaz (tek seferde ödeme matrahı)'),
+    '5510 s.K. m.82/1-2: günlük/aylık prime esas kazanç üst sınırı (2016: 6,5 kat; 6761 s.K. m.8 ile 2017-2025: 7,5 kat; 7566 s.K. m.24 ile 2026: 9 kat)',
+  );
+  if (p.zamanasimi) {
+    liste.push({
+      ad: 'Zamanaşımı sınır tarihi',
+      deger: `${trTarih(p.zamanasimi.sinirTarihi)} (öncesi dönem/günler dışlanır; girdi: ${p.zamanasimi.gerekce})`,
+      kaynak: 'girdi',
+      dayanak: '6098 s.K. TBK m.147/1-1, 4857 s.K. m.32/8, Ek m.3 ve Geçici m.8 (zamanaşımı def\'i)',
+    });
+  }
 
   const k = g.kalemler;
   const fazlaCalismaCarpani = k.fazlaCalisma
@@ -158,6 +175,8 @@ export function esaslariBelirle(g: Girdi): Esaslar {
     indirimMahsupSirasi: p.indirimMahsupSirasi,
     vergiYili,
     asgariUcretIstisnasi,
+    sgkUstSiniri,
+    zamanasimi: p.zamanasimi,
     fazlaCalismaCarpani,
     haftaTatiliCarpani,
     ubgtCarpani,

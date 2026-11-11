@@ -130,14 +130,31 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 - Dayanak: 2429 s.K. (günler), 4857 m.47 (çalışılan her gün için ayrıca bir günlük ücret).
 - Tutar = Σ gün × o tarihteki aylık / 30 × 1.
 
+## Zamanaşımı kırpması (`parametreler.zamanasimi`)
+
+- Dayanak: 6098 s.K. TBK m.147/1-1 ve 4857 s.K. m.32/8 (ücret, ikramiye, fazla çalışma, hafta tatili ve
+  UBGT gibi dönemsel ücret alacaklarında 5 yıllık zamanaşımı); tazminatlar ve yıllık izin ücreti için 4857
+  s.K. Ek m.3 ve Geçici m.8 (7036 s.K. m.15-16, 25.10.2017).
+- Zamanaşımı hak düşürücü süre değil def'idir; yalnız ileri sürülüp mahkemece/bilirkişi görevlendirmesinde
+  esas alındığında `parametreler.zamanasimi: { sinirTarihi, gerekce }` ile uygulanır.
+- Ücret alacağı, fazla çalışma ve hafta tatili dönemlerinde `sinirTarihi` öncesinde kalan dönemler tamamen
+  atlanır ve kalem notuna yazılır; kısmen `sinirTarihi` öncesinde kalan dönemlerde başlangıç `sinirTarihi`ne
+  çekilir, `gunSayisi`, `odenenBrut`, `dislanacakGun` ve `haftaSayisi` kalan gün / ilk dönem günü oranıyla
+  korunur ve kalem notuna yazılır.
+- İkramiye satırlarında ve UBGT günlerinde `sinirTarihi` öncesindeki satır ve günler elenir ve kalem notuna
+  yazılır.
+
 ## Takdiri indirim ve mahsup
 
 - İndirim = kuruş(ham brüt × oran). Mahsup girdi tutarıdır. İkisi birlikteyse sıra girdide seçilir.
 
 ## Brütten nete
 
-- SGK işçi payı ve işsizlik sigortası işçi payı brüt üzerinden; gelir vergisi matrahı = brüt - ikisi;
-  damga vergisi brüt üzerinden. Oranlar hesap tarihindeki tablo satırından.
+- SGK işçi payı ve işsizlik sigortası işçi payı brüt üzerinden (`parametreler.sgkUstSiniri: true`
+  seçilmişse 5510 s.K. m.82/1-2 uyarınca ödeme tarihindeki aylık asgari ücret × `ustSinirKati` tavanıyla
+  sınırlı matrah üzerinden: 2016'da 6,5 kat, 6761 s.K. m.8 ile 01.01.2017'den 7,5 kat, 7566 s.K. m.24 ve
+  m.38/1-b ile 01.01.2026'dan 9 kat); gelir vergisi matrahı = brüt - ikisi; damga vergisi brüt üzerinden.
+  Oranlar hesap tarihindeki tablo satırından.
 - Gelir vergisi: `sabit` ya da `dilim`. Dilimde vergi = V(önceki + matrah) - V(önceki); kalemlerin
   matrahları sırayla birikir. Tarife yılın **ücret** tarifesidir (2016'dan beri ücret ve ücret dışı
   tarifeler %27 diliminin üst sınırında ayrışır).
@@ -178,7 +195,10 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 - Kıdem tavanı: 22 dönem, Hazine ve Maliye Bakanlığı Mali ve Sosyal Haklar genelgeleri (2026 Temmuz:
   73.729,87 TL, genelge 03.07.2026).
 - Gelir vergisi: GVGT Seri 290, 296, 302, 305, 310, 313, 317, 323, 324, 329, 332 (ücret tarifesi).
-- Damga vergisi binde 7,59; SGK işçi %14 (MYÖ %9 + GSS %5), işsizlik %1; 2016-2026 değişmedi.
+- Damga vergisi binde 7,59; SGK işçi %14 (MYÖ %9 + GSS %5), işsizlik %1 (2016-2026 oranı değişmedi);
+  prime esas kazanç üst sınır katı (`ustSinirKati`, 5510 s.K. m.82/1): 2016'da 6,5 kat, 01.01.2017'den
+  7,5 kat (6761 s.K. m.8, RG 24.11.2016/29898), 01.01.2026'dan 9 kat (7566 s.K. m.24 ve m.38/1-b, RG
+  19.12.2025/33112).
 - Yasal faiz: %9 (BKK 2005/9831), 01.06.2024 %24 (CBK 8485), 31.07.2026 %31 (7589 s.K. m.10 formülü).
   AYM E.2024/24, K.2025/164 iptali madde 31.07.2026'da değiştiği için işçilik alacaklarını etkilemiyor.
 

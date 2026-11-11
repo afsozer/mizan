@@ -279,8 +279,12 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
     madde([
       ...s.uyarilar,
       'Hesap, girdi dosyasındaki olgu kabullerine (hizmet süresi, ücret, fazla çalışma saatleri, çalışılan tatil günleri) dayanır. Bu kabullerin ispatı ve değerlendirmesi mahkemeye aittir.',
-      'Zamanaşımı araç tarafından uygulanmaz; dönemler girdi dosyasında zamanaşımı dikkate alınarak verilir.',
-      'SGK prime esas kazanç üst sınırı brütten nete dönüşümde uygulanmamıştır. Kesintiler tek seferde ödeme varsayımıyla, hesap tarihindeki oranlarla hesaplanmıştır.',
+      s.esaslar.zamanasimi
+        ? `Zamanaşımı def'i nedeniyle ${trTarih(s.esaslar.zamanasimi.sinirTarihi)} öncesi dönem, satır ve günler ücret alacağı, ikramiye, fazla çalışma, hafta tatili ve UBGT hesaplarından dışlanmıştır (girdi: ${s.esaslar.zamanasimi.gerekce}).`
+        : 'Zamanaşımı araç tarafından uygulanmaz; dönemler girdi dosyasında zamanaşımı dikkate alınarak verilir.',
+      s.esaslar.sgkUstSiniri
+        ? 'SGK ve işsizlik sigortası işçi payı matrahı, 5510 s.K. m.82 uyarınca hesap tarihindeki aylık prime esas kazanç üst sınırıyla sınırlanmıştır. Kesintiler tek seferde ödeme varsayımıyla, hesap tarihindeki oranlarla hesaplanmıştır.'
+        : 'SGK prime esas kazanç üst sınırı brütten nete dönüşümde uygulanmamıştır. Kesintiler tek seferde ödeme varsayımıyla, hesap tarihindeki oranlarla hesaplanmıştır.',
       s.esaslar.asgariUcretIstisnasi
         ? 'Asgari ücret gelir ve damga vergisi istisnası, hesap tarihinin ayında başka ücret ödenmediği varsayımıyla bir kez uygulanmıştır.'
         : 'Asgari ücret gelir ve damga vergisi istisnası uygulanmamıştır (parametreler.vergi.asgariUcretIstisnasi).',

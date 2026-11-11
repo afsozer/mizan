@@ -6,6 +6,7 @@ export type {
   KalemKodu,
   FaizTuru,
   UcretYontemi,
+  ZamanasimiParametresi,
   KotuniyetGirdisi,
   BostaGecenSureGirdisi,
   IseBaslatmamaGirdisi,

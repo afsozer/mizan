@@ -2,7 +2,7 @@
 // kaynaksız, çakışan ya da boşluklu satır reddedilir. Bitişi belli son satırdan sonrası sorulursa
 // hesap durur. Açık uçlu son satır (kanunla belirlenen oranlar) doğrulama tarihinden sonra da
 // kullanılır ama rapora uyarı düşer; eski oran sessizce yürümez.
-import { d, Decimal, tl, yuzde } from './para.ts';
+import { d, Decimal, sayi, tl, yuzde } from './para.ts';
 import { gecerliTarih, gunEkle, karsilastir, trTarih, enBuyuk, enKucuk } from './tarih.ts';
 
 export interface Kaynak {
@@ -58,18 +58,19 @@ export class KaynakKaydi {
   }
 }
 
-const ALANLAR: Record<string, { etiket: string; tur: 'tl' | 'oran' }> = {
+const ALANLAR: Record<string, { etiket: string; tur: 'tl' | 'oran' | 'kat' }> = {
   brutAylik: { etiket: 'aylık', tur: 'tl' },
   brutGunluk: { etiket: 'günlük', tur: 'tl' },
   tutar: { etiket: '', tur: 'tl' },
   oran: { etiket: '', tur: 'oran' },
   sgkIsci: { etiket: 'SGK', tur: 'oran' },
   issizlikIsci: { etiket: 'işsizlik', tur: 'oran' },
+  ustSinirKati: { etiket: 'üst sınır', tur: 'kat' },
 };
 
 function degerBicimle(alan: string, deger: string): string {
   const a = ALANLAR[alan] ?? { etiket: alan, tur: 'tl' as const };
-  const metin = a.tur === 'tl' ? `${tl(d(deger))} TL` : yuzde(d(deger));
+  const metin = a.tur === 'tl' ? `${tl(d(deger))} TL` : a.tur === 'kat' ? `${sayi(d(deger))} kat` : yuzde(d(deger));
   return a.etiket ? `${a.etiket} ${metin}` : metin;
 }
 
@@ -216,6 +217,7 @@ export interface OranSatiri extends DonemSatiri {
 export interface SgkSatiri extends DonemSatiri {
   sgkIsci: string;
   issizlikIsci: string;
+  ustSinirKati: string;
 }
 
 export interface GelirVergisiYili {
@@ -325,7 +327,7 @@ export function tablolariKur(h: HamTablolar): Tablolar {
   return {
     asgariUcret: kur<AsgariUcretSatiri>(h.asgariUcret, ['brutAylik', 'brutGunluk']),
     kidemTavani: kur<KidemTavaniSatiri>(h.kidemTavani, ['tutar']),
-    sgk: kur<SgkSatiri>(h.sgk, ['sgkIsci', 'issizlikIsci']),
+    sgk: kur<SgkSatiri>(h.sgk, ['sgkIsci', 'issizlikIsci', 'ustSinirKati']),
     damga: kur<OranSatiri>(h.damga, ['oran']),
     yasalFaiz: kur<OranSatiri>(h.yasalFaiz, ['oran']),
     mevduatFaizi: kur<OranSatiri>(h.mevduatFaizi, ['oran']),

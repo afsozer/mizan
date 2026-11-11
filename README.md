@@ -128,6 +128,17 @@ bölümünde "girdi" ya da "varsayılan" diye, dayanağıyla görünür.
   hesap tarihinin ayında bir kez, o ay başka ücret ödenmediği varsayımıyla uygulanır; önce ücret
   niteliğindeki kalemlerin, kalanı ihbar ve kıdemin vergisine mahsup edilir (GVK m.23/1-18, GVGT Seri
   319, GİB özelgesi 13.12.2023). Yalnız 2022 ve sonrası vergi yılında. Verilmezse uygulanmaz.
+- SGK prime esas kazanç üst sınırı (`parametreler.sgkUstSiniri`): `true` seçildiğinde ücret niteliğindeki
+  kalemlerde SGK ve işsizlik sigortası işçi payı matrahı ödeme tarihindeki aylık asgari ücret ×
+  `ustSinirKati` ile sınırlanır (çok aylı boşta geçen süre ve ücret alacaklarında ay sayısıyla çarpılır;
+  5510 s.K. m.80/1-d, m.82/1-2: 2016'da 6,5 kat, 6761 s.K. m.8 ile 01.01.2017'den 7,5 kat, 7566 s.K. m.24
+  ve m.38/1-b ile 01.01.2026'dan 9 kat). Varsayılan `false` (tek seferde ödeme matrahı).
+- Zamanaşımı kırpması (`parametreler.zamanasimi: { sinirTarihi, gerekce }`): zamanaşımı def'i ileri
+  sürüldüğünde (6098 s.K. TBK m.147/1-1, 4857 s.K. m.32/8, Ek m.3, Geçici m.8) kabul edilen sınır
+  tarihinden önce kalan ücret alacağı, fazla çalışma ve hafta tatili dönemleri kırpılır (kısmen kırpılan
+  dönemde `gunSayisi`, `odenenBrut`, `dislanacakGun` ve `haftaSayisi` orantılanır, tamamen sınır
+  öncesinde kalan dönem atlanır), ikramiye satırlarında ve UBGT günlerinde sınır öncesi tarihler dışlanır
+  ve kalem notlarına yazılır.
 
 Varsayılanı olan esaslar: günlük ücret = aylık / 30; saat ücreti = aylık / 225 (haftalık 45 saat);
 fazla çalışma çarpanı 1,5 (4857 m.41/2); hafta tatili çarpanı 1,5 (Yargıtay uygulaması); UBGT çarpanı
@@ -186,9 +197,12 @@ satırının kaynak bağlantısı. Aynı girdi ve aynı commit ile hesap yeniden
 
 - Olgu kabulleri (hizmet süresi, ücret, fazla çalışma saatleri, çalışılan tatil günleri) girdiden gelir;
   ispat ve değerlendirme mahkemeye aittir.
-- Zamanaşımı uygulanmaz; dönemler girdide zamanaşımı gözetilerek verilir.
-- SGK prime esas kazanç üst sınırı uygulanmaz. Kesintiler tek seferde ödeme varsayımıyla, hesap
-  tarihindeki oranlarla hesaplanır; geçmiş aylara dağıtılmaz.
+- Zamanaşımı kendiliğinden uygulanmaz; dönemler girdide zamanaşımı gözetilerek verilebilir ya da
+  `parametreler.zamanasimi` ile sınır tarihi ve gerekçesi tanımlanarak fazla çalışma, hafta tatili ve
+  UBGT günleri otomatik kırpılabilir.
+- SGK prime esas kazanç üst sınırı varsayılan olarak uygulanmaz; `parametreler.sgkUstSiniri: true`
+  seçilirse ödeme tarihindeki aylık üst sınır (5510 s.K. m.82) uygulanır. Kesintiler tek seferde ödeme
+  varsayımıyla, hesap tarihindeki oranlarla hesaplanır; geçmiş aylara dağıtılmaz.
 - Kıdem tazminatı tavanı aşan kısım için ücret gibi vergilendirme (GVK m.25/7) uygulanmaz; araç kıdemi
   zaten tavanla sınırlar.
 - 2022 öncesi asgari geçim indirimi uygulanmaz.

@@ -80,6 +80,8 @@ export function hataYolu(hata: unknown): string {
   if (mesaj.includes('parametreler.indirimMahsupSirasi')) return 'girdi.parametreler.indirimMahsupSirasi';
   if (mesaj.startsWith('Ücret alacağı:')) return 'girdi.kalemler.ucretAlacagi';
   if (mesaj.startsWith('İkramiye ve ilave tediye / prim alacağı:')) return 'girdi.kalemler.ikramiye';
+  if (mesaj.includes('parametreler.sgkUstSiniri')) return 'girdi.parametreler.sgkUstSiniri';
+  if (mesaj.includes('parametreler.zamanasimi')) return 'girdi.parametreler.zamanasimi';
   return 'girdi';
 }
 

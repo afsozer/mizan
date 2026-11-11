@@ -37,6 +37,8 @@ export interface KalemHesabi {
   /** Takdiri indirim ve mahsuptan önceki brüt, kuruşa yuvarlanmış. */
   hamBrut: Decimal;
   kesintiTuru: KesintiTuru;
+  /** SGK üst sınırı uygulanırken kalemin ay karşılığı (varsayılan 1 ay). */
+  sgkAySayisi?: Decimal;
   notlar: string[];
 }
 

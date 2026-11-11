@@ -9,6 +9,7 @@
       "bitis": null,
       "sgkIsci": "0.14",
       "issizlikIsci": "0.01",
+      "ustSinirKati": "7.5",
       "kaynak": {
         "ad": "TEST VERİSİ, gerçek oran değildir",
         "url": "https://example.invalid/test",

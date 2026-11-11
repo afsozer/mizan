@@ -1,5 +1,6 @@
 // Ödenmeyen ücret alacağı (4857 s.K. m.32, m.34) ve ikramiye / ilave tediye / prim alacağı
 // (4857 s.K. m.32, 6098 s.K. TBK m.405).
+import type { UcretAlacagiDonemi, ZamanasimiParametresi } from '../girdi.ts';
 import { d, Decimal, kurus, sayi, tl, topla } from '../para.ts';
 import { ayEkle, dahilGun, enBuyuk, enKucuk, gecerliTarih, gunEkle, karsilastir, sure, trTarih } from '../tarih.ts';
 import { KALEM_ADLARI, type Baglam, type KalemHesabi } from './ortak.ts';
@@ -40,9 +41,65 @@ function tamAyKesitGunu(donemBas: string, donemBit: string, kesitBas: string, ke
   return toplam;
 }
 
+function ucretDonemleriniKirp(
+  donemler: UcretAlacagiDonemi[],
+  zamanasimi: ZamanasimiParametresi | undefined,
+): { donemler: UcretAlacagiDonemi[]; notlar: string[] } {
+  if (!zamanasimi) return { donemler, notlar: [] };
+  const { sinirTarihi, gerekce } = zamanasimi;
+  const kalanlar: UcretAlacagiDonemi[] = [];
+  const notlar: string[] = [];
+  for (const donem of donemler) {
+    if (karsilastir(donem.bitis, sinirTarihi) < 0) {
+      notlar.push(
+        `Zamanaşımı sınır tarihi (${trTarih(sinirTarihi)}; girdi: ${gerekce}) nedeniyle ${trTarih(donem.baslangic)} - ${trTarih(donem.bitis)} dönemi tamamen zamanaşımına uğradığından hesap dışı bırakıldı.`,
+      );
+      continue;
+    }
+    if (karsilastir(donem.baslangic, sinirTarihi) < 0) {
+      const ilkGun = dahilGun(donem.baslangic, donem.bitis);
+      const kalanGun = dahilGun(sinirTarihi, donem.bitis);
+      const oran = d(kalanGun).div(ilkGun);
+      const kirpilanBitis = gunEkle(sinirTarihi, -1);
+      kalanlar.push({
+        ...donem,
+        baslangic: sinirTarihi,
+        gunSayisi: donem.gunSayisi ? donem.gunSayisi.times(oran) : undefined,
+        odenenBrut: donem.odenenBrut ? kurus(donem.odenenBrut.times(oran)) : undefined,
+      });
+      notlar.push(
+        `Zamanaşımı sınır tarihi (${trTarih(sinirTarihi)}; girdi: ${gerekce}) nedeniyle ${trTarih(donem.baslangic)} - ${trTarih(donem.bitis)} döneminin ${trTarih(donem.baslangic)} - ${trTarih(kirpilanBitis)} kısmı (${ilkGun - kalanGun} gün) kırpıldı; kalan ${kalanGun} gün üzerinden hesaplandı.`,
+      );
+      continue;
+    }
+    kalanlar.push(donem);
+  }
+  return { donemler: kalanlar, notlar };
+}
+
+function kapsananTakvimAySayisi(donemler: UcretAlacagiDonemi[]): Decimal | undefined {
+  const aylar = new Set<string>();
+  for (const donem of donemler) {
+    let yil = Number(donem.baslangic.slice(0, 4));
+    let ay = Number(donem.baslangic.slice(5, 7));
+    const bitYil = Number(donem.bitis.slice(0, 4));
+    const bitAy = Number(donem.bitis.slice(5, 7));
+    while (yil < bitYil || (yil === bitYil && ay <= bitAy)) {
+      aylar.add(`${yil}-${String(ay).padStart(2, '0')}`);
+      ay++;
+      if (ay > 12) {
+        ay = 1;
+        yil++;
+      }
+    }
+  }
+  return aylar.size > 1 ? d(aylar.size) : undefined;
+}
+
 export function ucretAlacagiHesapla(b: Baglam): KalemHesabi {
   const k = b.girdi.kalemler.ucretAlacagi!;
-  const { gunlukBolen } = b.esaslar;
+  const { gunlukBolen, zamanasimi } = b.esaslar;
+  const { donemler, notlar: zamanasimiNotlari } = ucretDonemleriniKirp(k.donemler, zamanasimi);
   const satirlar: string[][] = [];
   const gunler: Decimal[] = [];
   const hesaplananlar: Decimal[] = [];
@@ -51,7 +108,7 @@ export function ucretAlacagiHesapla(b: Baglam): KalemHesabi {
   let bolunenSayisi = 0;
   let eksiyeDusenVar = false;
 
-  for (const donem of k.donemler) {
+  for (const donem of donemler) {
     const takvimGun = dahilGun(donem.baslangic, donem.bitis);
     const tamAy = donem.tamAy ?? k.gunKurali === 'tam-ay';
     const donemHedefGun = donem.gunSayisi ?? (tamAy ? d(tamAyGunu(donem.baslangic, donem.bitis)) : d(takvimGun));
@@ -112,6 +169,7 @@ export function ucretAlacagiHesapla(b: Baglam): KalemHesabi {
   const dayanak: string[] = [
     '4857 s.K. m.32/1: genel anlamda ücret bir kimseye bir iş karşılığında işveren veya üçüncü kişiler tarafından sağlanan ve para ile ödenen tutardır',
     '4857 s.K. m.32/5-6: ücret en geç ayda bir ödenir; iş sözleşmelerinin sona ermesinde işçinin ücreti tam olarak ödenir',
+    ...(zamanasimi ? ['6098 s.K. TBK m.147/1-1 ve 4857 s.K. m.32/8: ücret alacaklarında 5 yıllık zamanaşımı'] : []),
   ];
   if (k.faiz?.some((f) => f.tur === 'mevduat')) {
     dayanak.push('4857 s.K. m.34/1: gününde ödenmeyen ücretler için mevduata uygulanan en yüksek faiz oranı uygulanır');
@@ -122,7 +180,7 @@ export function ucretAlacagiHesapla(b: Baglam): KalemHesabi {
 
   const bilgiler: [string, string][] = [
     ['Ücret yöntemi', b.ucret.yontemAciklamasi()],
-    ['Dönem sayısı', String(k.donemler.length)],
+    ['Dönem sayısı', String(donemler.length)],
     ['Toplam gün', sayi(toplamGun)],
   ];
   if (k.gunKurali) {
@@ -133,19 +191,20 @@ export function ucretAlacagiHesapla(b: Baglam): KalemHesabi {
   if (bolunenSayisi > 0) {
     notlar.push('Ücret değişim tarihlerini kapsayan dönemler ücret kesitlerine bölünerek her kesit kendi dönem ücretiyle hesaplandı.');
   }
-  const verilenGunSayisi = k.donemler.filter((x) => x.gunSayisi).length;
+  const verilenGunSayisi = donemler.filter((x) => x.gunSayisi).length;
   if (verilenGunSayisi > 0) {
     notlar.push(`${verilenGunSayisi} dönemde gün sayısı girdi ile verildi; takvim günü yerine o sayı kullanıldı.`);
   }
-  if (k.gunKurali === 'tam-ay' || k.donemler.some((x) => x.tamAy)) {
+  if (k.gunKurali === 'tam-ay' || donemler.some((x) => x.tamAy)) {
     notlar.push('Tam ay kuralı uygulanan dönemlerde 1 ay 30 gün sayıldı.');
   }
-  if (k.donemler.some((x) => x.brutAylik)) {
+  if (donemler.some((x) => x.brutAylik)) {
     notlar.push('Satıra özel brüt aylık ücret verilen dönemlerde ücret motoru yerine satır ücreti kullanıldı.');
   }
   if (eksiyeDusenVar) {
     notlar.push('Satırda ödenen brüt tutar hesaplanan brütü aştığı için kalan bakiye 0 alındı.');
   }
+  notlar.push(...zamanasimiNotlari);
 
   return {
     kod: 'ucretAlacagi',
@@ -160,6 +219,7 @@ export function ucretAlacagiHesapla(b: Baglam): KalemHesabi {
     },
     hamBrut,
     kesintiTuru: 'ucret',
+    sgkAySayisi: kapsananTakvimAySayisi(donemler),
     notlar,
   };
 }
@@ -197,12 +257,24 @@ function ikramiyeDonemYaz(donem: string | { baslangic: string; bitis: string } |
 
 export function ikramiyeHesapla(b: Baglam): KalemHesabi {
   const k = b.girdi.kalemler.ikramiye!;
-  const { gunlukBolen } = b.esaslar;
+  const { gunlukBolen, zamanasimi } = b.esaslar;
   const satirlar: string[][] = [];
   const tutarlar: Decimal[] = [];
+  const zamanasimiNotlari: string[] = [];
+  const aktifSatirlar = k.satirlar.filter((s) => {
+    if (!zamanasimi) return true;
+    const ucretTarihi = ikramiyeUcretTarihi(s.donem, s.tarih, b.ucret.sonUcretTarihi);
+    if (karsilastir(ucretTarihi, zamanasimi.sinirTarihi) < 0) {
+      zamanasimiNotlari.push(
+        `Zamanaşımı sınır tarihi (${trTarih(zamanasimi.sinirTarihi)}; girdi: ${zamanasimi.gerekce}) öncesinde kalan "${s.ad}" (${ikramiyeDonemYaz(s.donem, s.tarih)}) satırı hesap dışı bırakıldı.`,
+      );
+      return false;
+    }
+    return true;
+  });
   let eksiyeDusenVar = false;
 
-  for (const s of k.satirlar) {
+  for (const s of aktifSatirlar) {
     const ucretTarihi = ikramiyeUcretTarihi(s.donem, s.tarih, b.ucret.sonUcretTarihi);
     const donemTarih = ikramiyeDonemYaz(s.donem, s.tarih);
     const oran = s.calisilanOran ?? d(1);
@@ -247,32 +319,35 @@ export function ikramiyeHesapla(b: Baglam): KalemHesabi {
     '4857 s.K. m.32/2: ücret, prim, ikramiye ve bu nitelikteki her çeşit istihkak Türk parası ile ödenir',
     '6098 s.K. TBK m.405/1: ikramiyeyi istem hakkı anlaşma, çalışma şartı veya işverenin tek taraflı taahhüdü halinde doğar',
     '6098 s.K. TBK m.405/2: hizmet sözleşmesi ikramiyenin verildiği dönemden önce sona ermişse, çalıştığı süreye yansıyan bölümü (kıstelyevm) ödenir',
+    ...(zamanasimi ? ['6098 s.K. TBK m.147/1-1 ve 4857 s.K. m.32/8: ücret ve ikramiye alacaklarında 5 yıllık zamanaşımı'] : []),
   ];
   if (k.faiz?.some((f) => f.tur === 'mevduat')) {
     dayanak.push('4857 s.K. m.34/1: gününde ödenmeyen ücretler için mevduata uygulanan en yüksek faiz oranı uygulanır');
   }
 
+  const formulKaynak = aktifSatirlar.length ? aktifSatirlar : k.satirlar;
   const formul: string[] = [];
-  if (k.satirlar.some((s) => s.hesapSekli === 'tutar')) {
+  if (formulKaynak.some((s) => s.hesapSekli === 'tutar')) {
     formul.push('Sabit tutar: tutar = sabit brüt tutar × çalışılan oran');
   }
-  if (k.satirlar.some((s) => s.hesapSekli === 'gunluk')) {
+  if (formulKaynak.some((s) => s.hesapSekli === 'gunluk')) {
     formul.push(`Günlük: günlük ücret = çıplak brüt aylık / ${sayi(gunlukBolen)}; tutar = günlük ücret × gün × çalışılan oran`);
   }
-  if (k.satirlar.some((s) => s.hesapSekli === 'aylik-oran')) {
+  if (formulKaynak.some((s) => s.hesapSekli === 'aylik-oran')) {
     formul.push('Aylık oran: tutar = çıplak brüt aylık × oran × çalışılan oran');
   }
 
   const notlar: string[] = [];
-  if (k.satirlar.some((s) => s.calisilanOran && s.calisilanOran.lt(1))) {
+  if (aktifSatirlar.some((s) => s.calisilanOran && s.calisilanOran.lt(1))) {
     notlar.push('Dönem tamamlanmadan sona eren satırlarda TBK m.405/2 uyarınca çalışılan süreye yansıyan oran (kıstelyevm) uygulandı.');
   }
-  if (k.satirlar.some((s) => s.brutAylik)) {
+  if (aktifSatirlar.some((s) => s.brutAylik)) {
     notlar.push('Satıra özel brüt aylık ücret verilen satırlarda ücret motoru yerine satır ücreti kullanıldı.');
   }
   if (eksiyeDusenVar) {
     notlar.push('Satırda ödenen brüt tutar hesaplanan brütü aştığı için kalan bakiye 0 alındı.');
   }
+  notlar.push(...zamanasimiNotlari);
 
   return {
     kod: 'ikramiye',
@@ -281,7 +356,7 @@ export function ikramiyeHesapla(b: Baglam): KalemHesabi {
     formul,
     bilgiler: [
       ['Ücret yöntemi', b.ucret.yontemAciklamasi()],
-      ['Satır sayısı', String(k.satirlar.length)],
+      ['Satır sayısı', String(aktifSatirlar.length)],
     ],
     detay: {
       basliklar: ['Kalem', 'Dönem / tarih', 'Hesap şekli', 'Esas aylık (TL)', 'Kıstelyevm', 'Tutar (TL)'],

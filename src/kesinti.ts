@@ -3,7 +3,7 @@
 //   işe başlatmama: yalnız damga vergisi (GVK m.25/1-1 gelir vergisi istisnası, 5510 m.80/1-b prim dışı)
 //   ihbar ve kötüniyet: gelir vergisi + damga vergisi (5510 m.80/1-b prime esas kazanca girmez)
 //   ücret niteliğindekiler: SGK işçi payı + işsizlik sigortası işçi payı + gelir vergisi + damga vergisi
-import { d, Decimal, kurus, tl, yuzde, topla } from './para.ts';
+import { d, Decimal, kurus, sayi, tl, yuzde, topla } from './para.ts';
 import type { KesintiTuru } from './kalemler/ortak.ts';
 import type { VergiParametresi } from './girdi.ts';
 import type { KaynakKaydi, Tablolar } from './tablolar.ts';
@@ -40,17 +40,33 @@ export function kesintiHesapla(
   birikim: VergiBirikimi,
   tablolar: Tablolar,
   kayit: KaynakKaydi,
+  sgkUstSiniri = false,
+  sgkAySayisi?: Decimal,
 ): KesintiSonucu {
   const kesintiler: Kesinti[] = [];
   let gvMatrah = brut;
 
   if (tur === 'ucret') {
     const sgk = tablolar.sgk.bul(tarih, kayit);
-    const sgkTutar = kurus(brut.times(sgk.sgkIsci));
-    const issizlik = kurus(brut.times(sgk.issizlikIsci));
+    let primMatrahi = brut;
+    let sgkDayanak = '5510 s.K. m.81/1-a, f';
+    let issizlikDayanak = '4447 s.K. m.49/1';
+    if (sgkUstSiniri) {
+      const asgari = d(tablolar.asgariUcret.bul(tarih, kayit).brutAylik);
+      const kat = d(sgk.ustSinirKati);
+      const ayKatsayisi = sgkAySayisi ?? d(1);
+      const tavan = kurus(asgari.times(kat).times(ayKatsayisi));
+      primMatrahi = Decimal.min(brut, tavan);
+      const ayMetni = ayKatsayisi.eq(1) ? '' : ` × ${sayi(ayKatsayisi)} ay`;
+      const tavanNotu = `; 5510 s.K. m.82 üst sınır ${sayi(kat)} × ${tl(asgari)}${ayMetni} = ${tl(tavan)} TL`;
+      sgkDayanak += tavanNotu;
+      issizlikDayanak += tavanNotu;
+    }
+    const sgkTutar = kurus(primMatrahi.times(sgk.sgkIsci));
+    const issizlik = kurus(primMatrahi.times(sgk.issizlikIsci));
     kesintiler.push(
-      { ad: 'SGK işçi payı', matrah: brut, oran: yuzde(d(sgk.sgkIsci)), tutar: sgkTutar, dayanak: '5510 s.K. m.81/1-a, f' },
-      { ad: 'İşsizlik sigortası işçi payı', matrah: brut, oran: yuzde(d(sgk.issizlikIsci)), tutar: issizlik, dayanak: '4447 s.K. m.49/1' },
+      { ad: 'SGK işçi payı', matrah: primMatrahi, oran: yuzde(d(sgk.sgkIsci)), tutar: sgkTutar, dayanak: sgkDayanak },
+      { ad: 'İşsizlik sigortası işçi payı', matrah: primMatrahi, oran: yuzde(d(sgk.issizlikIsci)), tutar: issizlik, dayanak: issizlikDayanak },
     );
     gvMatrah = brut.minus(sgkTutar).minus(issizlik);
   }

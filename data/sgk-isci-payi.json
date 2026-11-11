@@ -1,19 +1,58 @@
 {
   "tablo": "sgk-isci-payi",
   "ad": "SGK ve işsizlik sigortası işçi payı",
-  "aciklama": "5510 s.K. m.81/1-a malullük, yaşlılık ve ölüm sigortası sigortalı hissesi %9 ile m.81/1-f genel sağlık sigortası sigortalı hissesi %5 toplamı (sgkIsci) ve 4447 s.K. m.49/1 işsizlik sigortası sigortalı payı %1 (issizlikIsci). 2016-2026 arasında sigortalı payı değişmedi; 7566 s.K. 01.01.2026'dan itibaren yalnız işveren MYÖ hissesini artırdı. Kıdem ve ihbar tazminatı prime esas kazanca girmez (5510 m.80/1-b).",
+  "aciklama": "5510 s.K. m.81/1-a malullük, yaşlılık ve ölüm sigortası sigortalı hissesi %9 ile m.81/1-f genel sağlık sigortası sigortalı hissesi %5 toplamı (sgkIsci), 4447 s.K. m.49/1 işsizlik sigortası sigortalı payı %1 (issizlikIsci) ve 5510 s.K. m.82/1 prime esas kazanç üst sınırının asgari ücrete kat oranı (ustSinirKati: 2016'da 6,5 kat, 6761 s.K. m.8 ile 01.01.2017'den 7,5 kat, 7566 s.K. m.24 ile 01.01.2026'dan 9 kat). 2016-2026 arasında sigortalı prim oranı değişmedi; 7566 s.K. 01.01.2026'dan itibaren işveren MYÖ hissesini ve prime esas kazanç üst sınır katını artırdı. Kıdem ve ihbar tazminatı prime esas kazanca girmez (5510 m.80/1-b).",
   "dogrulamaTarihi": "2026-11-11",
   "satirlar": [
     {
       "baslangic": "2016-01-01",
+      "bitis": "2016-12-31",
+      "sgkIsci": "0.14",
+      "issizlikIsci": "0.01",
+      "ustSinirKati": "6.5",
+      "kaynak": {
+        "ad": "5510 s.K. m.81/1-a (MYÖ sigortalı %9), m.81/1-f (GSS sigortalı %5) ve m.82/1 (üst sınır 6,5 kat); 4447 s.K. m.49/1 (işsizlik sigortalı %1)",
+        "url": "https://www.mevzuat.gov.tr/MevzuatMetin/1.5.5510.pdf",
+        "resmiGazete": {
+          "tarih": "2006-06-16",
+          "sayi": "26200"
+        },
+        "dogrulama": "mevzuat.gov.tr 5510 m.81-82 (dipnot 154-155) ve 4447 m.49 metinleri okundu; 5754 s.K. (RG 08.05.2008/26870) ve 6552 s.K. m.50 (RG 11.09.2014/29116 Mükerrer) kontrol edildi",
+        "not": "4447 s.K. metni: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4447.pdf. SGDP'ye tabi çalışan emekliler kapsam dışı."
+      }
+    },
+    {
+      "baslangic": "2017-01-01",
+      "bitis": "2025-12-31",
+      "sgkIsci": "0.14",
+      "issizlikIsci": "0.01",
+      "ustSinirKati": "7.5",
+      "kaynak": {
+        "ad": "5510 s.K. m.81/1-a, f ve m.82/1 (6761 s.K. m.8 ile üst sınır 7,5 kat); 4447 s.K. m.49/1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2016/11/20161124-1.htm",
+        "resmiGazete": {
+          "tarih": "2016-11-24",
+          "sayi": "29898"
+        },
+        "dogrulama": "6761 s.K. m.8 (RG 24.11.2016/29898) ve mevzuat.gov.tr 5510 m.82 dipnot 155 okundu (01.01.2017'den geçerli 7,5 kat)",
+        "not": "5510 s.K.: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.5510.pdf; 4447 s.K.: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4447.pdf. SGDP'ye tabi çalışan emekliler kapsam dışı."
+      }
+    },
+    {
+      "baslangic": "2026-01-01",
       "bitis": null,
       "sgkIsci": "0.14",
       "issizlikIsci": "0.01",
+      "ustSinirKati": "9",
       "kaynak": {
-        "ad": "5510 s.K. m.81/1-a (MYÖ sigortalı %9) ve m.81/1-f (GSS sigortalı %5); 4447 s.K. m.49/1 (işsizlik sigortalı %1)",
-        "url": "https://www.mevzuat.gov.tr/MevzuatMetin/1.5.5510.pdf",
-        "dogrulama": "mevzuat.gov.tr 5510 ve 4447 metinleri ve dipnotları okundu; 5754 s.K. (RG 08.05.2008/26870) ve 7566 s.K. (RG 19.12.2025/33112) metinleri RG'den okundu",
-        "not": "4447 s.K. metni: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4447.pdf. SGDP'ye tabi çalışan emekliler kapsam dışı."
+        "ad": "5510 s.K. m.81/1-a, f ve m.82/1 (7566 s.K. m.24 ve m.38/1-b ile üst sınır 9 kat); 4447 s.K. m.49/1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/12/20251219-1.htm",
+        "resmiGazete": {
+          "tarih": "2025-12-19",
+          "sayi": "33112"
+        },
+        "dogrulama": "7566 s.K. m.24 ve m.38/1-b (RG 19.12.2025/33112) ile mevzuat.gov.tr 5510 m.82 dipnot 156 okundu (01.01.2026'dan geçerli 9 kat)",
+        "not": "5510 s.K.: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.5510.pdf; 4447 s.K.: https://www.mevzuat.gov.tr/MevzuatMetin/1.5.4447.pdf. SGDP'ye tabi çalışan emekliler kapsam dışı."
       }
     }
   ]

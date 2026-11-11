@@ -170,6 +170,11 @@ export interface UbgtGirdisi extends OrtakKalem {
   takdiriIndirim: TakdiriIndirim;
 }
 
+export interface ZamanasimiParametresi {
+  sinirTarihi: string;
+  gerekce: string;
+}
+
 export interface VergiParametresi {
   yontem: 'dilim' | 'sabit';
   sabitOran?: Decimal;
@@ -212,6 +217,10 @@ export interface Girdi {
     indirimMahsupSirasi?: 'once-indirim' | 'once-mahsup';
     /** takvim: yıl/ay/gün takvimden; gun: gün sayısı, 1 yıl 365, 1 ay 30 gün. */
     sureHesabi?: 'takvim' | 'gun';
+    /** 5510 s.K. m.82 prime esas kazanç üst sınırı (varsayılan false). */
+    sgkUstSiniri?: boolean;
+    /** Zamanaşımı def'i kabul edildiğinde sınır tarihi ve gerekçesi; dönemsel ücret alacaklarında öncesi kırpılır. */
+    zamanasimi?: ZamanasimiParametresi;
     vergi: VergiParametresi;
   };
   tablolar?: { mevduatFaizi?: string };
@@ -464,7 +473,18 @@ export function girdiCoz(veri: unknown): Girdi {
   if (yontem !== 'donemsel' && ucret.donemsel) throw alanHatasi('girdi.ucret.donemsel', 'yalnız yöntem "donemsel" iken kullanılır');
 
   const p = k.alt('parametreler');
-  p.izinli(['gunlukBolen', 'aylikCalismaSaati', 'haftaHesabi', 'faizGunEsasi', 'faizMatrahi', 'indirimMahsupSirasi', 'sureHesabi', 'vergi']);
+  p.izinli([
+    'gunlukBolen',
+    'aylikCalismaSaati',
+    'haftaHesabi',
+    'faizGunEsasi',
+    'faizMatrahi',
+    'indirimMahsupSirasi',
+    'sureHesabi',
+    'sgkUstSiniri',
+    'zamanasimi',
+    'vergi',
+  ]);
   const v = p.alt('vergi');
   v.izinli(['yontem', 'sabitOran', 'yil', 'oncekiKumulatifMatrah', 'asgariUcretIstisnasi', 'birikim']);
   const vergiYontem = v.secenek('yontem', ['dilim', 'sabit'] as const);
@@ -478,6 +498,15 @@ export function girdiCoz(veri: unknown): Girdi {
     birikim: v.var('birikim') ? v.secenek('birikim', ['kalemler-arasi', 'kalem-bazinda'] as const) : undefined,
   };
   if (vergi.birikim && vergiYontem !== 'dilim') throw alanHatasi('girdi.parametreler.vergi.birikim', 'yalnız yöntem "dilim" iken kullanılır');
+  let zamanasimi: ZamanasimiParametresi | undefined;
+  if (p.var('zamanasimi')) {
+    const z = p.alt('zamanasimi');
+    z.izinli(['sinirTarihi', 'gerekce']);
+    zamanasimi = {
+      sinirTarihi: z.tarih('sinirTarihi'),
+      gerekce: z.metin('gerekce'),
+    };
+  }
   const parametreler = {
     gunlukBolen: p.var('gunlukBolen') ? p.sayi('gunlukBolen', 1) : undefined,
     aylikCalismaSaati: p.var('aylikCalismaSaati') ? p.sayi('aylikCalismaSaati', 1) : undefined,
@@ -488,6 +517,8 @@ export function girdiCoz(veri: unknown): Girdi {
       ? p.secenek('indirimMahsupSirasi', ['once-indirim', 'once-mahsup'] as const)
       : undefined,
     sureHesabi: p.var('sureHesabi') ? p.secenek('sureHesabi', ['takvim', 'gun'] as const) : undefined,
+    sgkUstSiniri: p.var('sgkUstSiniri') ? p.mantiksal('sgkUstSiniri') : undefined,
+    zamanasimi,
     vergi,
   };
   if (hizmet.dislanacakGun && parametreler.sureHesabi !== 'gun') {
