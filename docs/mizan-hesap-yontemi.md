@@ -39,6 +39,40 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 - Birden fazla dönemde son dönem mi tüm dönemler mi esas alınacağı girdide seçilir (9. HD 03.06.2021,
   2021/5562 E., 2021/9893 K.: ihbarda birleştirme yok). Kullandırılan bildirim süresi günden düşülür.
 
+## Kötüniyet tazminatı
+
+- Dayanak: 4857 m.17/6 (iş güvencesi kapsamı dışındaki işçilerin iş sözleşmesinin fesih hakkının kötüye
+  kullanılarak sona erdirilmesi), m.17/2 (bildirim süreleri), m.17/son (giydirilmiş ücret; 9. HD
+  30.03.2016, 2014/36354 E., 2016/7815 K.).
+- Kötüniyet = giydirilmiş brüt / 30 × (bildirim haftası × 3) × 7 (6, 12, 18 veya 24 hafta × 7 gün).
+  Tam 1,5 yıl sınırında `haftaSayisi` ile değiştirilebilir; birden fazla hizmet döneminde `donemEsasi`
+  (`son` | `tumu`) zorunludur.
+- Kesinti: gelir vergisi ve damga vergisi (5510 m.80/1-b prim dışı).
+- Faiz: yasal faiz.
+
+## Boşta geçen süre ücreti
+
+- Dayanak: 4857 m.21/3-4. Kararın kesinleşmesine kadar çalıştırılmadığı süre için en çok 4 aya kadar
+  doğmuş bulunan ücret ve diğer haklar; giydirilmiş brüt ücret üzerinden hesaplanır (9. HD 25.11.2019,
+  2016/9242 E., 2019/20742 K.; 9. HD 22.06.2017, 2017/21858 E., 2017/11169 K.).
+- Boşta geçen süre ücreti = esas giydirilmiş brüt aylık × ay sayısı (varsayılan 4, en çok 4 ay).
+  Döneme özgü `brutAylik` ve `ekYanHaklar` verilmezse son giydirilmiş brüt aylık esas alınır ve raporda
+  belirtilir.
+- Kesinti: SGK işçi payı, işsizlik sigortası işçi payı, gelir vergisi ve damga vergisi (5510 m.80/1-a-3).
+- Faiz: mevduata uygulanan en yüksek faiz (4857 m.34) veya yasal faiz.
+
+## İşe başlatmama tazminatı
+
+- Dayanak: 4857 m.21/1-2 ve m.21/4. İşçinin başvurusu üzerine işveren bir ay içinde işe başlatmaz ise
+  mahkemece veya özel hakemce belirlenen en az 4, en çok 8 aylık ücreti tutarında tazminat; çıplak brüt
+  ücret üzerinden hesaplanır (9. HD 25.11.2019, 2016/9242 E., 2019/20742 K.; 9. HD 22.06.2017,
+  2017/21858 E., 2017/11169 K.).
+- İşe başlatmama tazminatı = esas çıplak brüt aylık × ay sayısı (`aySayisi`: 4 ile 8 ay arası zorunlu
+  yargısal parametre; `esasBrutAylik` verilmezse son çıplak brüt ücret alınır).
+- Kesinti: yalnız damga vergisi (193 s.K. GVK m.25/1-1 gelir vergisi istisnası, 5510 s.K. m.80/1-b prim
+  istisnası).
+- Faiz: yasal faiz.
+
 ## Yıllık izin ücreti
 
 - Dayanak: 4857 m.53 (süreler), m.59 (sona ermede son ücret üzerinden ödeme).
@@ -108,7 +142,8 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
   matrahları sırayla birikir. Tarife yılın **ücret** tarifesidir (2016'dan beri ücret ve ücret dışı
   tarifeler %27 diliminin üst sınırında ayrışır).
 - Kıdem: tavan içinde gelir vergisinden istisna (GVK m.25/1-7-a), prim dışı (5510 m.80/1-b), damga
-  vergisine tabi. İhbar: prim dışı, gelir ve damga vergisine tabi.
+  vergisine tabi. İşe başlatmama tazminatı: gelir vergisinden istisna (GVK m.25/1-1), prim dışı (5510
+  m.80/1-b), yalnız damga vergisine tabi. İhbar ve kötüniyet: prim dışı, gelir ve damga vergisine tabi.
 - Asgari ücret istisnası (seçimli, 2022'den): ödeme ayının asgari ücret matrahı (brüt - SGK - işsizlik)
   yıl başından kümülatif matrahla vergilendirilir, bulunan vergi GV istisnasıdır; aylık brüt asgari ücret
   × binde 7,59 DV istisnasıdır. İkisi ödeme ayında bir kez, önce ücret niteliğindeki kalemlere, kalanı

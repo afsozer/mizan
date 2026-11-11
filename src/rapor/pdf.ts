@@ -196,6 +196,18 @@ export function raporTanimi(s: HesapSonucu, bilgi: RaporBilgisi): Record<string,
     if ('kullandirilanGun' in kg && kg.kullandirilanGun) {
       kalemTercihleri.push([k.ad, 'Kullandırılan bildirim süresi', `${kg.kullandirilanGun.toString()} gün`, '-']);
     }
+    if ('aySayisi' in kg && kg.aySayisi) {
+      kalemTercihleri.push([k.ad, 'Esas alınan ay sayısı', `${kg.aySayisi.toString()} ay`, '-']);
+    }
+    if ('brutAylik' in kg && kg.brutAylik) {
+      kalemTercihleri.push([k.ad, 'Döneme özgü çıplak brüt aylık', `${tl(kg.brutAylik)} TL`, '-']);
+    }
+    if ('ekYanHaklar' in kg && kg.ekYanHaklar !== undefined) {
+      kalemTercihleri.push([k.ad, 'Döneme özgü aylık yan haklar', `${tl(kg.ekYanHaklar)} TL`, '-']);
+    }
+    if ('esasBrutAylik' in kg && kg.esasBrutAylik) {
+      kalemTercihleri.push([k.ad, 'Esas çıplak brüt aylık', `${tl(kg.esasBrutAylik)} TL`, '-']);
+    }
     for (const f of kg.faiz ?? []) {
       kalemTercihleri.push([k.ad, 'Faiz', `${faizTuruAdi(f.tur, k.kod)}, ${trTarih(f.baslangic)}${f.tutar ? `, ${tl(f.tutar)} TL` : ''}`, f.gerekce]);
     }

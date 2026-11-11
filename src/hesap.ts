@@ -9,6 +9,7 @@ import { asgariUcretIstisnasi, istisnaUygula, kesintiHesapla, VergiBirikimi, typ
 import type { Baglam, KalemHesabi } from './kalemler/ortak.ts';
 import { kidemHesapla } from './kalemler/kidem.ts';
 import { ihbarHesapla } from './kalemler/ihbar.ts';
+import { bostaGecenSureHesapla, iseBaslatmamaHesapla, kotuniyetHesapla } from './kalemler/kotuniyet-iseiade.ts';
 import { yillikIzinHesapla } from './kalemler/yillik-izin.ts';
 import { ucretAlacagiHesapla, ikramiyeHesapla } from './kalemler/ucret-alacagi.ts';
 import { fazlaCalismaHesapla, haftaTatiliHesapla, ubgtHesapla } from './kalemler/donemsel.ts';
@@ -37,6 +38,9 @@ export interface HesapSonucu {
 const SIRA: [KalemKodu, (b: Baglam) => KalemHesabi][] = [
   ['kidem', kidemHesapla],
   ['ihbar', ihbarHesapla],
+  ['kotuniyet', kotuniyetHesapla],
+  ['bostaGecenSure', bostaGecenSureHesapla],
+  ['iseBaslatmama', iseBaslatmamaHesapla],
   ['yillikIzin', yillikIzinHesapla],
   ['ucretAlacagi', ucretAlacagiHesapla],
   ['ikramiye', ikramiyeHesapla],

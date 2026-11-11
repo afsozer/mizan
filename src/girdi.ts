@@ -4,7 +4,18 @@ import { parse } from 'yaml';
 import { d, Decimal } from './para.ts';
 import { gecerliTarih, karsilastir } from './tarih.ts';
 
-export type KalemKodu = 'kidem' | 'ihbar' | 'yillikIzin' | 'ucretAlacagi' | 'ikramiye' | 'fazlaCalisma' | 'haftaTatili' | 'ubgt';
+export type KalemKodu =
+  | 'kidem'
+  | 'ihbar'
+  | 'kotuniyet'
+  | 'bostaGecenSure'
+  | 'iseBaslatmama'
+  | 'yillikIzin'
+  | 'ucretAlacagi'
+  | 'ikramiye'
+  | 'fazlaCalisma'
+  | 'haftaTatili'
+  | 'ubgt';
 export type FaizTuru = 'mevduat' | 'yasal';
 export type UcretYontemi = 'asgari' | 'asgari-orani' | 'sabit' | 'donemsel';
 export type UcretGunKurali = 'takvim' | 'tam-ay';
@@ -58,6 +69,35 @@ export interface IhbarGirdisi extends OrtakKalem {
   donemEsasi?: 'son' | 'tumu';
   /** Bildirim süresinin işçiye kullandırılan kısmı (gün). */
   kullandirilanGun?: Decimal;
+}
+
+export interface KotuniyetGirdisi extends OrtakKalem {
+  hakVar: boolean;
+  gerekce: string;
+  /** 4857 m.17 sınır sürelerinde yorum farkı için elle hafta sayısı (bildirim süresinin 3 katı yerine). */
+  haftaSayisi?: Decimal;
+  /** Birden fazla hizmet döneminde zorunlu: bildirim süresi son döneme mi tüm dönemlere mi göre. */
+  donemEsasi?: 'son' | 'tumu';
+}
+
+export interface BostaGecenSureGirdisi extends OrtakKalem {
+  hakVar: boolean;
+  gerekce: string;
+  /** Çalıştırılmayan süreye göre en çok 4 aya kadar (varsayılan 4). */
+  aySayisi?: Decimal;
+  /** Boşta geçen süreye özgü aylık çıplak brüt ücret; verilmezse son çıplak brüt ücret alınır. */
+  brutAylik?: Decimal;
+  /** Boşta geçen süreye özgü aylık brüt yan haklar toplamı; verilmezse son yan haklar toplamı alınır. */
+  ekYanHaklar?: Decimal;
+}
+
+export interface IseBaslatmamaGirdisi extends OrtakKalem {
+  hakVar: boolean;
+  gerekce: string;
+  /** Mahkemece veya özel hakemce belirlenen tazminat süresi: 4 ile 8 ay arası (4857 m.21/1). */
+  aySayisi: Decimal;
+  /** İşe başlatmama tarihindeki aylık çıplak brüt ücret; verilmezse son çıplak brüt ücret alınır. */
+  esasBrutAylik?: Decimal;
 }
 
 export interface YillikIzinGirdisi extends OrtakKalem {
@@ -178,6 +218,9 @@ export interface Girdi {
   kalemler: {
     kidem?: KidemGirdisi;
     ihbar?: IhbarGirdisi;
+    kotuniyet?: KotuniyetGirdisi;
+    bostaGecenSure?: BostaGecenSureGirdisi;
+    iseBaslatmama?: IseBaslatmamaGirdisi;
     yillikIzin?: YillikIzinGirdisi;
     ucretAlacagi?: UcretAlacagiGirdisi;
     ikramiye?: IkramiyeGirdisi;
@@ -459,7 +502,19 @@ export function girdiCoz(veri: unknown): Girdi {
   }
 
   const km = k.alt('kalemler');
-  km.izinli(['kidem', 'ihbar', 'yillikIzin', 'ucretAlacagi', 'ikramiye', 'fazlaCalisma', 'haftaTatili', 'ubgt']);
+  km.izinli([
+    'kidem',
+    'ihbar',
+    'kotuniyet',
+    'bostaGecenSure',
+    'iseBaslatmama',
+    'yillikIzin',
+    'ucretAlacagi',
+    'ikramiye',
+    'fazlaCalisma',
+    'haftaTatili',
+    'ubgt',
+  ]);
   const kalemler: Girdi['kalemler'] = {};
   if (km.var('kidem')) {
     const o = km.alt('kidem');
@@ -500,6 +555,51 @@ export function girdiCoz(veri: unknown): Girdi {
     if (donemler.length > 1 && !kalemler.ihbar.donemEsasi) {
       throw alanHatasi(`${o.yer}.donemEsasi`, 'birden fazla hizmet döneminde yazılmalı (son | tumu)');
     }
+  }
+  if (km.var('kotuniyet')) {
+    const o = km.alt('kotuniyet');
+    o.izinli(['hakVar', 'gerekce', 'haftaSayisi', 'donemEsasi', ...ORTAK]);
+    kalemler.kotuniyet = {
+      hakVar: o.mantiksal('hakVar'),
+      gerekce: o.metin('gerekce'),
+      haftaSayisi: o.var('haftaSayisi') ? o.sayi('haftaSayisi', 1) : undefined,
+      donemEsasi: o.var('donemEsasi') ? o.secenek('donemEsasi', ['son', 'tumu'] as const) : undefined,
+      ...ortakOku(o),
+    };
+    if (donemler.length > 1 && !kalemler.kotuniyet.donemEsasi) {
+      throw alanHatasi(`${o.yer}.donemEsasi`, 'birden fazla hizmet döneminde yazılmalı (son | tumu)');
+    }
+  }
+  if (km.var('bostaGecenSure')) {
+    const o = km.alt('bostaGecenSure');
+    o.izinli(['hakVar', 'gerekce', 'aySayisi', 'brutAylik', 'ekYanHaklar', ...ORTAK]);
+    const aySayisi = o.var('aySayisi') ? o.sayi('aySayisi') : undefined;
+    if (aySayisi && (aySayisi.lte(0) || aySayisi.gt(4))) {
+      throw alanHatasi(`${o.yer}.aySayisi`, "4857 s.K. m.21/3 uyarınca 0'dan büyük ve en çok 4 ay olmalı");
+    }
+    kalemler.bostaGecenSure = {
+      hakVar: o.mantiksal('hakVar'),
+      gerekce: o.metin('gerekce'),
+      aySayisi,
+      brutAylik: o.var('brutAylik') ? o.tutar('brutAylik') : undefined,
+      ekYanHaklar: o.var('ekYanHaklar') ? o.tutar('ekYanHaklar') : undefined,
+      ...ortakOku(o),
+    };
+  }
+  if (km.var('iseBaslatmama')) {
+    const o = km.alt('iseBaslatmama');
+    o.izinli(['hakVar', 'gerekce', 'aySayisi', 'esasBrutAylik', ...ORTAK]);
+    const aySayisi = o.sayi('aySayisi');
+    if (aySayisi.lt(4) || aySayisi.gt(8)) {
+      throw alanHatasi(`${o.yer}.aySayisi`, '4857 s.K. m.21/1 uyarınca 4 ile 8 ay arasında olmalı');
+    }
+    kalemler.iseBaslatmama = {
+      hakVar: o.mantiksal('hakVar'),
+      gerekce: o.metin('gerekce'),
+      aySayisi,
+      esasBrutAylik: o.var('esasBrutAylik') ? o.tutar('esasBrutAylik') : undefined,
+      ...ortakOku(o),
+    };
   }
   if (km.var('yillikIzin')) {
     const o = km.alt('yillikIzin');

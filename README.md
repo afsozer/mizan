@@ -7,10 +7,11 @@ girdileri, formülü, dayanak maddeyi ve kullanılan resmi tablo satırının ka
 bir PDF rapor üretir; yanına bilirkişilik hesap kayıt defterine yapıştırılacak satır önerisini
 yazar.
 
-Faz 1 kapsamı: kıdem tazminatı (dönemsel tavanla), ihbar tazminatı, yıllık izin ücreti, ödenmeyen
-ücret alacağı (bakiye maaş), ikramiye ve ilave tediye / prim alacağı, fazla çalışma, hafta tatili ve
-ulusal bayram-genel tatil (UBGT) ücretleri; brütten nete dönüşüm (SGK ve işsizlik sigortası işçi payı,
-gelir vergisi, damga vergisi); faiz (kıdemde 1475 s.K. m.14 ve gününde ödenmeyen ücret/ikramiye
+Faz 1 kapsamı: kıdem tazminatı (dönemsel tavanla), ihbar tazminatı, kötüniyet tazminatı, boşta geçen
+süre ücreti, işe başlatmama tazminatı, yıllık izin ücreti, ödenmeyen ücret alacağı (bakiye maaş),
+ikramiye ve ilave tediye / prim alacağı, fazla çalışma, hafta tatili ve ulusal bayram-genel tatil
+(UBGT) ücretleri; brütten nete dönüşüm (SGK ve işsizlik sigortası işçi payı, gelir vergisi, damga
+vergisi); faiz (kıdemde 1475 s.K. m.14 ve gününde ödenmeyen ücret/ikramiye/boşta geçen süre
 alacaklarında 4857 s.K. m.34 uyarınca mevduata uygulanan en yüksek faiz, diğer kalemlerde yasal faiz).
 
 ## Kurulum
@@ -93,7 +94,8 @@ Kıdem ve ihbar son giydirilmiş ücretten (son çıplak ücret + yan haklar), y
 Araç hukuki değerlendirme yapmaz; sonucu değiştiren her tercih girdide yazılır ve raporun 3.
 bölümünde "girdi" ya da "varsayılan" diye, dayanağıyla görünür.
 
-- Kıdem ve ihbarda hak varlığı (`hakVar`) ve gerekçesi.
+- Kıdem, ihbar, kötüniyet, boşta geçen süre ücreti ve işe başlatmama tazminatında hak varlığı (`hakVar`) ve gerekçesi.
+- İşe başlatmama tazminatında mahkemece belirlenen ay sayısı (`aySayisi`, 4 ile 8 ay arası zorunlu) ve isteğe bağlı `esasBrutAylik` (çıplak brüt ücret); boşta geçen süre ücretinde `aySayisi` (varsayılan 4, en çok 4 ay) ve isteğe bağlı döneme özgü `brutAylik` / `ekYanHaklar`.
 - Takdiri indirim: fazla çalışma, hafta tatili ve UBGT'de **zorunlu** alan. İndirim yapılmayacaksa
   `oran: 0` ve gerekçe yazılır.
 - Mahsup; indirimle birlikteyse sırası (`parametreler.indirimMahsupSirasi`) da zorunlu.

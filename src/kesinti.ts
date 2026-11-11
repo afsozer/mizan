@@ -1,6 +1,7 @@
 // Brüt-net dönüşümü. Kesinti türü kaleme göre değişir:
 //   kıdem: yalnız damga vergisi (tavan içinde GVK m.25/1-7-a istisnası, 5510 m.80/1-b prim dışı)
-//   ihbar: gelir vergisi + damga vergisi (5510 m.80/1-b prime esas kazanca girmez)
+//   işe başlatmama: yalnız damga vergisi (GVK m.25/1-1 gelir vergisi istisnası, 5510 m.80/1-b prim dışı)
+//   ihbar ve kötüniyet: gelir vergisi + damga vergisi (5510 m.80/1-b prime esas kazanca girmez)
 //   ücret niteliğindekiler: SGK işçi payı + işsizlik sigortası işçi payı + gelir vergisi + damga vergisi
 import { d, Decimal, kurus, tl, yuzde, topla } from './para.ts';
 import type { KesintiTuru } from './kalemler/ortak.ts';
@@ -74,10 +75,17 @@ export function kesintiHesapla(
     matrah: brut,
     oran: yuzde(d(damga.oran)),
     tutar: kurus(brut.times(damga.oran)),
-    dayanak: '488 s.K. (1) sayılı tablo IV-1-b',
+    dayanak:
+      tur === 'iseBaslatmama'
+        ? '488 s.K. (1) sayılı tablo IV-1-b (GVK m.25/1-1 GV istisnası, 5510 s.K. m.80/1-b prim dışı)'
+        : '488 s.K. (1) sayılı tablo IV-1-b',
   });
 
-  return { kesintiler, net: brut.minus(topla(kesintiler.map((k) => k.tutar))), gelirVergisiMatrahi: gvMatrah };
+  return {
+    kesintiler,
+    net: brut.minus(topla(kesintiler.map((k) => k.tutar))),
+    gelirVergisiMatrahi: tur === 'ucret' || tur === 'ihbar' ? gvMatrah : d(0),
+  };
 }
 
 export interface AsgariUcretIstisnasi {

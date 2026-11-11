@@ -20,8 +20,8 @@ export interface DetayTablo {
   toplam?: string[];
 }
 
-/** Kesinti türü: kıdemde yalnız damga, ihbarda gelir ve damga, ücret niteliğindekilerde SGK dahil hepsi. */
-export type KesintiTuru = 'kidem' | 'ihbar' | 'ucret';
+/** Kesinti türü: kıdem ve işe başlatmamada yalnız damga, ihbar ve kötüniyette gelir ve damga, ücret niteliğindekilerde SGK dahil hepsi. */
+export type KesintiTuru = 'kidem' | 'iseBaslatmama' | 'ihbar' | 'ucret';
 
 export interface KalemHesabi {
   kod: KalemKodu;
@@ -43,6 +43,9 @@ export interface KalemHesabi {
 export const KALEM_ADLARI: Record<KalemKodu, string> = {
   kidem: 'Kıdem tazminatı',
   ihbar: 'İhbar tazminatı',
+  kotuniyet: 'Kötüniyet tazminatı',
+  bostaGecenSure: 'Boşta geçen süre ücreti',
+  iseBaslatmama: 'İşe başlatmama tazminatı',
   yillikIzin: 'Yıllık izin ücreti',
   ucretAlacagi: 'Ücret alacağı',
   ikramiye: 'İkramiye ve ilave tediye / prim alacağı',

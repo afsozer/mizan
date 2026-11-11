@@ -19,7 +19,7 @@ test('boş form ve yeni kalemler zorunlu hukuki tercihlere değer atamaz', () =>
   for (const k of KALEMLER) {
     const form = alanDegistir(yamlForma(ornek), ['kalemler'], { [k.key]: kalemYeni(k.key) });
     assert.throws(() => formuDogrula(form));
-    if (['kidem', 'ihbar'].includes(k.key)) assert.equal(degerOku(form, ['kalemler', k.key, 'hakVar']), '');
+    if (['kidem', 'ihbar', 'kotuniyet', 'bostaGecenSure', 'iseBaslatmama'].includes(k.key)) assert.equal(degerOku(form, ['kalemler', k.key, 'hakVar']), '');
     if (['fazlaCalisma', 'haftaTatili', 'ubgt'].includes(k.key)) assert.equal(degerOku(form, ['kalemler', k.key, 'takdiriIndirim', 'oran']), '');
   }
 });
