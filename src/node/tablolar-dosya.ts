@@ -23,6 +23,7 @@ export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): 
   const f = TABLO_DOSYALARI;
   const avansReeskontFaizi = varsaOku(f.avansReeskontFaizi);
   const icraHarclari = varsaOku(f.icraHarclari);
+  const aaut = varsaOku(f.aaut);
   return tablolariKur({
     asgariUcret: oku(f.asgariUcret),
     kidemTavani: oku(f.kidemTavani),
@@ -39,5 +40,6 @@ export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): 
     ubgtTakvimi: oku(f.ubgtTakvimi),
     ...(avansReeskontFaizi ? { avansReeskontFaizi } : {}),
     ...(icraHarclari ? { icraHarclari } : {}),
+    ...(aaut ? { aaut } : {}),
   });
 }

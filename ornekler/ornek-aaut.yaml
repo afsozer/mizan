@@ -1,0 +1,24 @@
+# mizan örnek girdisi: kurgusal bir AAÜT karşı vekalet ücreti hesabı (kısmi kabul / kısmi ret).
+# Tarihler YYYY-AA-GG, tutarlar TL, ondalık ayırıcı nokta.
+# Şemada olmayan alan hata verir; ad, kimlik numarası gibi kişisel veri yazılacak yer yoktur.
+
+alan: aaut
+
+dosya:
+  mahkeme: Örnek Asliye Hukuk Mahkemesi
+  esasNo: 2026/10
+  kisaAd: ornek-asliye-hukuk    # kanıt dosyası adında kullanılır
+  kaynak: örnek hesap           # defterdeki "Kaynak" sütunu: "kendi dosyam" ya da meslektaşın adı ve barosu
+  altAlan: "60.02"
+
+hesapTarihi: 2026-11-10         # AAÜT m.21 uyarınca hüküm veya hukuki yardımın tamamlandığı tarih
+
+uyusmazlik:
+  merci: asliye-hukuk           # sulh-hukuk | asliye-hukuk | asliye-ticaret | is | aile | tuketici | idare-vergi-durusmasiz | idare-vergi-durusmali | icra-dairesi | ...
+  tur: nispi                    # nispi (Üçüncü Kısım kademeli) | maktu (İkinci Kısım maktu)
+  nitelik: genel                # genel | manevi-tazminat | maddi-tazminat | nafaka
+  davaDegeri: 2500000           # toplam müddeabih / takip tutarı (TL)
+  kabulTutari: 1800000          # davacı lehine kabul edilen tutar (TL)
+  retTutari: 700000             # davalı lehine reddedilen tutar (TL)
+  asama: karar                  # karar (%100) | on-inceleme-oncesi (1/2, AAÜT m.6/m.15) | odeme-suresi-icinde (3/4, AAÜT m.11/4)
+  # asamaGerekcesi: Ön inceleme tutanağı imzalanmadan önce feragat (AAÜT m.6/1)

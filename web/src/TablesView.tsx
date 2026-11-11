@@ -1,5 +1,5 @@
-import { TABLO_DOSYALARI, trTarih, tl, yuzde, sayi, Decimal } from '../../src/index.ts';
-import type { Kaynak } from '../../src/index.ts';
+import { AAUT_MAKTU_ETIKETLERI, TABLO_DOSYALARI, trTarih, tl, yuzde, sayi, Decimal } from '../../src/index.ts';
+import type { AautMaktuAnahtari, Kaynak } from '../../src/index.ts';
 import { KaynakBilgisi, VeriTablosu } from './Results.tsx';
 import { indir } from './exports.ts';
 import type { TabloBelgesi } from './tables.ts';
@@ -9,6 +9,7 @@ const ALANLAR: Record<string, string> = {
   baslangic: 'Başlangıç',
   bitis: 'Bitiş',
   yil: 'Yıl',
+  donem: 'Tarife dönemi',
   tutar: 'Tutar (TL)',
   brutAylik: 'Aylık brüt (TL)',
   brutGunluk: 'Günlük brüt (TL)',
@@ -16,7 +17,8 @@ const ALANLAR: Record<string, string> = {
   sgkIsci: 'SGK işçi payı',
   issizlikIsci: 'İşsizlik işçi payı',
   ustSinirKati: 'Üst sınır katı',
-  dilimler: 'Vergi dilimleri',
+  maktu: 'Maktu ücretler (TL)',
+  dilimler: 'Dilimler',
   gunler: 'Tatil günleri',
   reeskontOrani: 'Reeskont iskonto oranı',
   avansOrani: 'Ticari temerrüt (avans) faiz oranı',
@@ -41,7 +43,21 @@ function degerYaz(key: string, deger: unknown): string {
   }
   if (typeof deger === 'string' && /^(tutar|brutAylik|brutGunluk|basvurmaHarci)$/.test(key)) return tl(new Decimal(deger));
   if (key === 'ustSinirKati' && typeof deger === 'string') return `${sayi(new Decimal(deger))} kat`;
-  if (key === 'dilimler' && Array.isArray(deger)) return deger.map((d: { ustSinir: string | null; oran: string }) => `${d.ustSinir === null ? 'Üst sınır yok' : `${tl(new Decimal(d.ustSinir))} TL üst sınıra kadar`}: ${yuzde(new Decimal(d.oran))}`).join('; ');
+  if (key === 'maktu' && deger && typeof deger === 'object' && !Array.isArray(deger)) {
+    return Object.entries(deger as Record<string, string>)
+      .map(([k, v]) => `${AAUT_MAKTU_ETIKETLERI[k as AautMaktuAnahtari] ?? k}: ${tl(new Decimal(v))} TL`)
+      .join('; ');
+  }
+  if (key === 'dilimler' && Array.isArray(deger)) {
+    return deger
+      .map((d: { dilimTutari?: string | null; ustSinir: string | null; oran: string }) => {
+        if (d.dilimTutari !== undefined) {
+          return `${d.dilimTutari === null ? 'Yukarısı' : `${tl(new Decimal(d.dilimTutari))} TL dilim (kümülatif ${tl(new Decimal(d.ustSinir!))} TL)`}: ${yuzde(new Decimal(d.oran))}`;
+        }
+        return `${d.ustSinir === null ? 'Üst sınır yok' : `${tl(new Decimal(d.ustSinir))} TL üst sınıra kadar`}: ${yuzde(new Decimal(d.oran))}`;
+      })
+      .join('; ');
+  }
   if (key === 'gunler' && Array.isArray(deger)) return deger.map((g: { tarih: string; gun: string; ad: string }) => `${trTarih(g.tarih)} ${g.ad} (${sayi(new Decimal(g.gun))} gün)`).join('; ');
   return typeof deger === 'object' ? JSON.stringify(deger) : String(deger);
 }

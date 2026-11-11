@@ -1,5 +1,5 @@
 import { tl, yuzde, trTarih } from '../../src/index.ts';
-import type { HesapSonucu, KalemSonucu, Kaynak } from '../../src/index.ts';
+import type { AautHesapSonucu, AautTarafHesabi, HesapSonucu, KalemSonucu, Kaynak } from '../../src/index.ts';
 
 export function VeriTablosu({ basliklar, satirlar, toplam, aciklama }: { basliklar: string[]; satirlar: string[][]; toplam?: string[]; aciklama?: string }) {
   return <div class="tablo-kaydir" tabIndex={0} role="region" aria-label={aciklama ?? basliklar.join(', ')}><table>
@@ -58,6 +58,71 @@ export function Sonuclar({ sonuc: s, tam = false }: { sonuc: HesapSonucu; tam?: 
     </details>)}</div>
     <details class="rapor-bolumu" open={tam || undefined}><summary>Hukuki tercihler <span>{s.parametreler.length} esas</span></summary>
       <VeriTablosu basliklar={['Tercih', 'Değer', 'Kaynak', 'Dayanak']} satirlar={s.parametreler.map(p => [p.ad, p.deger, p.kaynak, p.dayanak])} />
+    </details>
+    <details class="rapor-bolumu"><summary>Kullanılan kaynaklar <span>{s.kaynaklar.length} satır</span></summary>{s.kaynaklar.map((k, i) => <section class="kaynak-satiri" key={i}><h4>{k.tablo} · {k.aralik}</h4><p>{k.deger}</p><KaynakBilgisi kaynak={k.kaynak} /></section>)}</details>
+    <details class="rapor-bolumu" open={s.uyarilar.length > 0}><summary>Uyarılar <span>{s.uyarilar.length}</span></summary>{s.uyarilar.length ? <ul>{s.uyarilar.map((u, i) => <li key={i}>{u}</li>)}</ul> : <p>Bu hesap için tablo uyarısı yok.</p>}</details>
+  </>;
+}
+
+function AautTarafDetayi({ t }: { t: AautTarafHesabi }) {
+  return <div class="kalem-detayi">
+    <h4>Dayanak ve formül</h4>
+    <ul>{t.dayanak.map((d, i) => <li key={i}>{d}</li>)}</ul>
+    {t.formul.map((f, i) => <p class="formul" key={i}>{f}</p>)}
+    <dl class="bilgi-listesi">
+      <div><dt>Esas tutar</dt><dd>{tl(t.esasTutar)} TL</dd></div>
+      <div><dt>Merci maktu ücreti</dt><dd>{tl(t.maktuUcret)} TL</dd></div>
+      {!t.hamNispiUcret.isZero() && <div><dt>Kademeli nispi toplam</dt><dd>{tl(t.hamNispiUcret)} TL</dd></div>}
+      {!t.asamaCarpani.eq(1) && <div><dt>Aşama çarpanı</dt><dd>{yuzde(t.asamaCarpani)}</dd></div>}
+      <div><dt>Hükmedilecek ücret</dt><dd>{tl(t.hukmedilenUcret)} TL</dd></div>
+    </dl>
+    {t.dilimler.length > 0 && <>
+      <h4>Üçüncü Kısım kademeli dilim tablosu</h4>
+      <VeriTablosu
+        basliklar={['Dilim', 'Tarife kademesi', 'Oran', 'Dilim matrahı (TL)', 'Dilim ücreti (TL)']}
+        satirlar={t.dilimler.map(dl => [String(dl.sira), dl.aciklama, yuzde(dl.oran), tl(dl.matrah), tl(dl.tutar)])}
+        toplam={['Toplam', '', '', tl(t.esasTutar), tl(t.hamNispiUcret)]}
+        aciklama={`${t.baslik} dilim hesabı`}
+      />
+    </>}
+    {t.notlar.length > 0 && <div class="not"><h4>Notlar</h4><ul>{t.notlar.map((n, i) => <li key={i}>{n}</li>)}</ul></div>}
+  </div>;
+}
+
+export function AautSonuclar({ sonuc: s, tam = false }: { sonuc: AautHesapSonucu; tam?: boolean }) {
+  const u = s.girdi.uyusmazlik;
+  const taraflar: AautTarafHesabi[] = [];
+  if (!s.davaci.hukmedilenUcret.isZero() || u.kabulTutari.gt(0) || (u.tur === 'maktu' && u.maktuSonuc === 'kabul')) {
+    taraflar.push(s.davaci);
+  }
+  if (!s.davali.hukmedilenUcret.isZero() || u.retTutari.gt(0) || (u.tur === 'maktu' && u.maktuSonuc === 'ret')) {
+    taraflar.push(s.davali);
+  }
+
+  return <>
+    <div class="toplamlar">
+      <div class="ana-toplam"><span>Davacı / alacaklı lehine</span><strong>{tl(s.davaci.hukmedilenUcret)} <small>TL</small></strong></div>
+      <div><span>Davalı karşı vekalet</span><strong>{tl(s.davali.hukmedilenUcret)} <small>TL</small></strong></div>
+      <div><span>Merci maktu alt sınırı</span><strong>{tl(s.maktuUcret)} <small>TL</small></strong></div>
+    </div>
+    <p class="soluk sonuc-aciklama">{s.tarifeDonemi} AAÜT · {s.merciAdi} (maktu alt sınır {tl(s.maktuUcret)} TL).</p>
+    <div class="kalem-listesi">
+      {taraflar.map(t => <details key={t.taraf} class="sonuc-kalemi" open={tam || true}>
+        <summary>
+          <span class="kalem-adi">{t.baslik}</span>
+          <span class="kalem-net">{tl(t.hukmedilenUcret)} <small>TL</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Esas tutar <b>{tl(t.esasTutar)}</b></span>
+            {!t.hamNispiUcret.isZero() && <span>Kademeli nispi <b>{tl(t.hamNispiUcret)}</b></span>}
+            <span>Maktu <b>{tl(t.maktuUcret)}</b></span>
+          </span>
+        </summary>
+        <AautTarafDetayi t={t} />
+      </details>)}
+    </div>
+    <details class="rapor-bolumu" open={tam || undefined}><summary>Tarife esasları <span>{s.parametreler.length} esas</span></summary>
+      <VeriTablosu basliklar={['Esas', 'Değer', 'Kaynak', 'Dayanak']} satirlar={s.parametreler.map(p => [p.ad, p.deger, p.kaynak, p.dayanak])} />
     </details>
     <details class="rapor-bolumu"><summary>Kullanılan kaynaklar <span>{s.kaynaklar.length} satır</span></summary>{s.kaynaklar.map((k, i) => <section class="kaynak-satiri" key={i}><h4>{k.tablo} · {k.aralik}</h4><p>{k.deger}</p><KaynakBilgisi kaynak={k.kaynak} /></section>)}</details>
     <details class="rapor-bolumu" open={s.uyarilar.length > 0}><summary>Uyarılar <span>{s.uyarilar.length}</span></summary>{s.uyarilar.length ? <ul>{s.uyarilar.map((u, i) => <li key={i}>{u}</li>)}</ul> : <p>Bu hesap için tablo uyarısı yok.</p>}</details>

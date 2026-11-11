@@ -1,3 +1,11 @@
+import {
+  AAUT_ASAMALARI,
+  AAUT_ASAMA_ADLARI,
+  AAUT_MERCILERI,
+  AAUT_MERCI_ADLARI,
+  AAUT_NITELIKLERI,
+  AAUT_NITELIK_ADLARI,
+} from '../../src/index.ts';
 import type { Deger, Nesne } from './form-model.ts';
 
 export interface Secenek { deger: string | boolean; ad: string }
@@ -137,6 +145,99 @@ export const BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
   { ad: 'Kalemler', alanlar: [] },
 ];
 
+export const AAUT_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
+  {
+    ad: 'Dosya',
+    alanlar: [
+      {
+        key: 'dosya',
+        ad: 'Dosya bilgisi',
+        alanlar: [
+          metin('mahkeme', 'Mahkeme / icra dairesi'),
+          metin('esasNo', 'Esas / takip numarası'),
+          metin('kaynak', 'Defterdeki kaynak'),
+          metin('altAlan', 'Bilirkişilik alt alanı'),
+          metin('kisaAd', 'Dosya kısa adı', ops),
+          metin('hazirlayan', 'Hazırlayan', ops),
+        ],
+      },
+      tarih('hesapTarihi', 'Hüküm / hesap tarihi (AAÜT m.21)'),
+    ],
+  },
+  {
+    ad: 'Uyuşmazlık',
+    alanlar: [
+      {
+        key: 'uyusmazlik',
+        ad: 'Uyuşmazlık ve vekalet ücreti esasları',
+        alanlar: [
+          sec(
+            'merci',
+            'Yargı mercii / takip mercii',
+            AAUT_MERCILERI.map(m => [m, AAUT_MERCI_ADLARI[m]] as [string, string]),
+          ),
+          sec('tur', 'Vekalet ücreti türü', [
+            ['nispi', 'Nispi (Üçüncü Kısım kademeli tarife)'],
+            ['maktu', 'Maktu (İkinci Kısım maktu ücret)'],
+          ]),
+          sec(
+            'nitelik',
+            'Uyuşmazlık niteliği',
+            AAUT_NITELIKLERI.map(n => [n, AAUT_NITELIK_ADLARI[n]] as [string, string]),
+            {
+              ...ops,
+              gorunur: g => g.tur !== 'maktu' && g.merci !== 'icra-dairesi',
+              varsayilan: 'Genel alacak / dava / takip (AAÜT m.13)',
+              dayanak: 'AAÜT m.9, m.10, m.13/3-4',
+            },
+          ),
+          sayi('davaDegeri', 'Dava / takip değeri (müddeabih, TL)', {
+            gorunur: g => g.tur !== 'maktu',
+            ipucu: 'Nafaka davalarında (AAÜT m.9/1) esas tutar olarak 1 yıllık (12 aylık) nafaka tutarını girin.',
+          }),
+          sayi('kabulTutari', 'Kabul edilen tutar (TL)', {
+            ...ops,
+            gorunur: g => g.tur !== 'maktu' && g.merci !== 'icra-dairesi',
+          }),
+          sayi('retTutari', 'Reddedilen tutar (TL)', {
+            ...ops,
+            gorunur: g => g.tur !== 'maktu' && g.merci !== 'icra-dairesi',
+          }),
+          sec(
+            'maktuSonuc',
+            'Maktu iş sonucu',
+            [
+              ['kabul', 'Kabul (davacı / alacaklı lehine)'],
+              ['ret', 'Ret (davalı lehine)'],
+            ],
+            {
+              ...ops,
+              gorunur: g => g.tur === 'maktu',
+              varsayilan: 'Kabul',
+              dayanak: 'HMK m.326',
+            },
+          ),
+          sec(
+            'asama',
+            'Yargılama / takip aşaması',
+            AAUT_ASAMALARI.map(a => [a, AAUT_ASAMA_ADLARI[a]] as [string, string]),
+            {
+              ...ops,
+              varsayilan: 'Esastan karar (%100)',
+              dayanak: 'AAÜT m.6, m.11/4, m.15',
+            },
+          ),
+          metin('asamaGerekcesi', 'İndirimli aşama gerekçesi', {
+            ...ops,
+            tur: 'textarea',
+            gorunur: g => Boolean(g.asama && g.asama !== 'karar'),
+          }),
+        ],
+      },
+    ],
+  },
+];
+
 export function kalemYeni(key: string): Deger {
   return structuredClone(KALEMLER.find(k => k.key === key)?.yeni ?? {});
 }
@@ -144,7 +245,7 @@ export function kalemYeni(key: string): Deger {
 /** "girdi.kalemler.ihbar.faiz[0].baslangic" gibi bir yolun formdaki alan adı (bulunamazsa boş). */
 export function alanAdi(yol: string): string {
   const parcalar = yol.replace(/^girdi\.?/, '').replace(/\[\d+\]/g, '').split('.').filter(Boolean);
-  let alanlar: Alan[] = BOLUMLER.flatMap(b => b.alanlar);
+  let alanlar: Alan[] = [...BOLUMLER, ...AAUT_BOLUMLER].flatMap(b => b.alanlar);
   let ad = '';
   for (const [i, parca] of parcalar.entries()) {
     if (i === 1 && parcalar[0] === 'kalemler') {

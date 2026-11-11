@@ -1,4 +1,4 @@
-import { GirdiHatasi, girdiCoz, girdiMetindenCoz } from '../../src/index.ts';
+import { aautGirdiCoz, aautGirdiMetindenCoz, GirdiHatasi, girdiCoz, girdiMetindenCoz } from '../../src/index.ts';
 import { parse, stringify } from 'yaml';
 
 export type Deger = string | number | boolean | null | Nesne | Deger[];
@@ -16,6 +16,23 @@ export function bosForm(): Nesne {
   };
 }
 
+export function bosAautFormu(): Nesne {
+  return {
+    alan: 'aaut',
+    dosya: { mahkeme: '', esasNo: '', kaynak: '', altAlan: '' },
+    hesapTarihi: '',
+    uyusmazlik: {
+      merci: 'asliye-hukuk',
+      tur: 'nispi',
+      davaDegeri: '',
+    },
+  };
+}
+
+export function aautFormuMu(form: Nesne): boolean {
+  return form.alan === 'aaut';
+}
+
 /** Form değerlerini şemayla aynı yapıda kopyalar, tanımsız isteğe bağlı alanları çıkarır. */
 export function formdanGirdiKur(form: Nesne): Nesne {
   const kopyala = (deger: Deger): Deger => {
@@ -29,8 +46,13 @@ export function formdanGirdiKur(form: Nesne): Nesne {
 }
 
 export function yamlForma(metin: string): Nesne {
+  const ham = parse(metin) as Nesne | null;
+  if (ham && typeof ham === 'object' && !Array.isArray(ham) && ham.alan === 'aaut') {
+    aautGirdiMetindenCoz(metin);
+    return ham;
+  }
   girdiMetindenCoz(metin);
-  const parsed = parse(metin) as Nesne;
+  const parsed = ham as Nesne;
   const kalemler = parsed.kalemler as Nesne | undefined;
   const ubgt = kalemler?.ubgt as Nesne | undefined;
   const takvim = ubgt?.takvim as Nesne | undefined;
@@ -50,6 +72,8 @@ export function formYamli(form: Nesne): string {
 }
 
 export function formuDogrula(form: Nesne) { return girdiCoz(formdanGirdiKur(form)); }
+
+export function aautFormuDogrula(form: Nesne) { return aautGirdiCoz(formdanGirdiKur(form)); }
 
 export function degerOku(form: Nesne, yol: Yol): Deger | undefined {
   let deger: Deger | undefined = form;

@@ -19,8 +19,30 @@ export type {
   IkramiyeSatiri,
   IkramiyeGirdisi,
 } from './girdi.ts';
-export { tablolariKur, TABLO_DOSYALARI, KaynakKaydi, UbgtTakvimi } from './tablolar.ts';
-export type { HamTablo, HamTablolar, Tablolar, Kaynak, KaynakSatiri, UbgtTakvimGunu, UbgtTakvimYili } from './tablolar.ts';
+export {
+  tablolariKur,
+  TABLO_DOSYALARI,
+  AAUT_MAKTU_ANAHTARLARI,
+  AAUT_MAKTU_ETIKETLERI,
+  AautTarifesi,
+  KaynakKaydi,
+  UbgtTakvimi,
+} from './tablolar.ts';
+export type {
+  HamTablo,
+  HamTablolar,
+  Tablolar,
+  Kaynak,
+  KaynakSatiri,
+  UbgtTakvimGunu,
+  UbgtTakvimYili,
+  AvansReeskontSatiri,
+  IcraHarclariSatiri,
+  AautMaktuAnahtari,
+  AautMaktuUcretler,
+  AautDilimi,
+  AautSatiri,
+} from './tablolar.ts';
 export { hesapla } from './hesap.ts';
 export type { HesapSonucu, KalemSonucu } from './hesap.ts';
 export { raporTanimi } from './rapor/pdf.ts';
@@ -62,4 +84,32 @@ export type {
   TahsilHarciAsamasi,
   TakipOncesiKalem,
 } from './icra/index.ts';
-export type { AvansReeskontSatiri, IcraHarclariSatiri } from './tablolar.ts';
+export {
+  AAUT_ASAMALARI,
+  AAUT_ASAMA_ADLARI,
+  AAUT_MAKTU_ZORUNLU_MERCILER,
+  AAUT_MERCILERI,
+  AAUT_MERCI_ADLARI,
+  AAUT_MERCI_MAKTU_ANAHTARI,
+  AAUT_NITELIKLERI,
+  AAUT_NITELIK_ADLARI,
+  AAUT_UCRET_TURLERI,
+  aautDefterSatiri,
+  aautGirdiCoz,
+  aautGirdiMetindenCoz,
+  aautHesapla,
+  aautKanitDosyaAdi,
+  aautRaporTanimi,
+  kademeliNispiHesapla,
+} from './aaut/index.ts';
+export type {
+  AautAsamasi,
+  AautDilimHesabi,
+  AautGirdisi,
+  AautHesapSonucu,
+  AautMerci,
+  AautTarafHesabi,
+  AautUcretTuru,
+  AautUyusmazlikGirdisi,
+  AautUyusmazlikNiteligi,
+} from './aaut/index.ts';

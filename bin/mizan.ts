@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { herhangiGirdiOku } from '../src/node/girdi-dosya.ts';
 import { hesapla } from '../src/hesap.ts';
 import { icraDefterSatiri, icraHesapla, icraKanitDosyaAdi, icraRaporTanimi } from '../src/icra/index.ts';
+import { aautDefterSatiri, aautHesapla, aautKanitDosyaAdi, aautRaporTanimi } from '../src/aaut/index.ts';
 import { tl } from '../src/para.ts';
 import { raporTanimi } from '../src/rapor/pdf.ts';
 import { udfOlustur, udfDosyaAdi } from '../src/rapor/udf.ts';
@@ -15,14 +16,14 @@ import { surumBilgisi } from '../src/node/surum.ts';
 import { tablolariYukle } from '../src/node/tablolar-dosya.ts';
 import { bugun, trTarih } from '../src/tarih.ts';
 
-const YARDIM = `mizan: işçilik alacakları ve icra kapak hesabı aracı
+const YARDIM = `mizan: işçilik alacakları, icra kapak hesabı ve AAÜT vekalet ücreti aracı
 
 Kullanım:
   mizan hesapla <girdi.yaml> [--cikti <dizin>]   PDF rapor, UYAP UDF rapor ve kayıt defteri satırı üretir
   mizan tablolar                                 Tabloları denetler, doğrulama tarihlerini yazar
   mizan --surum
 
-Girdi örnekleri: ornekler/ornek-iscilik.yaml, ornekler/ornek-icra.yaml`;
+Girdi örnekleri: ornekler/ornek-iscilik.yaml, ornekler/ornek-icra.yaml, ornekler/ornek-aaut.yaml`;
 
 function secenek(arg: string[], ad: string): string | undefined {
   const i = arg.indexOf(ad);
@@ -61,6 +62,29 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
     console.log(`${'Borçlunun ödeyeceği kapak tutarı'.padEnd(38)} ${tl(sonuc.borclununOdeyecegiKapakTutari).padStart(16)} TL`);
     console.log(`${'Cezaevleri yapı harcı (%2)'.padEnd(38)} ${tl(sonuc.harclar.cezaeviHarci).padStart(16)} TL`);
     console.log(`${'Alacaklıya net ödenecek tutar'.padEnd(38)} ${tl(sonuc.alacakliyaNetOdenecekTutar).padStart(16)} TL`);
+    for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
+    console.log(`\nRapor: ${pdfYolu}`);
+    console.log(`Defter satırı (${defterYolu}):\n${satir}`);
+    return;
+  }
+
+  if (okunan.alan === 'aaut') {
+    const { girdi, ozet } = okunan;
+    const sonuc = aautHesapla(girdi, tablolariYukle());
+    const pdfAdi = aautKanitDosyaAdi(sonuc, tarih);
+    const pdfYolu = join(dizin, pdfAdi);
+    await pdfYaz(aautRaporTanimi(sonuc, { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet }), pdfYolu);
+    const satir = aautDefterSatiri(sonuc, tarih, surum);
+    const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
+    writeFileSync(defterYolu, satir + '\n');
+
+    console.log(`${'Tarife dönemi'.padEnd(38)} ${sonuc.tarifeDonemi} (${sonuc.merciAdi})`);
+    if (!sonuc.davaci.hukmedilenUcret.isZero() || girdi.uyusmazlik.kabulTutari.gt(0)) {
+      console.log(`${sonuc.davaci.baslik.padEnd(38)} ${tl(sonuc.davaci.hukmedilenUcret).padStart(14)} TL`);
+    }
+    if (!sonuc.davali.hukmedilenUcret.isZero() || girdi.uyusmazlik.retTutari.gt(0)) {
+      console.log(`${sonuc.davali.baslik.padEnd(38)} ${tl(sonuc.davali.hukmedilenUcret).padStart(14)} TL`);
+    }
     for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
     console.log(`\nRapor: ${pdfYolu}`);
     console.log(`Defter satırı (${defterYolu}):\n${satir}`);
@@ -109,6 +133,12 @@ function tablolarKomutu(): void {
   console.log(
     `${t.ubgtTakvimi.ad}\n  yıllar: ${t.ubgtTakvimi.yillar.map((y) => y.yil).join(', ')}, doğrulama ${trTarih(t.ubgtTakvimi.dogrulamaTarihi)}`,
   );
+  if (t.aaut) {
+    const ilk = t.aaut.satirlar[0]!;
+    console.log(
+      `${t.aaut.ad}\n  ${t.aaut.satirlar.length} dönem (${t.aaut.satirlar.map((s) => s.donem).join(', ')}), başlangıç ${trTarih(ilk.baslangic)}, doğrulama ${trTarih(t.aaut.dogrulamaTarihi)}`,
+    );
+  }
 }
 
 async function main(): Promise<void> {

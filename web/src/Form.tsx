@@ -1,3 +1,4 @@
+import { AAUT_MAKTU_ZORUNLU_MERCILER, type AautMerci } from '../../src/index.ts';
 import type { Alan } from './schema.ts';
 import { alanDegistir, degerOku, formdanGirdiKur, hataAciklamasi, yolYaz } from './form-model.ts';
 import type { Deger, Nesne, Yol } from './form-model.ts';
@@ -22,6 +23,39 @@ function FormAlani({ alan, yol, form, degistir, hata }: FormProps & { alan: Alan
     if (adres === 'girdi.ucret.yontem' && v !== 'donemsel') sonuc = alanDegistir(sonuc, ['ucret', 'donemsel'], undefined);
     if (adres === 'girdi.parametreler.vergi.yontem') {
       sonuc = alanDegistir(sonuc, ['parametreler', 'vergi', v === 'sabit' ? 'birikim' : 'sabitOran'], undefined);
+    }
+    if (adres === 'girdi.uyusmazlik.merci') {
+      const m = String(v ?? '') as AautMerci;
+      const icraTakibiMi = m === 'icra-dairesi' || m === 'icra-tahliye';
+      const mevcutAsama = degerOku(sonuc, ['uyusmazlik', 'asama']);
+      if (AAUT_MAKTU_ZORUNLU_MERCILER.includes(m)) {
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'tur'], 'maktu');
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'davaDegeri'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'kabulTutari'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'retTutari'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'nitelik'], undefined);
+      } else if (m === 'icra-dairesi') {
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'kabulTutari'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'retTutari'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'nitelik'], undefined);
+      }
+      if ((icraTakibiMi && mevcutAsama === 'on-inceleme-oncesi') || (!icraTakibiMi && mevcutAsama === 'odeme-suresi-icinde')) {
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'asama'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'asamaGerekcesi'], undefined);
+      }
+    }
+    if (adres === 'girdi.uyusmazlik.tur') {
+      if (v === 'maktu') {
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'davaDegeri'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'kabulTutari'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'retTutari'], undefined);
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'nitelik'], undefined);
+      } else {
+        sonuc = alanDegistir(sonuc, ['uyusmazlik', 'maktuSonuc'], undefined);
+      }
+    }
+    if (adres === 'girdi.uyusmazlik.asama' && (!v || v === 'karar')) {
+      sonuc = alanDegistir(sonuc, ['uyusmazlik', 'asamaGerekcesi'], undefined);
     }
     degistir(sonuc);
   };

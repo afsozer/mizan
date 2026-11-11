@@ -40,6 +40,7 @@ export function hesapTablolari(belgeler: TabloBelgesi[], secim: string | undefin
     mevduatFaizi: dosyaBul(mevduatAdi),
     avansReeskontFaizi: dosyaBul(TABLO_DOSYALARI.avansReeskontFaizi),
     icraHarclari: dosyaBul(TABLO_DOSYALARI.icraHarclari),
+    aaut: dosyaBul(TABLO_DOSYALARI.aaut),
   };
   return tablolariKur(ham);
 }

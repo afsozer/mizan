@@ -1,0 +1,160 @@
+{
+  "tablo": "aaut",
+  "ad": "Avukatlık Asgari Ücret Tarifesi",
+  "aciklama": "Türkiye Barolar Birliği Avukatlık Asgari Ücret Tarifesi (AAÜT) İkinci Kısım İkinci Bölüm maktu ücretleri ve Üçüncü Kısım kademeli nispi vekalet ücreti dilimleri (1136 s.K. m.164, m.168; AAÜT m.6, m.9, m.10, m.11, m.13, m.15, m.21).",
+  "dogrulamaTarihi": "2026-11-11",
+  "satirlar": [
+    {
+      "baslangic": "2024-10-03",
+      "bitis": "2025-11-03",
+      "donem": "2024-2025",
+      "maktu": {
+        "sulhHukuk": "18000",
+        "sulhCezaInfaz": "13500",
+        "asliye": "30000",
+        "tuketici": "15000",
+        "fikriSinai": "40000",
+        "agirCeza": "48000",
+        "cocuk": "30000",
+        "cocukAgirCeza": "48000",
+        "idareVergiDurusmasiz": "18000",
+        "idareVergiDurusmali": "36000",
+        "icraDairesi": "6000",
+        "icraMahkemesiIs": "7000",
+        "icraMahkemesiDava": "12000",
+        "icraTahliye": "13500",
+        "icraMahkemesiCeza": "10000",
+        "bamBimIlkDerece": "25000",
+        "bamBimIstinafTekDurusma": "16000",
+        "bamBimIstinafCokluDurusma": "32000",
+        "yargitayIlkDerece": "46500",
+        "danistayIlkDereceDurusmasiz": "28000",
+        "danistayIlkDereceDurusmali": "56000",
+        "temyizDurusmasi": "28000"
+      },
+      "dilimler": [
+        { "dilimTutari": "400000", "ustSinir": "400000", "oran": "0.16" },
+        { "dilimTutari": "400000", "ustSinir": "800000", "oran": "0.15" },
+        { "dilimTutari": "800000", "ustSinir": "1600000", "oran": "0.14" },
+        { "dilimTutari": "1200000", "ustSinir": "2800000", "oran": "0.11" },
+        { "dilimTutari": "1600000", "ustSinir": "4400000", "oran": "0.08" },
+        { "dilimTutari": "2000000", "ustSinir": "6400000", "oran": "0.05" },
+        { "dilimTutari": "2400000", "ustSinir": "8800000", "oran": "0.03" },
+        { "dilimTutari": "2800000", "ustSinir": "11600000", "oran": "0.02" },
+        { "dilimTutari": null, "ustSinir": null, "oran": "0.01" }
+      ],
+      "kaynak": {
+        "ad": "Türkiye Barolar Birliği Avukatlık Asgari Ücret Tarifesi (2024-2025)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/10/20241003-4-1.htm",
+        "resmiGazete": {
+          "tarih": "2024-10-03",
+          "sayi": "32681",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2024/10/20241003-4-1-1.pdf"
+        },
+        "dogrulama": "03.10.2024 tarihli ve 32681 sayılı Resmi Gazete'de yayımlanan AAÜT Tebliği eki İkinci Kısım İkinci Bölüm (s. 8-9) ve Üçüncü Kısım (s. 9) tablolarından okundu."
+      }
+    },
+    {
+      "baslangic": "2025-11-04",
+      "bitis": "2026-11-02",
+      "donem": "2025-2026",
+      "maktu": {
+        "sulhHukuk": "30000",
+        "sulhCezaInfaz": "18000",
+        "asliye": "45000",
+        "tuketici": "22500",
+        "fikriSinai": "55000",
+        "agirCeza": "65000",
+        "cocuk": "45000",
+        "cocukAgirCeza": "65000",
+        "idareVergiDurusmasiz": "30000",
+        "idareVergiDurusmali": "40000",
+        "icraDairesi": "9000",
+        "icraMahkemesiIs": "11000",
+        "icraMahkemesiDava": "18000",
+        "icraTahliye": "20000",
+        "icraMahkemesiCeza": "15000",
+        "bamBimIlkDerece": "35000",
+        "bamBimIstinafTekDurusma": "22000",
+        "bamBimIstinafCokluDurusma": "42000",
+        "yargitayIlkDerece": "65000",
+        "danistayIlkDereceDurusmasiz": "40000",
+        "danistayIlkDereceDurusmali": "65000",
+        "temyizDurusmasi": "40000"
+      },
+      "dilimler": [
+        { "dilimTutari": "600000", "ustSinir": "600000", "oran": "0.16" },
+        { "dilimTutari": "600000", "ustSinir": "1200000", "oran": "0.15" },
+        { "dilimTutari": "1200000", "ustSinir": "2400000", "oran": "0.14" },
+        { "dilimTutari": "1200000", "ustSinir": "3600000", "oran": "0.13" },
+        { "dilimTutari": "1800000", "ustSinir": "5400000", "oran": "0.11" },
+        { "dilimTutari": "2400000", "ustSinir": "7800000", "oran": "0.08" },
+        { "dilimTutari": "3000000", "ustSinir": "10800000", "oran": "0.05" },
+        { "dilimTutari": "3600000", "ustSinir": "14400000", "oran": "0.03" },
+        { "dilimTutari": "4200000", "ustSinir": "18600000", "oran": "0.02" },
+        { "dilimTutari": null, "ustSinir": null, "oran": "0.01" }
+      ],
+      "kaynak": {
+        "ad": "Türkiye Barolar Birliği Avukatlık Asgari Ücret Tarifesi (2025-2026)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/11/20251104-9.htm",
+        "resmiGazete": {
+          "tarih": "2025-11-04",
+          "sayi": "33067",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2025/11/20251104-9-1.pdf"
+        },
+        "dogrulama": "04.11.2025 tarihli ve 33067 sayılı Resmi Gazete'de yayımlanan AAÜT Tebliği eki İkinci Kısım İkinci Bölüm (s. 9-10) ve Üçüncü Kısım (s. 10) tablolarından okundu. AYM E.2024/29, K.2024/226 kararı (yürürlük 14.12.2025) ve 08.01.2026 tarihli, 33131 sayılı RG değişikliğiyle m.10/2 yürürlükten kaldırılmıştır."
+      }
+    },
+    {
+      "baslangic": "2026-11-03",
+      "bitis": null,
+      "donem": "2026-2027",
+      "maktu": {
+        "sulhHukuk": "40000",
+        "sulhCezaInfaz": "23000",
+        "asliye": "62000",
+        "tuketici": "30000",
+        "fikriSinai": "70000",
+        "agirCeza": "86000",
+        "cocuk": "62000",
+        "cocukAgirCeza": "86000",
+        "idareVergiDurusmasiz": "40000",
+        "idareVergiDurusmali": "52000",
+        "icraDairesi": "12500",
+        "icraMahkemesiIs": "15000",
+        "icraMahkemesiDava": "23000",
+        "icraTahliye": "26000",
+        "icraMahkemesiCeza": "20000",
+        "bamBimIlkDerece": "45000",
+        "bamBimIstinafTekDurusma": "28000",
+        "bamBimIstinafCokluDurusma": "55000",
+        "yargitayIlkDerece": "85000",
+        "danistayIlkDereceDurusmasiz": "50000",
+        "danistayIlkDereceDurusmali": "80000",
+        "temyizDurusmasi": "50000"
+      },
+      "dilimler": [
+        { "dilimTutari": "800000", "ustSinir": "800000", "oran": "0.16" },
+        { "dilimTutari": "800000", "ustSinir": "1600000", "oran": "0.15" },
+        { "dilimTutari": "1600000", "ustSinir": "3200000", "oran": "0.14" },
+        { "dilimTutari": "1600000", "ustSinir": "4800000", "oran": "0.13" },
+        { "dilimTutari": "2400000", "ustSinir": "7200000", "oran": "0.11" },
+        { "dilimTutari": "3200000", "ustSinir": "10400000", "oran": "0.08" },
+        { "dilimTutari": "4000000", "ustSinir": "14400000", "oran": "0.05" },
+        { "dilimTutari": "4800000", "ustSinir": "19200000", "oran": "0.03" },
+        { "dilimTutari": "5600000", "ustSinir": "24800000", "oran": "0.02" },
+        { "dilimTutari": null, "ustSinir": null, "oran": "0.01" }
+      ],
+      "kaynak": {
+        "ad": "Türkiye Barolar Birliği Avukatlık Asgari Ücret Tarifesi (2026-2027)",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2026/11/20261103-3.htm",
+        "resmiGazete": {
+          "tarih": "2026-11-03",
+          "sayi": "33419",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/11/20261103-3-1.pdf"
+        },
+        "dogrulama": "03.11.2026 tarihli ve 33419 sayılı Resmi Gazete'de yayımlanan AAÜT Tebliği eki İkinci Kısım İkinci Bölüm (s. 9-10) ve Üçüncü Kısım (s. 10) tablolarından okundu."
+      }
+    }
+  ]
+}

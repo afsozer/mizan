@@ -1,11 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GirdiHatasi, girdiCoz, girdiMetindenCoz, hesapla, TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
-import { alanDegistir, bosForm, degerOku, formdanGirdiKur, formYamli, formuDogrula, hataAciklamasi, hataYolu, yamlForma } from '../src/form-model.ts';
+import { aautGirdiMetindenCoz, GirdiHatasi, girdiCoz, girdiMetindenCoz, hesapla, TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
+import { aautFormuDogrula, aautFormuMu, alanDegistir, bosForm, degerOku, formdanGirdiKur, formYamli, formuDogrula, hataAciklamasi, hataYolu, yamlForma } from '../src/form-model.ts';
 import type { Nesne } from '../src/form-model.ts';
 import { alanAdi, KALEMLER, kalemYeni } from '../src/schema.ts';
 const ornek = readFileSync(new URL('../../ornekler/ornek-iscilik.yaml', import.meta.url), 'utf8');
+const ornekAaut = readFileSync(new URL('../../ornekler/ornek-aaut.yaml', import.meta.url), 'utf8');
 
 test('örnek YAML formdan kayıpsız geçer ve çekirdekte aynı girdiyi üretir', () => {
   const form = yamlForma(ornek);
@@ -55,6 +56,7 @@ test('hata yolundan formdaki alan adı bulunur', () => {
   assert.equal(alanAdi('girdi.hizmet.donemler[1].cikis'), 'İşten çıkış');
   assert.equal(alanAdi('girdi.kalemler.ubgt.takvim.haricTarihler'), 'Hariç tutulacak tarihler');
   assert.equal(alanAdi('girdi.kalemler.ubgt.takvim.haricTarihler[0].tarih'), 'Hariç tutulacak tarih');
+  assert.equal(alanAdi('girdi.uyusmazlik.davaDegeri'), 'Dava / takip değeri (müddeabih, TL)');
 });
 
 test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndürür', () => {
@@ -139,4 +141,17 @@ test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndür�
     { tarih: '2021-10-29' },
   ]);
   assert.deepEqual(formuDogrula(ubgtForm), girdiMetindenCoz(ubgtYaml));
+});
+
+test('örnek AAÜT YAML formdan kayıpsız geçer ve çekirdekte aynı girdiyi üretir', () => {
+  const form = yamlForma(ornekAaut);
+  assert.equal(aautFormuMu(form), true);
+  assert.deepEqual(aautFormuDogrula(form), aautGirdiMetindenCoz(ornekAaut));
+  assert.deepEqual(aautGirdiMetindenCoz(formYamli(form)), aautGirdiMetindenCoz(ornekAaut));
+
+  const hataliAaut = alanDegistir(form, ['uyusmazlik', 'davaDegeri'], '-100');
+  assert.throws(
+    () => aautFormuDogrula(hataliAaut),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.uyusmazlik.davaDegeri',
+  );
 });

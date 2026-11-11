@@ -443,6 +443,176 @@ export class UbgtTakvimi {
   }
 }
 
+export const AAUT_MAKTU_ANAHTARLARI = [
+  'sulhHukuk',
+  'sulhCezaInfaz',
+  'asliye',
+  'tuketici',
+  'fikriSinai',
+  'agirCeza',
+  'cocuk',
+  'cocukAgirCeza',
+  'idareVergiDurusmasiz',
+  'idareVergiDurusmali',
+  'icraDairesi',
+  'icraMahkemesiIs',
+  'icraMahkemesiDava',
+  'icraTahliye',
+  'icraMahkemesiCeza',
+  'bamBimIlkDerece',
+  'bamBimIstinafTekDurusma',
+  'bamBimIstinafCokluDurusma',
+  'yargitayIlkDerece',
+  'danistayIlkDereceDurusmasiz',
+  'danistayIlkDereceDurusmali',
+  'temyizDurusmasi',
+] as const;
+
+export type AautMaktuAnahtari = (typeof AAUT_MAKTU_ANAHTARLARI)[number];
+export type AautMaktuUcretler = Record<AautMaktuAnahtari, string>;
+
+export const AAUT_MAKTU_ETIKETLERI: Record<AautMaktuAnahtari, string> = {
+  sulhHukuk: 'Sulh hukuk mahkemeleri',
+  sulhCezaInfaz: 'Sulh ceza ve infaz hakimlikleri',
+  asliye: 'Asliye mahkemeleri (hukuk, ticaret, iş, aile, asliye ceza)',
+  tuketici: 'Tüketici mahkemeleri',
+  fikriSinai: 'Fikri ve sınai haklar mahkemeleri',
+  agirCeza: 'Ağır ceza mahkemeleri',
+  cocuk: 'Çocuk mahkemeleri',
+  cocukAgirCeza: 'Çocuk ağır ceza mahkemeleri',
+  idareVergiDurusmasiz: 'İdare ve vergi mahkemeleri (duruşmasız)',
+  idareVergiDurusmali: 'İdare ve vergi mahkemeleri (duruşmalı)',
+  icraDairesi: 'İcra daireleri',
+  icraMahkemesiIs: 'İcra mahkemeleri (iş)',
+  icraMahkemesiDava: 'İcra mahkemeleri (dava ve duruşmalı iş)',
+  icraTahliye: 'İcra daireleri (tahliye takibi)',
+  icraMahkemesiCeza: 'İcra mahkemeleri (ceza işi)',
+  bamBimIlkDerece: 'BAM / BİM (ilk derece)',
+  bamBimIstinafTekDurusma: 'BAM / BİM (istinaf - tek duruşmalı)',
+  bamBimIstinafCokluDurusma: 'BAM / BİM (istinaf - çoklu duruşma / keşifli)',
+  yargitayIlkDerece: 'Yargıtay (ilk derece)',
+  danistayIlkDereceDurusmasiz: 'Danıştay (ilk derece - duruşmasız)',
+  danistayIlkDereceDurusmali: 'Danıştay (ilk derece - duruşmalı)',
+  temyizDurusmasi: 'Yargıtay / Danıştay / Sayıştay temyiz duruşması',
+};
+
+export interface AautDilimi {
+  dilimTutari: string | null;
+  ustSinir: string | null;
+  oran: string;
+}
+
+export interface AautSatiri extends DonemSatiri {
+  donem: string;
+  maktu: AautMaktuUcretler;
+  dilimler: AautDilimi[];
+}
+
+export class AautTarifesi {
+  readonly kod: string;
+  readonly ad: string;
+  readonly aciklama?: string;
+  readonly dogrulamaTarihi: string;
+  readonly satirlar: AautSatiri[];
+  readonly ozet: string;
+
+  constructor(dosya: TabloDosyasi<AautSatiri>, ozet = '') {
+    this.kod = dosya.tablo;
+    this.ad = dosya.ad;
+    this.aciklama = dosya.aciklama;
+    this.dogrulamaTarihi = dosya.dogrulamaTarihi;
+    this.satirlar = dosya.satirlar;
+    this.ozet = ozet;
+    this.denetle();
+  }
+
+  private denetle(): void {
+    const yer = `Tablo "${this.kod}"`;
+    if (!gecerliTarih(this.dogrulamaTarihi)) throw new Error(`${yer}: dogrulamaTarihi geçersiz`);
+    if (this.satirlar.length === 0) throw new Error(`${yer}: satır yok`);
+    this.satirlar.forEach((s, i) => {
+      const sy = `${yer}, satır ${i + 1}`;
+      if (!gecerliTarih(s.baslangic)) throw new Error(`${sy}: baslangic geçersiz`);
+      if (s.bitis !== null && (!gecerliTarih(s.bitis) || karsilastir(s.bitis, s.baslangic) < 0)) {
+        throw new Error(`${sy}: bitis geçersiz`);
+      }
+      if (s.bitis === null && i !== this.satirlar.length - 1) throw new Error(`${sy}: yalnız son satırın bitişi boş olabilir`);
+      if (typeof s.donem !== 'string' || !s.donem.trim()) throw new Error(`${sy}: donem boş`);
+      if (!s.maktu || typeof s.maktu !== 'object') throw new Error(`${sy}: maktu nesnesi yok`);
+      for (const anahtar of AAUT_MAKTU_ANAHTARLARI) {
+        const v = s.maktu[anahtar];
+        if (typeof v !== 'string' || !SAYI.test(v)) throw new Error(`${sy}: maktu.${anahtar} sayı metni olmalı`);
+      }
+      if (!Array.isArray(s.dilimler) || s.dilimler.length === 0) throw new Error(`${sy}: dilimler boş`);
+      let kumulatif = d(0);
+      s.dilimler.forEach((dl, j) => {
+        const son = j === s.dilimler.length - 1;
+        if (typeof dl.oran !== 'string' || !SAYI.test(dl.oran)) throw new Error(`${sy}, dilim ${j + 1}: oran sayı metni olmalı`);
+        if (son !== (dl.ustSinir === null) || son !== (dl.dilimTutari === null)) {
+          throw new Error(`${sy}, dilim ${j + 1}: yalnız son dilimin dilimTutari ve ustSinir alanı boş olur`);
+        }
+        if (!son) {
+          if (typeof dl.dilimTutari !== 'string' || !SAYI.test(dl.dilimTutari)) {
+            throw new Error(`${sy}, dilim ${j + 1}: dilimTutari sayı metni olmalı`);
+          }
+          if (typeof dl.ustSinir !== 'string' || !SAYI.test(dl.ustSinir)) {
+            throw new Error(`${sy}, dilim ${j + 1}: ustSinir sayı metni olmalı`);
+          }
+          kumulatif = kumulatif.plus(dl.dilimTutari);
+          if (!kumulatif.eq(dl.ustSinir)) {
+            throw new Error(`${sy}, dilim ${j + 1}: kümülatif dilim toplamı (${kumulatif.toString()}) ustSinir (${dl.ustSinir}) ile eşleşmiyor`);
+          }
+        }
+      });
+      kaynakDenetle(s.kaynak, sy);
+      const sonraki = this.satirlar[i + 1];
+      if (sonraki && (s.bitis === null || gunEkle(s.bitis, 1) !== sonraki.baslangic)) {
+        throw new Error(`${sy}: sonraki satır ${s.bitis ? trTarih(gunEkle(s.bitis, 1)) : '?'} tarihinde başlamalı (boşluk ya da çakışma var)`);
+      }
+    });
+  }
+
+  bul(tarih: string, kayit?: KaynakKaydi, maktuEtiket?: string): AautSatiri {
+    const ilk = this.satirlar[0]!;
+    if (karsilastir(tarih, ilk.baslangic) < 0) {
+      throw new Error(`${this.ad} tablosu ${trTarih(ilk.baslangic)} tarihinden başlıyor; ${trTarih(tarih)} için satır yok`);
+    }
+    const son = this.satirlar[this.satirlar.length - 1]!;
+    if (son.bitis !== null && karsilastir(tarih, son.bitis) > 0) {
+      throw new Error(`${this.ad} tablosu ${trTarih(son.bitis)} tarihinde bitiyor; ${trTarih(tarih)} için değer yok`);
+    }
+    if (son.bitis === null && karsilastir(tarih, this.dogrulamaTarihi) > 0) {
+      kayit?.uyarilar.add(
+        `${this.ad} tablosu ${trTarih(this.dogrulamaTarihi)} tarihinde doğrulandı; son satır (${son.donem}) ${trTarih(tarih)} için de kullanıldı. ` +
+          `Bu tarihe kadar yeni tarife yayımlanmışsa data/${this.kod}.json güncellenmeli.`,
+      );
+    }
+    const satir = this.satirlar.find(
+      (s) => karsilastir(s.baslangic, tarih) <= 0 && (s.bitis === null || karsilastir(tarih, s.bitis) <= 0),
+    );
+    if (!satir) throw new Error(`${this.ad} tablosunda ${trTarih(tarih)} tarihini kapsayan satır yok`);
+
+    const aralik = `${trTarih(satir.baslangic)} - ${satir.bitis ? trTarih(satir.bitis) : 'devam'}`;
+    const dilimOzeti = satir.dilimler
+      .map((dl, idx) =>
+        dl.dilimTutari === null
+          ? `${tl(d(satir.dilimler[idx - 1]!.ustSinir!), 0)} TL üzeri ${yuzde(d(dl.oran))}`
+          : `${idx === 0 ? 'İlk' : 'Sonra gelen'} ${tl(d(dl.dilimTutari), 0)} TL ${yuzde(d(dl.oran))}`,
+      )
+      .join('; ');
+    const degerMetni = maktuEtiket ? `${satir.donem} (${maktuEtiket}; ${dilimOzeti})` : `${satir.donem} (${dilimOzeti})`;
+    kayit?.ekle({
+      tablo: this.ad,
+      tabloAciklamasi: this.aciklama,
+      sira: satir.baslangic,
+      aralik,
+      deger: degerMetni,
+      kaynak: satir.kaynak,
+    });
+    return satir;
+  }
+}
+
 export interface Tablolar {
   asgariUcret: DonemselTablo<AsgariUcretSatiri>;
   kidemTavani: DonemselTablo<KidemTavaniSatiri>;
@@ -454,6 +624,7 @@ export interface Tablolar {
   ubgtTakvimi: UbgtTakvimi;
   avansReeskontFaizi?: DonemselTablo<AvansReeskontSatiri>;
   icraHarclari?: DonemselTablo<IcraHarclariSatiri>;
+  aaut?: AautTarifesi;
 }
 
 /** data/ altındaki tablo dosyalarının adları; Node katmanı ve tarayıcı paketi aynı adları kullanır. */
@@ -469,6 +640,7 @@ export const TABLO_DOSYALARI = {
   ubgtTakvimi: 'ubgt-takvimi.json',
   avansReeskontFaizi: 'avans-reeskont-faizi.json',
   icraHarclari: 'icra-harclari.json',
+  aaut: 'aaut.json',
 } as const;
 
 /** Ayrıştırılmış bir tablo dosyası ve (varsa) ham metninin SHA-256 özeti. */
@@ -488,6 +660,7 @@ export interface HamTablolar {
   ubgtTakvimi?: HamTablo;
   avansReeskontFaizi?: HamTablo;
   icraHarclari?: HamTablo;
+  aaut?: HamTablo;
 }
 
 /** Ayrıştırılmış JSON tablolarından denetlenmiş tablo nesnelerini kurar (dosya erişimi yok). */
@@ -523,5 +696,6 @@ export function tablolariKur(h: HamTablolar): Tablolar {
           ]),
         }
       : {}),
+    ...(h.aaut ? { aaut: new AautTarifesi(h.aaut.dosya as TabloDosyasi<AautSatiri>, h.aaut.ozet ?? '') } : {}),
   };
 }
