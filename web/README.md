@@ -35,7 +35,7 @@ uygulamanın kendi dağıtım dosyalarından yüklenir. Yeni paket eklenmedi.
 - `src/Results.tsx`: brüt/net/faiz, hesap ayrıntıları, kesintiler, tercihler, kaynaklar ve uyarılar.
 - `src/tables.ts`: gömülü JSON metinleri, SHA-256 ve çekirdek üzerinden tablo kurma.
 - `src/TablesView.tsx`: tablo satırları, doğrulama kayıtları ve kullanıcı banka tablosu aktarımı.
-- `src/exports.ts`: PDF, YAML, indirme ve raporda kullanılan sürüm bilgisi.
+- `src/exports.ts`: PDF, UYAP UDF, YAML, indirme ve raporda kullanılan sürüm bilgisi.
 - `src/env.d.ts`, `src/pdfmake.d.ts`: derleme sabiti ve kurulu pdfmake tarayıcı paketinin tipleri.
 - `src/style.css`: kağıt/mürekkep/bakır renkleri, sistem serif başlıklar, tablo rakamları ve iki tema.
 - `tests/form-model.test.ts`: örnek girdinin kayıpsız aktarımı, boş hukuki tercihler, sıfır/false,
@@ -55,10 +55,12 @@ Başlangıçta worktree içinde bulunan çekirdek, test ve bağımlılık deği�
    eksikler sırayla gösterilir. Kalemlerin tercih grupları ve sonuç ayrıntıları ayrı açılıp kapanır.
 3. **İhtimali kopyala** seçili formun bağımsız kopyasını açar. **İhtimaller** ekranında ad verin,
    kopyayı düzenleyin ve brüt/net/faiz toplamlarını yan yana inceleyin.
-4. **Rapor ve kayıt** bölümünden PDF ve YAML indirin veya defter satırını kopyalayın. Panoya
-   erişilemiyorsa satır seçilebilir metin olarak açılır. PDF ve defter adı çekirdek API'den gelir.
-   PDF'nin girdi SHA-256 değeri, arayüzden indirilen YAML'ın tam metnidir; özgün yüklenen dosyanın
-   yorum ve boşlukları korunmaz. Üretim zamanı ve dosya tarihi İstanbul saatine göredir.
+4. **Rapor ve kayıt** bölümünden PDF, UYAP UDF (`.udf`) ve YAML indirin veya defter satırını
+   kopyalayın. Panoya erişilemiyorsa satır seçilebilir metin olarak açılır. PDF, UDF ve defter adı
+   çekirdek API'den gelir. PDF ve UDF'nin girdi SHA-256 değeri, arayüzden indirilen YAML'ın tam
+   metnidir; özgün yüklenen dosyanın yorum ve boşlukları korunmaz. Üretim zamanı ve dosya tarihi
+   İstanbul saatine göredir. **Uyarı:** İndirilen `.udf` belgesi resmi kullanımdan önce UYAP
+   Doküman Editör'de açılarak elle doğrulanmalıdır.
 5. **Tablolar** bölümünde sekiz paket tablosunu ve kaynaklarını inceleyin. Mevduat satırı olan
    hesapta tüm bankalar/kamu bankaları seçilebilir. Kendi banka yazısı JSON dosyanızı yükleyebilir,
    bu tabloyu ayrıca seçebilirsiniz. JSON çekirdeğin `tablolariKur` denetiminden geçirilir; dosyanın

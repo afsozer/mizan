@@ -9,7 +9,7 @@ import { alanDegistir, bosForm, degerOku, formYamli, formuDogrula, formdanGirdiK
 import type { Nesne } from './form-model.ts';
 import { hesapTablolari, paketTablolari, tabloHazirla } from './tables.ts';
 import type { TabloBelgesi } from './tables.ts';
-import { indir, pdfIndir, surum, uretimTarihi } from './exports.ts';
+import { indir, pdfIndir, udfIndir, surum, uretimTarihi } from './exports.ts';
 import { TablolarEkrani } from './TablesView.tsx';
 
 interface Ihtimal { id: number; ad: string; form: Nesne; dokunuldu?: boolean }
@@ -117,6 +117,13 @@ export function App() {
     catch (e) { bildir(`PDF oluşturulamadı: ${HATA(e)}`); }
     finally { mesgulYaz(false); }
   };
+  const udfOlusturIndir = async () => {
+    if (!sonuc) return;
+    mesgulYaz(true);
+    try { await udfIndir(sonuc, formYamli(form)); bildir("UDF raporu hazırlandı ve indirme başlatıldı. Resmi kullanımdan önce UYAP Doküman Editör'de elle doğrulayın."); }
+    catch (e) { bildir(`UDF oluşturulamadı: ${HATA(e)}`); }
+    finally { mesgulYaz(false); }
+  };
   const [defterMetni, defterYaz] = useState('');
   const defterKopyala = async () => {
     if (!sonuc) return;
@@ -186,8 +193,8 @@ export function App() {
         </article>; })}</div>
       </section>}
       {sayfa === 'rapor' && <section class="rapor-ekrani"><div class="sayfa-basligi"><div><h1>Rapor ve kayıt</h1><p>Seçili ihtimal: {aktif.ad}. Rapor, girdi ve tablo özetleriyle yeniden üretilebilir.</p></div></div>
-        <div class="rapor-araclari"><button class="birincil" disabled={!sonuc || mesgul} onClick={() => void pdfOlustur()}>{mesgul ? 'PDF hazırlanıyor...' : 'PDF raporunu indir'}</button><button disabled={!sonuc} onClick={() => { if (sonuc) { indir(formYamli(form), kanitDosyaAdi(sonuc, uretimTarihi()).replace(/\.pdf$/, '.yaml'), 'application/yaml'); bildir('YAML indirmesi başlatıldı. Girdinin kalıcı kopyasını bu dosyada saklayın.'); } }}>Girdiyi YAML indir</button><button disabled={!sonuc} onClick={() => void defterKopyala()}>Defter satırını kopyala</button></div>
-        <p class="not">Dosya bilgileri kalıcı olarak kaydedilmez. Sayfayı kapatmadan YAML dosyasını indirin; birden fazla ihtimal varsa her birini ayrıca kaydedin. PDF içindeki girdi özeti, indirilen YAML metninin SHA-256 değeridir.</p>
+        <div class="rapor-araclari"><button class="birincil" disabled={!sonuc || mesgul} onClick={() => void pdfOlustur()}>{mesgul ? 'PDF hazırlanıyor...' : 'PDF raporunu indir'}</button><button disabled={!sonuc || mesgul} onClick={() => void udfOlusturIndir()}>UDF indir</button><button disabled={!sonuc} onClick={() => { if (sonuc) { indir(formYamli(form), kanitDosyaAdi(sonuc, uretimTarihi()).replace(/\.pdf$/, '.yaml'), 'application/yaml'); bildir('YAML indirmesi başlatıldı. Girdinin kalıcı kopyasını bu dosyada saklayın.'); } }}>Girdiyi YAML indir</button><button disabled={!sonuc} onClick={() => void defterKopyala()}>Defter satırını kopyala</button></div>
+        <p class="not">Dosya bilgileri kalıcı olarak kaydedilmez. Sayfayı kapatmadan YAML dosyasını indirin; birden fazla ihtimal varsa her birini ayrıca kaydedin. PDF ve UDF içindeki girdi özeti, indirilen YAML metninin SHA-256 değeridir. Üretilen UDF belgesini resmi kullanımdan önce UYAP Doküman Editör'de açarak elle doğrulayın.</p>
         {defterMetni && <label class="defter-yedek">Kayıt defteri satırı<textarea readOnly value={defterMetni} rows={6} onFocus={e => e.currentTarget.select()} /></label>}
         {sonuc ? <div class="rapor-onizleme"><Sonuclar sonuc={sonuc} tam /></div> : <div class="hata-kutusu"><p>{hata ? hataAciklamasi(hata.mesaj) : 'Girdiler henüz tamamlanmadı.'}</p><button onClick={hatayaGit}>Girdileri tamamla</button></div>}
       </section>}

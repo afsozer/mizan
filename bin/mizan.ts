@@ -6,6 +6,7 @@ import { girdiOku } from '../src/node/girdi-dosya.ts';
 import { hesapla } from '../src/hesap.ts';
 import { tl } from '../src/para.ts';
 import { raporTanimi } from '../src/rapor/pdf.ts';
+import { udfOlustur, udfDosyaAdi } from '../src/rapor/udf.ts';
 import { pdfYaz } from '../src/node/pdf-yaz.ts';
 import { defterSatiri, kanitDosyaAdi } from '../src/rapor/defter.ts';
 import { surumYaz } from '../src/surum.ts';
@@ -16,7 +17,7 @@ import { bugun, trTarih } from '../src/tarih.ts';
 const YARDIM = `mizan: işçilik alacakları hesap aracı
 
 Kullanım:
-  mizan hesapla <girdi.yaml> [--cikti <dizin>]   PDF rapor ve kayıt defteri satırı üretir
+  mizan hesapla <girdi.yaml> [--cikti <dizin>]   PDF rapor, UYAP UDF rapor ve kayıt defteri satırı üretir
   mizan tablolar                                 Tabloları denetler, doğrulama tarihlerini yazar
   mizan --surum
 
@@ -45,7 +46,10 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
   mkdirSync(dizin, { recursive: true });
   const pdfAdi = kanitDosyaAdi(sonuc, tarih);
   const pdfYolu = join(dizin, pdfAdi);
-  await pdfYaz(raporTanimi(sonuc, { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet }), pdfYolu);
+  const raporBilgi = { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet };
+  await pdfYaz(raporTanimi(sonuc, raporBilgi), pdfYolu);
+  const udfYolu = join(dizin, udfDosyaAdi(sonuc, tarih));
+  writeFileSync(udfYolu, udfOlustur(sonuc, raporBilgi));
   const satir = defterSatiri(sonuc, tarih, surum);
   const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
   writeFileSync(defterYolu, satir + '\n');
@@ -56,6 +60,7 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
   console.log(`${'Toplam'.padEnd(38)} brüt ${tl(sonuc.toplam.brut).padStart(14)}  net ${tl(sonuc.toplam.net).padStart(14)}  faiz ${tl(sonuc.toplam.faiz)}`);
   for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
   console.log(`\nRapor: ${pdfYolu}`);
+  console.log(`UDF:   ${udfYolu} (resmi kullanımdan önce UYAP Doküman Editör'de elle doğrulayın)`);
   console.log(`Defter satırı (${defterYolu}):\n${satir}`);
 }
 

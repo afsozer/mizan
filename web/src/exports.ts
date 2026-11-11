@@ -1,4 +1,4 @@
-import { raporTanimi, kanitDosyaAdi, surumYaz } from '../../src/index.ts';
+import { raporTanimi, kanitDosyaAdi, udfOlustur, udfDosyaAdi, surumYaz } from '../../src/index.ts';
 import type { HesapSonucu } from '../../src/index.ts';
 import { sha256 } from './tables.ts';
 
@@ -27,4 +27,15 @@ export async function pdfIndir(sonuc: HesapSonucu, yaml: string) {
   });
   const blob = await pdfMake.createPdf(tanim).getBlob();
   indir(blob, kanitDosyaAdi(sonuc, uretimTarihi(zaman)));
+}
+export async function udfIndir(sonuc: HesapSonucu, yaml: string) {
+  const zaman = new Date();
+  const baytlar = udfOlustur(sonuc, {
+    surum: surum(),
+    girdiOzeti: await sha256(yaml),
+    uretimZamani: new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' }).format(zaman),
+  });
+  const kopya = new Uint8Array(baytlar.byteLength);
+  kopya.set(baytlar);
+  indir(new Blob([kopya.buffer], { type: 'application/zip' }), udfDosyaAdi(sonuc, uretimTarihi(zaman)));
 }

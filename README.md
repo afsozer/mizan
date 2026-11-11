@@ -4,8 +4,8 @@
 
 İşçilik alacaklarını bilirkişi raporu düzeyinde hesaplayan komut satırı aracı. Her hesap için
 girdileri, formülü, dayanak maddeyi ve kullanılan resmi tablo satırının kaynağını gösteren tarihli
-bir PDF rapor üretir; yanına bilirkişilik hesap kayıt defterine yapıştırılacak satır önerisini
-yazar.
+bir PDF rapor ve UYAP Doküman Formatı (`.udf`) raporu üretir; yanına bilirkişilik hesap kayıt
+defterine yapıştırılacak satır önerisini yazar.
 
 Faz 1 kapsamı: kıdem tazminatı (dönemsel tavanla), ihbar tazminatı, kötüniyet tazminatı, boşta geçen
 süre ücreti, işe başlatmama tazminatı, yıllık izin ücreti, ödenmeyen ücret alacağı (bakiye maaş),
@@ -31,11 +31,16 @@ npm test
 node bin/mizan.ts hesapla ornekler/ornek-iscilik.yaml --cikti ornekler/cikti
 ```
 
-Örnek çıktı bu depoda üretilir ama `ornekler/cikti/` git dışında tutulur. Çıktı dizinine iki dosya
+Örnek çıktı bu depoda üretilir ama `ornekler/cikti/` git dışında tutulur. Çıktı dizinine üç dosya
 yazılır:
 
 - `2026-10-22_ornek-is-2026-1_60.02.pdf`: hesap raporu. Ad, defterdeki
   `YYYY-AA-GG_mahkeme-esas_altalan.pdf` kuralına uyar; tarih raporun üretildiği gündür.
+- `2026-10-22_ornek-is-2026-1_60.02.udf`: UYAP Doküman Formatı (`format_id="1.8"`) rapor çıktısı.
+  PDF raporundaki tüm bölümleri (başlık, dosya ve hesap özeti, hizmet süresi ve ücret, hukuki
+  tercihler, kalem detayları, resmi tablo kaynakları ve kanıt/doğrulama bilgileri) içerir.
+  **Uyarı:** Üretilen her `.udf` dosyası resmi kullanımdan önce UYAP Doküman Editör'de açılarak
+  elle doğrulanmalıdır.
 - `2026-10-22_ornek-is-2026-1_60.02.defter.md`: kayıt defteri satırı önerisi
   (tarih, kaynak, mahkeme ve esas no, alt alan, kalemler ve toplamlar, kanıt dosyası). Teyit sütunu boş
   bırakılır.

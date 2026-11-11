@@ -25,6 +25,7 @@ export { hesapla } from './hesap.ts';
 export type { HesapSonucu, KalemSonucu } from './hesap.ts';
 export { raporTanimi } from './rapor/pdf.ts';
 export type { RaporBilgisi } from './rapor/pdf.ts';
+export { udfOlustur, udfDosyaAdi } from './rapor/udf.ts';
 export { defterSatiri, kanitDosyaAdi, kisaltma } from './rapor/defter.ts';
 export { surumYaz } from './surum.ts';
 export type { Surum } from './surum.ts';
