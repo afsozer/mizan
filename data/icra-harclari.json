@@ -1,0 +1,272 @@
+{
+  "tablo": "icra-harclari",
+  "ad": "İcra harçları tarifesi (492 s.K. (1) sayılı tarife B/I ve 2548 s.K. m.1)",
+  "aciklama": "492 s.K. Harçlar Kanunu (1) sayılı tarife B/I-1 maktu icraya başvurma harcı, m.29 ilamsız takiplerde binde 5 peşin harç, B/I-3 değeri belli olan icra takiplerinde nispi tahsil harcı oranları (tebliğden önce %0, tebliğden sonra hacizden önce %4,55, hacizden sonra satıştan önce %9,10, satıştan sonra %11,38, maaş/ücret haczinde %4,55), m.23 feragat/vazgeçme indirimi (%50, satıştan sonra tam) ve 2548 s.K. m.1 cezaevleri yapı harcı (%2, alacaklıdan kesilir).",
+  "dogrulamaTarihi": "2026-11-11",
+  "satirlar": [
+    {
+      "baslangic": "2016-01-01",
+      "bitis": "2016-12-31",
+      "basvurmaHarci": "29.20",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 75); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2015/12/20151225-13.htm",
+        "resmiGazete": {
+          "tarih": "2015-12-25",
+          "sayi": "29573"
+        },
+        "dogrulama": "Okundu: RG 25.12.2015/29573 Seri No: 75 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 29,20 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55); mevzuat.gov.tr 492 s.K. ve 2548 s.K. metinleri."
+      }
+    },
+    {
+      "baslangic": "2017-01-01",
+      "bitis": "2017-12-31",
+      "basvurmaHarci": "31.40",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 78); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2016/12/20161227-13.htm",
+        "resmiGazete": {
+          "tarih": "2016-12-27",
+          "sayi": "29931"
+        },
+        "dogrulama": "Okundu: RG 27.12.2016/29931 Seri No: 78 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 31,40 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2018-01-01",
+      "bitis": "2018-12-31",
+      "basvurmaHarci": "35.90",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 80); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2017/12/20171229M1.htm",
+        "resmiGazete": {
+          "tarih": "2017-12-29",
+          "sayi": "30285"
+        },
+        "dogrulama": "Okundu: RG 29.12.2017/30285 (Mükerrer) Seri No: 80 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 35,90 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2019-01-01",
+      "bitis": "2019-12-31",
+      "basvurmaHarci": "44.40",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 82); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2018/12/20181231M3.htm",
+        "resmiGazete": {
+          "tarih": "2018-12-31",
+          "sayi": "30642"
+        },
+        "dogrulama": "Okundu: RG 31.12.2018/30642 (3. Mükerrer) Seri No: 82 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 44,40 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2020-01-01",
+      "bitis": "2020-12-31",
+      "basvurmaHarci": "54.40",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 84); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2019/12/20191227M2.htm",
+        "resmiGazete": {
+          "tarih": "2019-12-27",
+          "sayi": "30991"
+        },
+        "dogrulama": "Okundu: RG 27.12.2019/30991 (2. Mükerrer) Seri No: 84 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 54,40 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2021-01-01",
+      "bitis": "2021-12-31",
+      "basvurmaHarci": "59.30",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 86); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2020/12/20201229M1.htm",
+        "resmiGazete": {
+          "tarih": "2020-12-29",
+          "sayi": "31349"
+        },
+        "dogrulama": "Okundu: RG 29.12.2020/31349 (1. Mükerrer) Seri No: 86 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 59,30 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2022-01-01",
+      "bitis": "2022-12-31",
+      "basvurmaHarci": "80.70",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 89); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2021/12/20211221-14.htm",
+        "resmiGazete": {
+          "tarih": "2021-12-21",
+          "sayi": "31696"
+        },
+        "dogrulama": "Okundu: RG 21.12.2021/31696 Seri No: 89 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 80,70 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2023-01-01",
+      "bitis": "2023-07-07",
+      "basvurmaHarci": "179.90",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 91); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2022/12/20221230M2.htm",
+        "resmiGazete": {
+          "tarih": "2022-12-30",
+          "sayi": "32059"
+        },
+        "dogrulama": "Okundu: RG 30.12.2022/32059 (2. Mükerrer) Seri No: 91 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 179,90 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2023-07-08",
+      "bitis": "2023-12-31",
+      "basvurmaHarci": "269.85",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Cumhurbaşkanı Kararı 7344 ve Harçlar Kanunu Genel Tebliği (Seri No: 93); 492 s.K. (1) sayılı tarife B/I",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/07/20230713-6.htm",
+        "resmiGazete": {
+          "tarih": "2023-07-13",
+          "sayi": "32247"
+        },
+        "dogrulama": "Okundu: RG 07.07.2023/32241 CBK 7344 (%50 artış, yürürlük izleyen gün 08.07.2023) ve RG 13.07.2023/32247 Seri No: 93 Tebliğ eki (başvurma harcı 269,85 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2024-01-01",
+      "bitis": "2024-12-31",
+      "basvurmaHarci": "427.60",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 94); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/12/20231230M2.htm",
+        "resmiGazete": {
+          "tarih": "2023-12-30",
+          "sayi": "32415"
+        },
+        "dogrulama": "Okundu: RG 30.12.2023/32415 (2. Mükerrer) Seri No: 94 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 427,60 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2025-01-01",
+      "bitis": "2025-12-31",
+      "basvurmaHarci": "615.40",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 96); 492 s.K. m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/12/20241230M2.htm",
+        "resmiGazete": {
+          "tarih": "2024-12-30",
+          "sayi": "32768"
+        },
+        "dogrulama": "Okundu: RG 30.12.2024/32768 (2. Mükerrer) Seri No: 96 Tebliğ eki (1) sayılı tarife B/I (başvurma harcı 615,40 TL; tahsil harcı %4,55 / %9,10 / %11,38 / %4,55)."
+      }
+    },
+    {
+      "baslangic": "2026-01-01",
+      "bitis": "2026-12-31",
+      "basvurmaHarci": "732.00",
+      "pesinHarcOrani": "0.005",
+      "tahsilTebligdenOnce": "0",
+      "tahsilHacizdenOnce": "0.0455",
+      "tahsilSatistanOnce": "0.091",
+      "tahsilSatistanSonra": "0.1138",
+      "tahsilMaasHaczi": "0.0455",
+      "feragatCarpani": "0.5",
+      "cezaeviHarciOrani": "0.02",
+      "kaynak": {
+        "ad": "Harçlar Kanunu Genel Tebliği (Seri No: 98); 492 s.K. m.20, m.23, m.28, m.29, (1) sayılı tarife B/I; 2548 s.K. m.1",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/12/20251231M5-28.pdf",
+        "resmiGazete": {
+          "tarih": "2025-12-31",
+          "sayi": "33124"
+        },
+        "dogrulama": "Okundu: RG 31.12.2025/33124 (5. Mükerrer) Seri No: 98 Tebliğ eki (1) sayılı tarife B/I (icraya başvurma harcı 732,00 TL; tahsil harcı B/I-3-a %4,55, B/I-3-b %9,10, B/I-3-c %11,38, B/I-3-d %4,55) ve mevzuat.gov.tr güncel 492 s.K. ve 2548 s.K. metinleri (11.11.2026 kontrol)."
+      }
+    }
+  ]
+}

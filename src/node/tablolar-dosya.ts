@@ -1,5 +1,5 @@
 // Tabloları data/ dizininden okuyan Node katmanı. Çekirdek (src/tablolar.ts) dosyaya dokunmaz.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +19,10 @@ export interface TabloYollari {
 
 export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): Tablolar {
   const oku = (ad: string) => tabloOku(join(dizin, ad));
+  const varsaOku = (ad: string) => (existsSync(join(dizin, ad)) ? oku(ad) : undefined);
   const f = TABLO_DOSYALARI;
+  const avansReeskontFaizi = varsaOku(f.avansReeskontFaizi);
+  const icraHarclari = varsaOku(f.icraHarclari);
   return tablolariKur({
     asgariUcret: oku(f.asgariUcret),
     kidemTavani: oku(f.kidemTavani),
@@ -34,5 +37,7 @@ export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): 
           : oku(f.mevduatFaizi),
     gelirVergisi: oku(f.gelirVergisi),
     ubgtTakvimi: oku(f.ubgtTakvimi),
+    ...(avansReeskontFaizi ? { avansReeskontFaizi } : {}),
+    ...(icraHarclari ? { icraHarclari } : {}),
   });
 }

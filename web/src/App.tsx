@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { hesapla, defterSatiri, kanitDosyaAdi, tl, TABLO_DOSYALARI } from '../../src/index.ts';
-import type { HesapSonucu } from '../../src/index.ts';
+import { hesapla, defterSatiri, kanitDosyaAdi, metindenAlanOku, tl, TABLO_DOSYALARI } from '../../src/index.ts';
+import type { HesapAlani, HesapSonucu } from '../../src/index.ts';
 import ornekYaml from '../../ornekler/ornek-iscilik.yaml?raw';
 import { Alanlar, alanId } from './Form.tsx';
+import { IcraCalismaAlani } from './IcraPanel.tsx';
 import { Sonuclar } from './Results.tsx';
 import { alanAdi, BOLUMLER, KALEMLER, kalemYeni } from './schema.ts';
 import { alanDegistir, bosForm, degerOku, formYamli, formuDogrula, formdanGirdiKur, hataAciklamasi, hataYolu, yamlForma } from './form-model.ts';
@@ -26,6 +27,8 @@ function degerlendir(form: Nesne, belgeler: TabloBelgesi[]): Degerlendirme {
 }
 
 export function App() {
+  const [hesapAlani, hesapAlaniYaz] = useState<HesapAlani>('iscilik');
+  const [disaridanIcraYaml, disaridanIcraYamlYaz] = useState('');
   const [ihtimaller, ihtimalleriYaz] = useState<Ihtimal[]>([{ id: 1, ad: 'İlk ihtimal', form: bosForm() }]);
   const [aktifId, aktifiYaz] = useState(1);
   const [sayfa, sayfaYaz] = useState('hesap');
@@ -94,8 +97,21 @@ export function App() {
     bildir('İhtimal kopyalandı. Kopyada değiştirdiğiniz tercihler diğer ihtimalleri etkilemez.');
   };
   const yamlYukle = async (f: File) => {
-    try { formYaz(yamlForma(await f.text())); adimYaz(0); sayfaYaz('hesap'); bildir(`${f.name} forma yüklendi.`); }
-    catch (e) { bildir(`YAML yüklenemedi: ${HATA(e)}`); }
+    try {
+      const metin = await f.text();
+      if (metindenAlanOku(metin) === 'icra') {
+        hesapAlaniYaz('icra');
+        disaridanIcraYamlYaz(metin);
+        sayfaYaz('hesap');
+        bildir(`${f.name} icra kapak hesabına yüklendi.`);
+        return;
+      }
+      hesapAlaniYaz('iscilik');
+      formYaz(yamlForma(metin));
+      adimYaz(0);
+      sayfaYaz('hesap');
+      bildir(`${f.name} forma yüklendi.`);
+    } catch (e) { bildir(`YAML yüklenemedi: ${HATA(e)}`); }
   };
   const tabloYukle = async (f: File) => {
     mesgulYaz(true);
@@ -149,18 +165,21 @@ export function App() {
   if (kapandi) return <main class="kapandi" id="ana-icerik"><span class="marka-adi">mizan<span class="marka-nokta">.</span></span>
     <h1>Sunucu kapatıldı</h1><p>Bu sekmeyi kapatabilirsiniz. Arayüzü yeniden açmak için depo klasöründe <code>npm run arayuz</code> komutunu çalıştırın.</p></main>;
 
+  const alanSecici = <div class="ihtimal-secimi"><label for="aktif-alan">Hesap alanı</label><select id="aktif-alan" value={hesapAlani} onChange={e => { const yeniAlan = e.currentTarget.value as HesapAlani; hesapAlaniYaz(yeniAlan); if (yeniAlan === 'icra' && sayfa === 'ihtimaller') sayfaYaz('hesap'); bildir(''); defterYaz(''); }}><option value="iscilik">İşçilik alacakları</option><option value="icra">İcra takibi ve harç</option></select></div>;
+
   return <>
     <a class="atla" href="#ana-icerik">İçeriğe geç</a>
     <header class="ust-serit"><div class="marka"><span class="marka-adi">mizan<span class="marka-nokta">.</span></span></div>
       {yerelSunucu && <div class="ust-sag"><button class="kapat-dugmesi" onClick={() => void sunucuyuKapat()} title="Yerel sunucuyu kapatır">Kapat</button></div>}</header>
-    <nav class="ana-sekmeler" aria-label="Ana gezinme">{[['hesap', 'Hesap kurma'], ['ihtimaller', 'İhtimaller'], ['rapor', 'Rapor ve kayıt'], ['tablolar', 'Tablolar']].map(([kod, ad]) => <button key={kod} aria-current={sayfa === kod ? 'page' : undefined} onClick={() => sayfaYaz(kod!)}>{ad}</button>)}</nav>
+    <nav class="ana-sekmeler" aria-label="Ana gezinme">{(hesapAlani === 'icra' ? [['hesap', 'Hesap kurma'], ['rapor', 'Rapor ve kayıt'], ['tablolar', 'Tablolar']] : [['hesap', 'Hesap kurma'], ['ihtimaller', 'İhtimaller'], ['rapor', 'Rapor ve kayıt'], ['tablolar', 'Tablolar']]).map(([kod, ad]) => <button key={kod} aria-current={sayfa === kod ? 'page' : undefined} onClick={() => sayfaYaz(kod!)}>{ad}</button>)}</nav>
     <main id="ana-icerik">
       <div role="status" aria-live="polite" class={`bildirim ${bildirim ? '' : 'bos'}`}>{bildirim}</div>
       {baslangicHatasi && <p role="alert" class="hata-kutusu">Tablolar hazırlanamadı: {baslangicHatasi}</p>}
       {!belgeler.length && !baslangicHatasi && <p role="status">Kaynak tabloları hazırlanıyor...</p>}
-      {sayfa !== 'tablolar' && <div class="calisma-seridi"><div class="ihtimal-secimi"><label for="aktif-ihtimal">Çalışılan ihtimal</label><select id="aktif-ihtimal" value={aktifId} onChange={e => { aktifiYaz(Number(e.currentTarget.value)); bildir(''); defterYaz(''); }}>{ihtimaller.map(i => <option key={i.id} value={i.id}>{i.ad}</option>)}</select></div>
+      {hesapAlani === 'icra' && sayfa !== 'tablolar' && <IcraCalismaAlani alanSecici={alanSecici} sayfa={sayfa} sayfaYaz={sayfaYaz} belgeler={belgeler} bildir={bildir} mesgul={mesgul} mesgulYaz={mesgulYaz} disaridanYaml={disaridanIcraYaml} disaridanYamlTemizle={() => disaridanIcraYamlYaz('')} disYamlYukle={f => void yamlYukle(f)} />}
+      {hesapAlani === 'iscilik' && sayfa !== 'tablolar' && <div class="calisma-seridi"><div class="calisma-secimler">{alanSecici}<div class="ihtimal-secimi"><label for="aktif-ihtimal">Çalışılan ihtimal</label><select id="aktif-ihtimal" value={aktifId} onChange={e => { aktifiYaz(Number(e.currentTarget.value)); bildir(''); defterYaz(''); }}>{ihtimaller.map(i => <option key={i.id} value={i.id}>{i.ad}</option>)}</select></div></div>
         <div class="araclar"><button onClick={kopyala}>İhtimali kopyala</button><button onClick={() => { formYaz(yamlForma(ornekYaml)); adimYaz(0); sayfaYaz('hesap'); bildir('Kurgusal örnek hesap yüklendi.'); }}>Örnek hesap yükle</button><label class="buton dosya-buton">YAML yükle<input type="file" accept=".yaml,.yml,application/yaml,text/yaml" onChange={e => { const f = e.currentTarget.files?.[0]; if (f) void yamlYukle(f); e.currentTarget.value = ''; }} /></label></div></div>}
-      {sayfa === 'hesap' && <div class="hesap-duzeni">
+      {hesapAlani === 'iscilik' && sayfa === 'hesap' && <div class="hesap-duzeni">
         <section class="form-paneli" aria-label="Hesap girdileri"><div class="bolum-basligi"><span class="bolum-no">{String(adim + 1).padStart(2, '0')} / 05</span><h1>{BOLUMLER[adim]!.ad}</h1></div>
           <nav class="adimlar" aria-label="Hesap adımları">{BOLUMLER.map((b, i) => <button key={b.ad} aria-current={adim === i ? 'step' : undefined} onClick={() => adimYaz(i)}>{b.ad}</button>)}</nav>
           <form onSubmit={e => e.preventDefault()} noValidate>
@@ -180,7 +199,7 @@ export function App() {
         </aside>
         <a class="mobil-ozet" href="#sonuc-paneli">{sonuc ? <>Net <b>{tl(sonuc.toplam.net)} TL</b><span>Sonuca git</span></> : <>Hesap eksik<span>Durumu gör</span></>}</a>
       </div>}
-      {sayfa === 'ihtimaller' && <section class="ihtimaller-ekrani"><div class="sayfa-basligi"><h1>İhtimalleri karşılaştırın</h1><button class="birincil" onClick={kopyala}>İhtimali kopyala</button></div>
+      {hesapAlani === 'iscilik' && sayfa === 'ihtimaller' && <section class="ihtimaller-ekrani"><div class="sayfa-basligi"><h1>İhtimalleri karşılaştırın</h1><button class="birincil" onClick={kopyala}>İhtimali kopyala</button></div>
         <div class="ihtimal-listesi">{ihtimaller.map((i, n) => { const d = degerlendirmeler[n]!; return <article class={`ihtimal ${i.id === aktifId ? 'aktif' : ''}`} key={i.id}>
           <label for={`ihtimal-ad-${i.id}`}>İhtimal adı</label><input id={`ihtimal-ad-${i.id}`} value={i.ad} onInput={e => ihtimalleriYaz(ihtimaller.map(o => o.id === i.id ? { ...o, ad: e.currentTarget.value } : o))} />
           <p class="soluk">{String((i.form.dosya as Nesne).mahkeme || 'Mahkeme girilmedi')} · {String((i.form.dosya as Nesne).esasNo || 'Esas numarası girilmedi')}</p>
@@ -189,13 +208,13 @@ export function App() {
           <div class="ihtimal-araclari"><button onClick={() => { aktifiYaz(i.id); sayfaYaz('hesap'); bildir(''); }}>Bu ihtimali düzenle</button><button class="metin-buton" disabled={ihtimaller.length === 1} onClick={() => { ihtimalleriYaz(ihtimaller.filter(o => o.id !== i.id)); if (aktifId === i.id) aktifiYaz(ihtimaller.find(o => o.id !== i.id)!.id); }}>Kaldır</button></div>
         </article>; })}</div>
       </section>}
-      {sayfa === 'rapor' && <section class="rapor-ekrani"><div class="sayfa-basligi"><h1>Rapor ve kayıt</h1></div>
+      {hesapAlani === 'iscilik' && sayfa === 'rapor' && <section class="rapor-ekrani"><div class="sayfa-basligi"><h1>Rapor ve kayıt</h1></div>
         <div class="rapor-araclari"><button class="birincil" disabled={!sonuc || mesgul} onClick={() => void pdfOlustur()}>{mesgul ? 'PDF hazırlanıyor...' : 'PDF raporunu indir'}</button><button disabled={!sonuc || mesgul} onClick={() => void udfOlusturIndir()}>UDF indir</button><button disabled={!sonuc} onClick={() => { if (sonuc) { indir(formYamli(form), kanitDosyaAdi(sonuc, uretimTarihi()).replace(/\.pdf$/, '.yaml'), 'application/yaml'); bildir('YAML indirmesi başlatıldı. Girdinin kalıcı kopyasını bu dosyada saklayın.'); } }}>Girdiyi YAML indir</button><button disabled={!sonuc} onClick={() => void defterKopyala()}>Defter satırını kopyala</button></div>
         <p class="not">Üretilen UDF belgesini resmi kullanımdan önce UYAP Doküman Editör'de açarak elle doğrulayın.</p>
         {defterMetni && <label class="defter-yedek">Kayıt defteri satırı<textarea readOnly value={defterMetni} rows={6} onFocus={e => e.currentTarget.select()} /></label>}
         {sonuc ? <div class="rapor-onizleme"><Sonuclar sonuc={sonuc} tam /></div> : <div class="hata-kutusu"><p>{hata ? hataAciklamasi(hata.mesaj) : 'Girdiler henüz tamamlanmadı.'}</p><button onClick={hatayaGit}>Girdileri tamamla</button></div>}
       </section>}
-      {sayfa === 'tablolar' && <><TablolarEkrani belgeler={belgeler} yukle={f => void tabloYukle(f)} mesgul={mesgul || !belgeler.length} /><section class="mevduat-paneli">{tabloSecimi}</section></>}
+      {sayfa === 'tablolar' && <><TablolarEkrani belgeler={belgeler} yukle={f => void tabloYukle(f)} mesgul={mesgul || !belgeler.length} />{hesapAlani === 'iscilik' && <section class="mevduat-paneli">{tabloSecimi}</section>}</>}
     </main>
     <footer><span>{surum()}</span></footer>
   </>;

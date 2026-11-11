@@ -1,0 +1,62 @@
+# Örnek icra kapak hesabı girdi dosyası (kurgusal dosya).
+# Kişisel veri (borçlu/alacaklı adı, T.C. kimlik no, vergi no, IBAN) yazılmaz.
+# Sayılarda binlik ayırıcı kullanılmaz; ondalık ayırıcı noktadır (1234.56).
+# Oranlar 0 ile 1 arasında yazılır (%45 -> 0.45).
+
+alan: icra
+
+dosya:
+  mahkeme: Örnek İcra Dairesi
+  esasNo: 2026/1
+  kaynak: örnek hesap
+  altAlan: "60.05"
+  # İsteğe bağlı: kanıt dosyası adındaki merci kısaltması (verilmezse mahkeme adından üretilir)
+  kisaAd: ornek-icra
+
+hesapTarihi: 2026-06-15
+
+parametreler:
+  # 365 (varsayılan) | 360
+  faizGunEsasi: 365
+
+takip:
+  takipTarihi: 2025-10-01
+  # ilamsiz | ilamli | kambiyo
+  takipTuru: ilamsiz
+  asilAlacak: 200000
+  # Takip öncesi birikmiş faiz ve fer'i alacaklar (TBK m.121/3 gereği takip sonrasında faiz yürütülmez,
+  # 492 s.K. m.20 gereği takip çıkışı toplamına dahil edilerek harç matrahına girer)
+  takipOncesiKalemler:
+    - ad: İşlemiş temerrüt faizi
+      tutar: 12000
+      aciklama: Fatura vadesinden takip tarihine kadar işlemiş faiz
+    - ad: İhtarname gideri
+      tutar: 1500
+      aciklama: Noter ihtarname masrafı
+  faiz:
+    # yasal | avans | reeskont | sozlesme
+    tur: avans
+    gerekce: Ticari fatura alacağı (3095 s.K. m.2/2 ticari temerrüt / avans faizi)
+  # İlamsız ve kambiyo takiplerinde takip çıkışı üzerinden binde 5 peşin harç (492 s.K. m.28-29)
+  pesinHarcAlindiMi: true
+  # tebligden-once | hacizden-once | satistan-once | satistan-sonra | maas-haczi
+  tahsilHarciAsamasi: satistan-once
+  # 492 s.K. m.23: feragat/vazgeçme varsa satış öncesi aşamalarda tahsil harcı 1/2 indirimli alınır
+  feragatVarMi: false
+  vekaletUcreti: 34000
+  masraflar:
+    - tarih: 2025-10-10
+      tutar: 450
+      aciklama: Ödeme emri tebligat ve posta gideri
+    - tarih: 2026-01-15
+      tutar: 2550
+      aciklama: Haciz ve muhafaza gider avansı
+  # 6098 s.K. TBK m.100: Kısmi ödemeler öncelikle ödeme tarihine kadar işlemiş faiz ve giderlerden,
+  # artan tutar ise asıl alacaktan düşülür.
+  kismiOdemeler:
+    - tarih: 2025-12-01
+      tutar: 40000
+      aciklama: Dosya hesabına 1. kısmi ödeme
+    - tarih: 2026-03-01
+      tutar: 85000
+      aciklama: Dosya hesabına 2. kısmi ödeme

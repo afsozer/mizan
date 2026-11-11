@@ -199,6 +199,7 @@ export interface VergiParametresi {
 }
 
 export interface Girdi {
+  alan?: 'iscilik';
   dosya: { mahkeme: string; esasNo: string; kaynak: string; altAlan: string; kisaAd?: string; hazirlayan?: string };
   hesapTarihi: string;
   faizBitis?: string;
@@ -449,7 +450,8 @@ const ORTAK = ['faiz', 'mahsup', 'takdiriIndirim'];
 
 export function girdiCoz(veri: unknown): Girdi {
   const k = Okuyucu.kok(veri);
-  k.izinli(['dosya', 'hesapTarihi', 'faizBitis', 'hizmet', 'ucret', 'parametreler', 'tablolar', 'kalemler']);
+  k.izinli(['alan', 'dosya', 'hesapTarihi', 'faizBitis', 'hizmet', 'ucret', 'parametreler', 'tablolar', 'kalemler']);
+  const alan = k.var('alan') ? k.secenek('alan', ['iscilik'] as const) : undefined;
 
   const dsy = k.alt('dosya');
   dsy.izinli(['mahkeme', 'esasNo', 'kaynak', 'altAlan', 'kisaAd', 'hazirlayan']);
@@ -897,6 +899,7 @@ export function girdiCoz(veri: unknown): Girdi {
   }
 
   return {
+    ...(alan ? { alan } : {}),
     dosya,
     hesapTarihi: k.tarih('hesapTarihi'),
     faizBitis: k.var('faizBitis') ? k.tarih('faizBitis') : undefined,

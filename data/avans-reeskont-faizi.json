@@ -1,0 +1,308 @@
+{
+  "tablo": "avans-reeskont-faizi",
+  "ad": "TCMB reeskont iskonto ve avans (ticari temerrüt) faiz oranları (3095 s.K. m.2)",
+  "aciklama": "3095 s.K. m.2/2 uyarınca ticari işlerde temerrüt faizi olarak uygulanan TCMB kısa vadeli avans faiz oranı (avansOrani) ile vadesine en çok 3 ay kalan senetler için öngörülen reeskont iskonto faiz oranı (reeskontOrani). Yargıtay 12. HD yerleşik içtihadına göre icra takiplerinde avans ve reeskont faizi TCMB tebliğlerinin yürürlük tarihlerinde değişen oranlarla kesitlere bölünerek hesaplanır.",
+  "dogrulamaTarihi": "2026-11-11",
+  "satirlar": [
+    {
+      "baslangic": "2014-12-14",
+      "bitis": "2016-12-30",
+      "reeskontOrani": "0.09",
+      "avansOrani": "0.105",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2014/12/20141214-4.htm",
+        "resmiGazete": {
+          "tarih": "2014-12-14",
+          "sayi": "29205"
+        },
+        "dogrulama": "Okundu: RG 14.12.2014/29205 TCMB tebliği metni ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %9,00; avans %10,50)."
+      }
+    },
+    {
+      "baslangic": "2016-12-31",
+      "bitis": "2018-06-28",
+      "reeskontOrani": "0.0875",
+      "avansOrani": "0.0975",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2016/12/20161231-9.htm",
+        "resmiGazete": {
+          "tarih": "2016-12-31",
+          "sayi": "29935"
+        },
+        "dogrulama": "Okundu: RG 31.12.2016/29935 TCMB tebliği metni ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %8,75; avans %9,75)."
+      }
+    },
+    {
+      "baslangic": "2018-06-29",
+      "bitis": "2019-10-10",
+      "reeskontOrani": "0.185",
+      "avansOrani": "0.195",
+      "kaynak": {
+        "ad": "TCMB Reeskont İşlemlerinde Uygulanacak İskonto Faiz Oranlarının Tespiti ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliğleri",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2018/06/20180629-5.htm",
+        "resmiGazete": {
+          "tarih": "2018-06-29",
+          "sayi": "30463"
+        },
+        "dogrulama": "Okundu: RG 29.06.2018/30463 TCMB tebliğleri ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %18,50; avans %19,50)."
+      }
+    },
+    {
+      "baslangic": "2019-10-11",
+      "bitis": "2019-12-20",
+      "reeskontOrani": "0.1725",
+      "avansOrani": "0.1825",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2019/10/20191011-17.pdf",
+        "resmiGazete": {
+          "tarih": "2019-10-11",
+          "sayi": "30915"
+        },
+        "dogrulama": "Okundu: RG 11.10.2019/30915 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %17,25; avans %18,25)."
+      }
+    },
+    {
+      "baslangic": "2019-12-21",
+      "bitis": "2020-06-12",
+      "reeskontOrani": "0.1275",
+      "avansOrani": "0.1375",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Yıllık Faiz Oranları Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2019/12/20191221-6.htm",
+        "resmiGazete": {
+          "tarih": "2019-12-21",
+          "sayi": "30985"
+        },
+        "dogrulama": "Okundu: RG 21.12.2019/30985 TCMB tebliği metni ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %12,75; avans %13,75)."
+      }
+    },
+    {
+      "baslangic": "2020-06-13",
+      "bitis": "2020-12-18",
+      "reeskontOrani": "0.09",
+      "avansOrani": "0.10",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2020/06/20200613-9.htm",
+        "resmiGazete": {
+          "tarih": "2020-06-13",
+          "sayi": "31154"
+        },
+        "dogrulama": "Okundu: RG 13.06.2020/31154 TCMB tebliği metni ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %9,00; avans %10,00)."
+      }
+    },
+    {
+      "baslangic": "2020-12-19",
+      "bitis": "2021-12-30",
+      "reeskontOrani": "0.1575",
+      "avansOrani": "0.1675",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2020/12/20201219-8.pdf",
+        "resmiGazete": {
+          "tarih": "2020-12-19",
+          "sayi": "31339"
+        },
+        "dogrulama": "Okundu: RG 19.12.2020/31339 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %15,75; avans %16,75)."
+      }
+    },
+    {
+      "baslangic": "2021-12-31",
+      "bitis": "2022-12-30",
+      "reeskontOrani": "0.1475",
+      "avansOrani": "0.1575",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2022/01/20220102-7.pdf",
+        "resmiGazete": {
+          "tarih": "2022-01-02",
+          "sayi": "31707"
+        },
+        "dogrulama": "Okundu: RG 02.01.2022/31707 TCMB tebliği PDF (düzeltme ile 31.12.2021 tarihinden geçerli) ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %14,75; avans %15,75)."
+      }
+    },
+    {
+      "baslangic": "2022-12-31",
+      "bitis": "2023-06-23",
+      "reeskontOrani": "0.0975",
+      "avansOrani": "0.1075",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2022/12/20221231-8.pdf",
+        "resmiGazete": {
+          "tarih": "2022-12-31",
+          "sayi": "32060"
+        },
+        "dogrulama": "Okundu: RG 31.12.2022/32060 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %9,75; avans %10,75)."
+      }
+    },
+    {
+      "baslangic": "2023-06-24",
+      "bitis": "2023-08-31",
+      "reeskontOrani": "0.1575",
+      "avansOrani": "0.1675",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/06/20230624-5.pdf",
+        "resmiGazete": {
+          "tarih": "2023-06-24",
+          "sayi": "32231"
+        },
+        "dogrulama": "Okundu: RG 24.06.2023/32231 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %15,75; avans %16,75)."
+      }
+    },
+    {
+      "baslangic": "2023-09-01",
+      "bitis": "2023-09-27",
+      "reeskontOrani": "0.2575",
+      "avansOrani": "0.2675",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/09/20230901-7.pdf",
+        "resmiGazete": {
+          "tarih": "2023-09-01",
+          "sayi": "32296"
+        },
+        "dogrulama": "Okundu: RG 01.09.2023/32296 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %25,75; avans %26,75)."
+      }
+    },
+    {
+      "baslangic": "2023-09-28",
+      "bitis": "2023-10-31",
+      "reeskontOrani": "0.3075",
+      "avansOrani": "0.3175",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/09/20230928-7.pdf",
+        "resmiGazete": {
+          "tarih": "2023-09-28",
+          "sayi": "32323"
+        },
+        "dogrulama": "Okundu: RG 28.09.2023/32323 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %30,75; avans %31,75)."
+      }
+    },
+    {
+      "baslangic": "2023-11-01",
+      "bitis": "2023-11-30",
+      "reeskontOrani": "0.3575",
+      "avansOrani": "0.3675",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/11/20231101-3.pdf",
+        "resmiGazete": {
+          "tarih": "2023-11-01",
+          "sayi": "32356"
+        },
+        "dogrulama": "Okundu: RG 01.11.2023/32356 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %35,75; avans %36,75)."
+      }
+    },
+    {
+      "baslangic": "2023-12-01",
+      "bitis": "2023-12-22",
+      "reeskontOrani": "0.4075",
+      "avansOrani": "0.4175",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/12/20231201-10.pdf",
+        "resmiGazete": {
+          "tarih": "2023-12-01",
+          "sayi": "32386"
+        },
+        "dogrulama": "Okundu: RG 01.12.2023/32386 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %40,75; avans %41,75)."
+      }
+    },
+    {
+      "baslangic": "2023-12-23",
+      "bitis": "2024-03-31",
+      "reeskontOrani": "0.4325",
+      "avansOrani": "0.4425",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/12/20231223-12.pdf",
+        "resmiGazete": {
+          "tarih": "2023-12-23",
+          "sayi": "32408"
+        },
+        "dogrulama": "Okundu: RG 23.12.2023/32408 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %43,25; avans %44,25)."
+      }
+    },
+    {
+      "baslangic": "2024-04-01",
+      "bitis": "2024-12-27",
+      "reeskontOrani": "0.5075",
+      "avansOrani": "0.5175",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/04/20240401-4.pdf",
+        "resmiGazete": {
+          "tarih": "2024-04-01",
+          "sayi": "32507"
+        },
+        "dogrulama": "Okundu: RG 01.04.2024/32507 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %50,75; avans %51,75)."
+      }
+    },
+    {
+      "baslangic": "2024-12-28",
+      "bitis": "2025-03-07",
+      "reeskontOrani": "0.4825",
+      "avansOrani": "0.4925",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/12/20241228-30.pdf",
+        "resmiGazete": {
+          "tarih": "2024-12-28",
+          "sayi": "32766"
+        },
+        "dogrulama": "Okundu: RG 28.12.2024/32766 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %48,25; avans %49,25)."
+      }
+    },
+    {
+      "baslangic": "2025-03-08",
+      "bitis": "2025-09-16",
+      "reeskontOrani": "0.4325",
+      "avansOrani": "0.4425",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/03/20250308-7.pdf",
+        "resmiGazete": {
+          "tarih": "2025-03-08",
+          "sayi": "32835"
+        },
+        "dogrulama": "Okundu: RG 08.03.2025/32835 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %43,25; avans %44,25)."
+      }
+    },
+    {
+      "baslangic": "2025-09-17",
+      "bitis": "2025-12-19",
+      "reeskontOrani": "0.4125",
+      "avansOrani": "0.4225",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/09/20250917-2.pdf",
+        "resmiGazete": {
+          "tarih": "2025-09-17",
+          "sayi": "33020"
+        },
+        "dogrulama": "Okundu: RG 17.09.2025/33020 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %41,25; avans %42,25)."
+      }
+    },
+    {
+      "baslangic": "2025-12-20",
+      "bitis": null,
+      "reeskontOrani": "0.3875",
+      "avansOrani": "0.3975",
+      "kaynak": {
+        "ad": "TCMB Reeskont ve Avans İşlemlerinde Uygulanacak Faiz Oranlarının Tespiti Tebliği",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/12/20251220-12.pdf",
+        "resmiGazete": {
+          "tarih": "2025-12-20",
+          "sayi": "33113"
+        },
+        "dogrulama": "Okundu: RG 20.12.2025/33113 TCMB tebliği PDF ve TCMB Reeskont ve Avans Faiz Oranları tablosu (iskonto %38,75; avans %39,75; 11.11.2026 itibarıyla yürürlükteki son tebliğ)."
+      }
+    }
+  ]
+}

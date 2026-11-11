@@ -62,6 +62,7 @@ main { padding-top: 28px; padding-bottom: 48px; min-height: 70vh; }
 .bildirim { border-left: 3px solid var(--vurgu); background: var(--vurgu-zemin); margin-bottom: 20px; padding: 12px 16px; overflow-wrap: anywhere; }
 .bildirim.bos { display: none; }
 .calisma-seridi { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 26px; }
+.calisma-secimler { display: flex; gap: 12px; flex-wrap: wrap; }
 .ihtimal-secimi { min-width: 180px; max-width: 300px; }
 .ihtimal-secimi label { font-size: 11px; color: var(--soluk); margin-bottom: 5px; }
 .ihtimal-secimi select { background: transparent; font-weight: 550; }
@@ -216,6 +217,7 @@ footer { display: flex; justify-content: space-between; gap: 24px; color: var(--
   .ana-sekmeler button { font-size: 11px; padding-block: 15px; }
   main { padding-top: 20px; }
   .calisma-seridi { display: block; padding-bottom: 22px; }
+  .calisma-secimler { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .ihtimal-secimi { max-width: none; }
   .araclar { margin-top: 12px; gap: 6px; }
   .araclar button, .araclar .buton { flex: 1; font-size: 10px; padding: 9px 6px; }

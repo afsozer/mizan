@@ -38,6 +38,8 @@ export function hesapTablolari(belgeler: TabloBelgesi[], secim: string | undefin
     gelirVergisi: dosyaBul(TABLO_DOSYALARI.gelirVergisi),
     ubgtTakvimi: dosyaBul(TABLO_DOSYALARI.ubgtTakvimi),
     mevduatFaizi: dosyaBul(mevduatAdi),
+    avansReeskontFaizi: dosyaBul(TABLO_DOSYALARI.avansReeskontFaizi),
+    icraHarclari: dosyaBul(TABLO_DOSYALARI.icraHarclari),
   };
   return tablolariKur(ham);
 }

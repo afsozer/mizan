@@ -66,6 +66,17 @@ const ALANLAR: Record<string, { etiket: string; tur: 'tl' | 'oran' | 'kat' }> = 
   sgkIsci: { etiket: 'SGK', tur: 'oran' },
   issizlikIsci: { etiket: 'işsizlik', tur: 'oran' },
   ustSinirKati: { etiket: 'üst sınır', tur: 'kat' },
+  reeskontOrani: { etiket: 'reeskont', tur: 'oran' },
+  avansOrani: { etiket: 'avans', tur: 'oran' },
+  basvurmaHarci: { etiket: 'başvurma', tur: 'tl' },
+  pesinHarcOrani: { etiket: 'peşin harç', tur: 'oran' },
+  tahsilTebligdenOnce: { etiket: 'tebliğden önce', tur: 'oran' },
+  tahsilHacizdenOnce: { etiket: 'hacizden önce', tur: 'oran' },
+  tahsilSatistanOnce: { etiket: 'satıştan önce', tur: 'oran' },
+  tahsilSatistanSonra: { etiket: 'satıştan sonra', tur: 'oran' },
+  tahsilMaasHaczi: { etiket: 'maaş haczi', tur: 'oran' },
+  feragatCarpani: { etiket: 'feragat çarpanı', tur: 'oran' },
+  cezaeviHarciOrani: { etiket: 'cezaevi harcı', tur: 'oran' },
 };
 
 function degerBicimle(alan: string, deger: string): string {
@@ -218,6 +229,21 @@ export interface SgkSatiri extends DonemSatiri {
   sgkIsci: string;
   issizlikIsci: string;
   ustSinirKati: string;
+}
+export interface AvansReeskontSatiri extends DonemSatiri {
+  reeskontOrani: string;
+  avansOrani: string;
+}
+export interface IcraHarclariSatiri extends DonemSatiri {
+  basvurmaHarci: string;
+  pesinHarcOrani: string;
+  tahsilTebligdenOnce: string;
+  tahsilHacizdenOnce: string;
+  tahsilSatistanOnce: string;
+  tahsilSatistanSonra: string;
+  tahsilMaasHaczi: string;
+  feragatCarpani: string;
+  cezaeviHarciOrani: string;
 }
 
 export interface GelirVergisiYili {
@@ -426,6 +452,8 @@ export interface Tablolar {
   mevduatFaizi: DonemselTablo<OranSatiri>;
   gelirVergisi: GelirVergisiTarifesi;
   ubgtTakvimi: UbgtTakvimi;
+  avansReeskontFaizi?: DonemselTablo<AvansReeskontSatiri>;
+  icraHarclari?: DonemselTablo<IcraHarclariSatiri>;
 }
 
 /** data/ altındaki tablo dosyalarının adları; Node katmanı ve tarayıcı paketi aynı adları kullanır. */
@@ -439,6 +467,8 @@ export const TABLO_DOSYALARI = {
   mevduatFaiziKamu: 'mevduat-faizi-kamu.json',
   gelirVergisi: 'gelir-vergisi.json',
   ubgtTakvimi: 'ubgt-takvimi.json',
+  avansReeskontFaizi: 'avans-reeskont-faizi.json',
+  icraHarclari: 'icra-harclari.json',
 } as const;
 
 /** Ayrıştırılmış bir tablo dosyası ve (varsa) ham metninin SHA-256 özeti. */
@@ -447,9 +477,18 @@ export interface HamTablo {
   ozet?: string;
 }
 
-export type HamTablolar = Omit<Record<keyof Tablolar, HamTablo>, 'ubgtTakvimi'> & {
+export interface HamTablolar {
+  asgariUcret: HamTablo;
+  kidemTavani: HamTablo;
+  sgk: HamTablo;
+  damga: HamTablo;
+  yasalFaiz: HamTablo;
+  mevduatFaizi: HamTablo;
+  gelirVergisi: HamTablo;
   ubgtTakvimi?: HamTablo;
-};
+  avansReeskontFaizi?: HamTablo;
+  icraHarclari?: HamTablo;
+}
 
 /** Ayrıştırılmış JSON tablolarından denetlenmiş tablo nesnelerini kurar (dosya erişimi yok). */
 export function tablolariKur(h: HamTablolar): Tablolar {
@@ -466,5 +505,23 @@ export function tablolariKur(h: HamTablolar): Tablolar {
     ubgtTakvimi: h.ubgtTakvimi
       ? new UbgtTakvimi(h.ubgtTakvimi.dosya as TabloDosyasi<UbgtTakvimYili>, h.ubgtTakvimi.ozet ?? '')
       : new UbgtTakvimi({ tablo: 'ubgt-takvimi', ad: 'Ulusal bayram ve genel tatil takvimi (2429 s.K.)', dogrulamaTarihi: '2026-11-11', satirlar: [] }, ''),
+    ...(h.avansReeskontFaizi
+      ? { avansReeskontFaizi: kur<AvansReeskontSatiri>(h.avansReeskontFaizi, ['reeskontOrani', 'avansOrani']) }
+      : {}),
+    ...(h.icraHarclari
+      ? {
+          icraHarclari: kur<IcraHarclariSatiri>(h.icraHarclari, [
+            'basvurmaHarci',
+            'pesinHarcOrani',
+            'tahsilTebligdenOnce',
+            'tahsilHacizdenOnce',
+            'tahsilSatistanOnce',
+            'tahsilSatistanSonra',
+            'tahsilMaasHaczi',
+            'feragatCarpani',
+            'cezaeviHarciOrani',
+          ]),
+        }
+      : {}),
   };
 }
