@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { girdiMetindenCoz, type Girdi } from '../girdi.ts';
 import { icraGirdiMetindenCoz, metindenAlanOku, type HesapAlani, type IcraGirdisi } from '../icra/girdi.ts';
 import { aautGirdiMetindenCoz, type AautGirdisi } from '../aaut/girdi.ts';
+import { aileGirdiMetindenCoz, type AileGirdi } from '../aile/index.ts';
 
 /** Girdi dosyasının hangi hesap alanına ait olduğunu belirler. */
 export function girdiAlaniniAlgila(yol: string): HesapAlani {
@@ -33,10 +34,18 @@ export function aautGirdiOku(yol: string): { girdi: AautGirdisi; metin: string; 
   return { girdi, metin, ozet: createHash('sha256').update(metin).digest('hex') };
 }
 
+/** Mal rejimi tasfiyesi girdi dosyasını okur ve doğrular. */
+export function aileGirdiOku(yol: string): { girdi: AileGirdi; metin: string; ozet: string } {
+  const metin = readFileSync(yol, 'utf8');
+  const girdi = aileGirdiMetindenCoz(metin);
+  return { girdi, metin, ozet: createHash('sha256').update(metin).digest('hex') };
+}
+
 export type OkunanGirdi =
   | { alan: 'iscilik'; girdi: Girdi; metin: string; ozet: string }
   | { alan: 'icra'; girdi: IcraGirdisi; metin: string; ozet: string }
-  | { alan: 'aaut'; girdi: AautGirdisi; metin: string; ozet: string };
+  | { alan: 'aaut'; girdi: AautGirdisi; metin: string; ozet: string }
+  | { alan: 'aile'; girdi: AileGirdi; metin: string; ozet: string };
 
 /** Üst düzey `alan` değerine göre girdi dosyasını otomatik algılar. */
 export function herhangiGirdiOku(yol: string): OkunanGirdi {
@@ -47,6 +56,9 @@ export function herhangiGirdiOku(yol: string): OkunanGirdi {
   }
   if (alan === 'aaut') {
     return { alan: 'aaut', ...aautGirdiOku(yol) };
+  }
+  if (alan === 'aile') {
+    return { alan: 'aile', ...aileGirdiOku(yol) };
   }
   return { alan: 'iscilik', ...girdiOku(yol) };
 }

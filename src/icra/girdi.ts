@@ -5,7 +5,7 @@ import { GirdiHatasi } from '../girdi.ts';
 import { d, Decimal } from '../para.ts';
 import { gecerliTarih, karsilastir } from '../tarih.ts';
 
-export type HesapAlani = 'iscilik' | 'icra' | 'aaut';
+export type HesapAlani = 'iscilik' | 'icra' | 'aaut' | 'aile';
 export type IcraTakipTuru = 'ilamsiz' | 'ilamli' | 'kambiyo';
 export type IcraFaizTuru = 'yasal' | 'avans' | 'reeskont' | 'sozlesme';
 export type TahsilHarciAsamasi =
@@ -185,10 +185,10 @@ class Okuyucu {
 export function alanOku(veri: unknown): HesapAlani {
   const k = Okuyucu.kok(veri);
   if (!k.var('alan')) return 'iscilik';
-  return k.secenek('alan', ['iscilik', 'icra', 'aaut'] as const);
+  return k.secenek('alan', ['iscilik', 'icra', 'aaut', 'aile'] as const);
 }
 
-/** YAML metninden üst düzey hesap alanını (`'iscilik' | 'icra' | 'aaut'`) algılar. */
+/** YAML metninden üst düzey hesap alanını (`'iscilik' | 'icra' | 'aaut' | 'aile'`) algılar. */
 export function metindenAlanOku(metin: string): HesapAlani {
   return alanOku(parse(metin));
 }

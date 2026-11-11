@@ -6,6 +6,7 @@ import { herhangiGirdiOku } from '../src/node/girdi-dosya.ts';
 import { hesapla } from '../src/hesap.ts';
 import { icraDefterSatiri, icraHesapla, icraKanitDosyaAdi, icraRaporTanimi } from '../src/icra/index.ts';
 import { aautDefterSatiri, aautHesapla, aautKanitDosyaAdi, aautRaporTanimi } from '../src/aaut/index.ts';
+import { aileDefterSatiri, aileHesapla, aileKanitDosyaAdi, aileRaporTanimi, tarafAdi } from '../src/aile/index.ts';
 import { tl } from '../src/para.ts';
 import { raporTanimi } from '../src/rapor/pdf.ts';
 import { udfOlustur, udfDosyaAdi } from '../src/rapor/udf.ts';
@@ -16,14 +17,14 @@ import { surumBilgisi } from '../src/node/surum.ts';
 import { tablolariYukle } from '../src/node/tablolar-dosya.ts';
 import { bugun, trTarih } from '../src/tarih.ts';
 
-const YARDIM = `mizan: işçilik alacakları, icra kapak hesabı ve AAÜT vekalet ücreti aracı
+const YARDIM = `mizan: işçilik alacakları, icra kapak hesabı, AAÜT vekalet ücreti ve mal rejimi tasfiyesi aracı
 
 Kullanım:
   mizan hesapla <girdi.yaml> [--cikti <dizin>]   PDF rapor, UYAP UDF rapor ve kayıt defteri satırı üretir
   mizan tablolar                                 Tabloları denetler, doğrulama tarihlerini yazar
   mizan --surum
 
-Girdi örnekleri: ornekler/ornek-iscilik.yaml, ornekler/ornek-icra.yaml, ornekler/ornek-aaut.yaml`;
+Girdi örnekleri: ornekler/ornek-iscilik.yaml, ornekler/ornek-icra.yaml, ornekler/ornek-aaut.yaml, ornekler/ornek-aile.yaml`;
 
 function secenek(arg: string[], ad: string): string | undefined {
   const i = arg.indexOf(ad);
@@ -85,6 +86,34 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
     if (!sonuc.davali.hukmedilenUcret.isZero() || girdi.uyusmazlik.retTutari.gt(0)) {
       console.log(`${sonuc.davali.baslik.padEnd(38)} ${tl(sonuc.davali.hukmedilenUcret).padStart(14)} TL`);
     }
+    for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
+    console.log(`\nRapor: ${pdfYolu}`);
+    console.log(`Defter satırı (${defterYolu}):\n${satir}`);
+    return;
+  }
+
+  if (okunan.alan === 'aile') {
+    const { girdi, ozet } = okunan;
+    const sonuc = aileHesapla(girdi, tablolariYukle());
+    const pdfAdi = aileKanitDosyaAdi(sonuc, tarih);
+    const pdfYolu = join(dizin, pdfAdi);
+    await pdfYaz(aileRaporTanimi(sonuc, { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet }), pdfYolu);
+    const satir = aileDefterSatiri(sonuc, tarih, surum);
+    const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
+    writeFileSync(defterYolu, satir + '\n');
+
+    console.log(`${'Davacı değer artış payı'.padEnd(38)} ${tl(sonuc.takas.davaciDegerArtisPayi).padStart(14)} TL`);
+    console.log(`${'Davalı değer artış payı'.padEnd(38)} ${tl(sonuc.takas.davaliDegerArtisPayi).padStart(14)} TL`);
+    console.log(`${'Davacı artık değeri'.padEnd(38)} ${tl(sonuc.artikDeger.davaci.artikDeger).padStart(14)} TL`);
+    console.log(`${'Davalı artık değeri'.padEnd(38)} ${tl(sonuc.artikDeger.davali.artikDeger).padStart(14)} TL`);
+    console.log(`${'Davacı net katılma alacağı'.padEnd(38)} ${tl(sonuc.takas.davaciNetKatilma).padStart(14)} TL`);
+    console.log(`${'Davalı net katılma alacağı'.padEnd(38)} ${tl(sonuc.takas.davaliNetKatilma).padStart(14)} TL`);
+    const netEtiket = sonuc.takas.netAlacakli === 'denk' ? 'Net bakiye (denk)' : `Net bakiye (${tarafAdi(sonuc.takas.netAlacakli)} lehine)`;
+    const faizOzeti =
+      sonuc.toplamFaiz.davaci.gt(0) && sonuc.toplamFaiz.davali.gt(0)
+        ? `davacı faizi ${tl(sonuc.toplamFaiz.davaci)} / davalı faizi ${tl(sonuc.toplamFaiz.davali)}`
+        : `faiz ${tl(sonuc.takas.netAlacakli === 'davali' ? sonuc.toplamFaiz.davali : sonuc.toplamFaiz.davaci)}`;
+    console.log(`${netEtiket.padEnd(38)} ${tl(sonuc.takas.netBakiye).padStart(14)} TL  ${faizOzeti}`);
     for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
     console.log(`\nRapor: ${pdfYolu}`);
     console.log(`Defter satırı (${defterYolu}):\n${satir}`);

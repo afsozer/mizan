@@ -1,5 +1,5 @@
-import { tl, yuzde, trTarih } from '../../src/index.ts';
-import type { AautHesapSonucu, AautTarafHesabi, HesapSonucu, KalemSonucu, Kaynak } from '../../src/index.ts';
+import { tl, yuzde, trTarih, tarafAdi, karsiTaraf } from '../../src/index.ts';
+import type { AautHesapSonucu, AautTarafHesabi, AileHesapSonucu, HesapSonucu, KalemSonucu, Kaynak } from '../../src/index.ts';
 
 export function VeriTablosu({ basliklar, satirlar, toplam, aciklama }: { basliklar: string[]; satirlar: string[][]; toplam?: string[]; aciklama?: string }) {
   return <div class="tablo-kaydir" tabIndex={0} role="region" aria-label={aciklama ?? basliklar.join(', ')}><table>
@@ -123,6 +123,177 @@ export function AautSonuclar({ sonuc: s, tam = false }: { sonuc: AautHesapSonucu
     </div>
     <details class="rapor-bolumu" open={tam || undefined}><summary>Tarife esasları <span>{s.parametreler.length} esas</span></summary>
       <VeriTablosu basliklar={['Esas', 'Değer', 'Kaynak', 'Dayanak']} satirlar={s.parametreler.map(p => [p.ad, p.deger, p.kaynak, p.dayanak])} />
+    </details>
+    <details class="rapor-bolumu"><summary>Kullanılan kaynaklar <span>{s.kaynaklar.length} satır</span></summary>{s.kaynaklar.map((k, i) => <section class="kaynak-satiri" key={i}><h4>{k.tablo} · {k.aralik}</h4><p>{k.deger}</p><KaynakBilgisi kaynak={k.kaynak} /></section>)}</details>
+    <details class="rapor-bolumu" open={s.uyarilar.length > 0}><summary>Uyarılar <span>{s.uyarilar.length}</span></summary>{s.uyarilar.length ? <ul>{s.uyarilar.map((u, i) => <li key={i}>{u}</li>)}</ul> : <p>Bu hesap için tablo uyarısı yok.</p>}</details>
+  </>;
+}
+
+export function AileSonuclar({ sonuc: s, tam = false }: { sonuc: AileHesapSonucu; tam?: boolean }) {
+  const davaciA = s.artikDeger.davaci;
+  const davaliA = s.artikDeger.davali;
+  const karsilikliFaizVar = s.toplamFaiz.davaci.gt(0) && s.toplamFaiz.davali.gt(0);
+  const netFaiz = s.takas.netAlacakli === 'davali' ? s.toplamFaiz.davali : s.toplamFaiz.davaci;
+  const faizGosterimi = karsilikliFaizVar ? `${tl(s.toplamFaiz.davaci)} / ${tl(s.toplamFaiz.davali)}` : tl(netFaiz);
+  return <>
+    <div class="toplamlar">
+      <div><span>Davacı toplam alacağı</span><strong>{tl(s.takas.davaciToplamAlacak)} <small>TL</small></strong></div>
+      <div class="ana-toplam"><span>{s.takas.netAlacakli !== 'denk' ? `${tarafAdi(s.takas.netAlacakli)} net bakiye` : 'Takas sonrası net bakiye'}</span><strong>{tl(s.takas.netBakiye)} <small>TL</small></strong></div>
+      <div><span>{karsilikliFaizVar ? 'Davacı / Davalı faizi' : 'İşlemiş yasal faiz'}</span><strong>{faizGosterimi} <small>TL</small></strong></div>
+    </div>
+    <p class="soluk sonuc-aciklama">Taraflar yalnız davacı ve davalı olarak adlandırılır (TMK m.202-241).</p>
+    <div class="kalem-listesi">
+      <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary><span class="kalem-adi">Mal mal oranlama ve değer artış payı</span><span class="kalem-net">{s.mallar.length} <small>mal</small></span><span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Davacı DAP <b>{tl(s.takas.davaciDegerArtisPayi)}</b></span>
+            <span>Davalı DAP <b>{tl(s.takas.davaliDegerArtisPayi)}</b></span>
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          {s.mallar.map((m, i) => <section key={i}>
+            <h4>{i + 1}. {m.ad} ({tarafAdi(m.malik)}, {m.nitelik === 'edinilmis' ? 'Edinilmiş mal' : 'Kişisel mal'})</h4>
+            <dl class="bilgi-listesi">
+              <div><dt>Edinme değeri</dt><dd>{tl(m.edinmeDegeri)} TL</dd></div>
+              <div><dt>Tasfiye (sürüm) değeri</dt><dd>{tl(m.tasfiyeDegeri)} TL</dd></div>
+              <div><dt>Diğer eşin ({tarafAdi(karsiTaraf(m.malik))}) DAP alacağı</dt><dd>{tl(m.toplamDigerEsDap)} TL</dd></div>
+              <div><dt>Mala ilişkin borç ve kişisel kayma</dt><dd>{tl(m.toplamMalaIliskinBorcVeKisiselKayma)} TL</dd></div>
+              <div><dt>Artık değere geçen net edinilmiş değer</dt><dd>{tl(m.edinilmisNetDeger)} TL</dd></div>
+            </dl>
+            {m.digerEsKatkilari.length > 0 && <VeriTablosu
+              basliklar={['Diğer eş katkısı (TMK m.227)', 'Katkı tutarı (TL)', 'Katkı oranı', 'Sürüm karşılığı (TL)', 'Taban kuralı', 'DAP alacağı (TL)']}
+              satirlar={m.digerEsKatkilari.map(k => [
+                k.aciklama,
+                tl(k.katkiTutari),
+                yuzde(k.katkiOrani),
+                tl(k.surumKarsiligi),
+                k.degerKaybiUygulandi ? 'Başlangıç değeri (TMK m.227/1 c.son)' : 'Sürüm oranı (TMK m.227/1)',
+                tl(k.alacak),
+              ])}
+              toplam={['Toplam değer artış payı', '', '', '', '', tl(m.toplamDigerEsDap)]}
+            />}
+            {m.notlar.length > 0 && <div class="not"><ul>{m.notlar.map((n, j) => <li key={j}>{n}</li>)}</ul></div>}
+          </section>)}
+        </div>
+      </details>
+
+      {(s.eklenecekDegerler.length > 0 || s.denklestirmeler.length > 0) && <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary><span class="kalem-adi">Eklenecek değerler ve denkleştirme</span><span class="kalem-net">{s.eklenecekDegerler.length + s.denklestirmeler.length} <small>kalem</small></span><span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti"><span>TMK m.229 ve m.230</span></span>
+        </summary>
+        <div class="kalem-detayi">
+          {s.eklenecekDegerler.length > 0 && <>
+            <h4>Eklenecek değerler (TMK m.229)</h4>
+            <VeriTablosu
+              basliklar={['İşlemi yapan eş', 'Tür', 'Açıklama', 'Devir tarihi', 'Eklenecek değer (TL)']}
+              satirlar={s.eklenecekDegerler.map(e => [
+                tarafAdi(e.es),
+                e.tur === 'son-bir-yil-bagis' ? 'Son 1 yılda rızasız kazandırma (m.229/1-1)' : 'Katılma alacağını azaltma kastı (m.229/1-2)',
+                e.aciklama,
+                e.devirTarihi ? trTarih(e.devirTarihi) : '-',
+                tl(e.tutar),
+              ])}
+            />
+          </>}
+          {s.denklestirmeler.length > 0 && <>
+            <h4>Denkleştirme kalemleri (TMK m.230)</h4>
+            <VeriTablosu
+              basliklar={['İlgili eş', 'Yön', 'Açıklama', 'Yöntem', 'Tutar (TL)']}
+              satirlar={s.denklestirmeler.map(dk => [
+                tarafAdi(dk.es),
+                dk.yon === 'edinilmisten-kisisele' ? 'Edinilmişten kişisel mala (+)' : 'Kişiselden edinilmiş mala (-)',
+                dk.aciklama,
+                dk.yontem === 'sabit' ? 'Sabit borç ödemesi (m.230/1)' : `Oranlı katkı (${yuzde(dk.katkiOrani!)}, m.230/3)`,
+                tl(dk.tutar),
+              ])}
+            />
+          </>}
+        </div>
+      </details>}
+
+      <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary><span class="kalem-adi">Artık değer tablosu (TMK m.231)</span><span class="kalem-net">{tl(davaciA.artikDeger.plus(davaliA.artikDeger))} <small>TL toplam</small></span><span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Davacı artık değer <b>{tl(davaciA.artikDeger)}</b></span>
+            <span>Davalı artık değer <b>{tl(davaliA.artikDeger)}</b></span>
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={['Artık değer bileşeni', 'Davacı eş (TL)', 'Davalı eş (TL)', 'Yasal dayanak']}
+            satirlar={[
+              ['(+) Edinilmiş malların tasfiye değeri', tl(davaciA.edinilmisMallarDegeri), tl(davaliA.edinilmisMallarDegeri), 'TMK m.219, m.228, m.235/1'],
+              ['(+) Eklenecek değerler', tl(davaciA.eklenecekDegerler), tl(davaliA.eklenecekDegerler), 'TMK m.229, m.235/2'],
+              ['(+) Denkleştirme alacağı (edinilmişten kişisele)', tl(davaciA.denklestirmeAlacagi), tl(davaliA.denklestirmeAlacagi), 'TMK m.230/1, m.230/3'],
+              ['(-) Edinilmiş mallara ilişkin borçlar ve kişisel kayma', `-${tl(davaciA.edinilmisMalBorclari)}`, `-${tl(davaliA.edinilmisMalBorclari)}`, 'TMK m.230/2, m.231/1'],
+              ['(-) Edinilmiş mallardan diğer eşe DAP borcu', `-${tl(davaciA.digerEsDegerArtisPayi)}`, `-${tl(davaliA.digerEsDegerArtisPayi)}`, 'TMK m.227, m.231/1'],
+              ['(=) Ham bakiye', tl(davaciA.hamArtikDeger), tl(davaliA.hamArtikDeger), 'TMK m.231/1'],
+            ]}
+            toplam={['Artık değer (TMK m.231/2 eksi bakiye = 0)', tl(davaciA.artikDeger), tl(davaliA.artikDeger), 'TMK m.231/2']}
+          />
+        </div>
+      </details>
+
+      <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary><span class="kalem-adi">Katılma alacağı ve takas (TMK m.236)</span><span class="kalem-net">{tl(s.takas.netBakiye)} <small>TL net</small></span><span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Davacı KA <b>{tl(s.katilma.davaci.netKatilmaAlacagi)}</b></span>
+            <span>Davalı KA <b>{tl(s.katilma.davali.netKatilmaAlacagi)}</b></span>
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={['Alacaklı eş', 'Karşı eşin artık değeri (TL)', 'Baz oran', 'Ham katılma alacağı (TL)', 'Hakkaniyet indirimi (TMK m.236/2)', 'Net katılma alacağı (TL)']}
+            satirlar={(['davaci', 'davali'] as const).map(t => {
+              const ka = s.katilma[t];
+              return [
+                tarafAdi(t),
+                tl(ka.karsiArtikDeger),
+                yuzde(ka.bazPayOrani),
+                tl(ka.hamKatilmaAlacagi),
+                ka.hakkaniyetIndirimi ? `-${tl(ka.hakkaniyetIndirimi.indirimTutari)} (${ka.hakkaniyetIndirimi.neden === 'zina' ? 'Zina' : 'Hayata kast'})` : 'Yok',
+                tl(ka.netKatilmaAlacagi),
+              ];
+            })}
+          />
+          <h4>Takas ve net bakiye (TMK m.236/1 c.2)</h4>
+          <VeriTablosu
+            basliklar={['Kalem', 'Davacı alacağı (TL)', 'Davalı alacağı (TL)', 'Takas sonrası net sonuç']}
+            satirlar={[
+              ['Değer artış payı alacağı (TMK m.227)', tl(s.takas.davaciDegerArtisPayi), tl(s.takas.davaliDegerArtisPayi), ''],
+              ['Katılma alacağı (TMK m.236)', tl(s.takas.davaciKatilma), tl(s.takas.davaliKatilma), `Takas sonrası KA: Davacı ${tl(s.takas.davaciNetKatilma)} TL / Davalı ${tl(s.takas.davaliNetKatilma)} TL`],
+            ]}
+            toplam={[
+              'Toplam / takas sonrası net bakiye',
+              tl(s.takas.davaciToplamAlacak),
+              tl(s.takas.davaliToplamAlacak),
+              s.takas.netAlacakli !== 'denk' ? `${tarafAdi(s.takas.netAlacakli)} lehine ${tl(s.takas.netBakiye)} TL` : '0,00 TL (denk)',
+            ]}
+          />
+        </div>
+      </details>
+
+      {s.alacakKalemleri.some(k => k.faiz) && <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary><span class="kalem-adi">Yasal faiz hesabı (TMK m.239/3)</span><span class="kalem-net">{faizGosterimi} <small>TL faiz</small></span><span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">{s.alacakKalemleri.filter(k => k.faiz).map((f, i) => <span key={i}>{f.ad} <b>{tl(f.faiz!.toplam)}</b></span>)}</span>
+        </summary>
+        <div class="kalem-detayi">
+          {s.alacakKalemleri.filter(k => k.faiz).map((f, i) => <section key={i}>
+            <h4>{f.ad} ({tarafAdi(f.alacakli)} lehine): {tl(f.faiz!.toplam)} TL</h4>
+            <p>{trTarih(f.faiz!.baslangic)} - {trTarih(f.faiz!.bitis)}, matrah {tl(f.faiz!.matrah)} TL. Gerekçe: {f.faiz!.gerekce}</p>
+            <p class="soluk">{f.faiz!.tabloAdi}</p>
+            {f.faiz!.kesitler.length > 0 ? <VeriTablosu
+              basliklar={['Dönem', 'Gün', 'Oran tarihi', 'Yıllık oran', 'Faiz (TL)']}
+              satirlar={f.faiz!.kesitler.map(x => [`${trTarih(x.baslangic)} - ${trTarih(x.bitis)}`, String(x.gun), x.oranTarihi ? trTarih(x.oranTarihi) : '', yuzde(x.oran), tl(x.tutar)])}
+              toplam={['Toplam', '', '', '', tl(f.faiz!.toplam)]}
+            /> : <p>Tasfiye tarihi ile faiz bitiş tarihi aynı olduğundan işlemiş faiz 0,00 TL'dir.</p>}
+          </section>)}
+        </div>
+      </details>}
+    </div>
+    {s.notlar.length > 0 && <details class="rapor-bolumu" open><summary>Hesap notları <span>{s.notlar.length}</span></summary><ul>{s.notlar.map((n, i) => <li key={i}>{n}</li>)}</ul></details>}
+    <details class="rapor-bolumu" open={tam || undefined}><summary>Hukuki tercihler <span>{s.parametreler.length} esas</span></summary>
+      <VeriTablosu basliklar={['Tercih', 'Değer', 'Kaynak', 'Dayanak']} satirlar={s.parametreler.map(p => [p.ad, p.deger, p.kaynak, p.dayanak])} />
     </details>
     <details class="rapor-bolumu"><summary>Kullanılan kaynaklar <span>{s.kaynaklar.length} satır</span></summary>{s.kaynaklar.map((k, i) => <section class="kaynak-satiri" key={i}><h4>{k.tablo} · {k.aralik}</h4><p>{k.deger}</p><KaynakBilgisi kaynak={k.kaynak} /></section>)}</details>
     <details class="rapor-bolumu" open={s.uyarilar.length > 0}><summary>Uyarılar <span>{s.uyarilar.length}</span></summary>{s.uyarilar.length ? <ul>{s.uyarilar.map((u, i) => <li key={i}>{u}</li>)}</ul> : <p>Bu hesap için tablo uyarısı yok.</p>}</details>

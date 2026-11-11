@@ -1,12 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { aautGirdiMetindenCoz, GirdiHatasi, girdiCoz, girdiMetindenCoz, hesapla, TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
-import { aautFormuDogrula, aautFormuMu, alanDegistir, bosForm, degerOku, formdanGirdiKur, formYamli, formuDogrula, hataAciklamasi, hataYolu, yamlForma } from '../src/form-model.ts';
+import { aautGirdiMetindenCoz, aileGirdiMetindenCoz, GirdiHatasi, girdiCoz, girdiMetindenCoz, hesapla, TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
+import { aautFormuDogrula, aautFormuMu, aileFormuDogrula, aileFormuMu, alanDegistir, bosAileFormu, bosForm, degerOku, formAlanTuru, formdanGirdiKur, formYamli, formuDogrula, hataAciklamasi, hataYolu, yamlForma } from '../src/form-model.ts';
 import type { Nesne } from '../src/form-model.ts';
 import { alanAdi, KALEMLER, kalemYeni } from '../src/schema.ts';
 const ornek = readFileSync(new URL('../../ornekler/ornek-iscilik.yaml', import.meta.url), 'utf8');
 const ornekAaut = readFileSync(new URL('../../ornekler/ornek-aaut.yaml', import.meta.url), 'utf8');
+const ornekAile = readFileSync(new URL('../../ornekler/ornek-aile.yaml', import.meta.url), 'utf8');
 
 test('örnek YAML formdan kayıpsız geçer ve çekirdekte aynı girdiyi üretir', () => {
   const form = yamlForma(ornek);
@@ -57,6 +58,8 @@ test('hata yolundan formdaki alan adı bulunur', () => {
   assert.equal(alanAdi('girdi.kalemler.ubgt.takvim.haricTarihler'), 'Hariç tutulacak tarihler');
   assert.equal(alanAdi('girdi.kalemler.ubgt.takvim.haricTarihler[0].tarih'), 'Hariç tutulacak tarih');
   assert.equal(alanAdi('girdi.uyusmazlik.davaDegeri'), 'Dava / takip değeri (müddeabih, TL)');
+  assert.equal(alanAdi('girdi.evlilik.malRejimiSonaErmeTarihi'), 'Mal rejiminin sona erme tarihi');
+  assert.equal(alanAdi('girdi.mallar[0].tasfiyeDegeri'), 'Tasfiye (karar/güncel) sürüm değeri (TL)');
 });
 
 test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndürür', () => {
@@ -146,6 +149,7 @@ test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndür�
 test('örnek AAÜT YAML formdan kayıpsız geçer ve çekirdekte aynı girdiyi üretir', () => {
   const form = yamlForma(ornekAaut);
   assert.equal(aautFormuMu(form), true);
+  assert.equal(formAlanTuru(form), 'aaut');
   assert.deepEqual(aautFormuDogrula(form), aautGirdiMetindenCoz(ornekAaut));
   assert.deepEqual(aautGirdiMetindenCoz(formYamli(form)), aautGirdiMetindenCoz(ornekAaut));
 
@@ -153,5 +157,17 @@ test('örnek AAÜT YAML formdan kayıpsız geçer ve çekirdekte aynı girdiyi �
   assert.throws(
     () => aautFormuDogrula(hataliAaut),
     (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.uyusmazlik.davaDegeri',
+  );
+});
+
+test('örnek aile YAML formdan kayıpsız geçer ve çekirdekte aynı girdiyi üretir', () => {
+  const form = yamlForma(ornekAile);
+  assert.equal(aileFormuMu(form), true);
+  assert.equal(formAlanTuru(form), 'aile');
+  assert.deepEqual(aileFormuDogrula(form), aileGirdiMetindenCoz(ornekAile));
+  assert.deepEqual(aileGirdiMetindenCoz(formYamli(form)), aileGirdiMetindenCoz(ornekAile));
+  assert.throws(
+    () => aileFormuDogrula(bosAileFormu()),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.dosya.mahkeme',
   );
 });

@@ -1,8 +1,11 @@
 # mizan web arayüzü
 
-Preact ve Vite ile tarayıcıda çalışan faz 1b arayüzü. Hesap, girdi denetimi, kaynak tablolarının
-kurulması ve rapor tanımı yalnız `../src/index.ts` üzerinden kullanılır. Çekirdek dosyalarında
-arayüz için hesap mantığı eklenmez.
+Preact ve Vite ile tarayıcıda çalışan yerel hesap arayüzü. İşçilik alacakları (`iscilik`), icra
+takibi ve harç (`icra`), AAÜT vekalet ücreti (`aaut`) ve aile hukuku mal rejimi tasfiyesi (`aile`)
+hesap alanlarını tek çalışma şeridindeki **Hesap alanı** seçicisi altında birleştirir; dışarıdan
+yüklenen YAML dosyalarında `alan` anahtarını algılayarak ilgili görünüme kendiliğinden geçer. Hesap,
+girdi denetimi, kaynak tablolarının kurulması ve rapor tanımı yalnız `../src/index.ts` üzerinden
+kullanılır. Çekirdek dosyalarında arayüz için hesap mantığı eklenmez.
 
 ## Çalıştırma
 
@@ -42,7 +45,8 @@ uygulamanın kendi dağıtım dosyalarından yüklenir. Yeni paket eklenmedi.
 - `index.html`: Türkçe giriş belgesi ve dış bağlantı isteklerini kısıtlayan CSP.
 - `vite.config.ts`: Preact, kök dizin, göreli dağıtım ve derleme anındaki sürüm/commit bilgisi.
 - `tsconfig.json`, `.gitignore`: bağımsız strict tip denetimi ve derleme çıktısı kuralı.
-- `src/main.tsx`, `src/App.tsx`: uygulama girişi, gezinme ve bellekteki ihtimaller.
+- `src/main.tsx`, `src/App.tsx`: uygulama girişi, 4 hesap alanı gezinmesi (`iscilik`, `icra`, `aaut`, `aile`) ve bellekteki ihtimaller.
+- `src/IcraPanel.tsx`: icra takibi kapak hesabı, harç ve TBK m.100 kısmi ödeme çalışma alanı.
 - `src/form-model.ts`: saf form nesnesi kurma, alan düzenleme ve YAML dönüşümü.
 - `src/schema.ts`: alan etiketleri, seçimler, görünür varsayılanlar ve tekrar eden satırların yapısı.
 - `src/Form.tsx`: etiketli alanlar, listeler, isteğe bağlı gruplar ve alana bağlı hata gösterimi.

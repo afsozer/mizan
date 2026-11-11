@@ -1,6 +1,8 @@
 import {
   aautKanitDosyaAdi,
   aautRaporTanimi,
+  aileKanitDosyaAdi,
+  aileRaporTanimi,
   icraKanitDosyaAdi,
   icraRaporTanimi,
   kanitDosyaAdi,
@@ -9,7 +11,7 @@ import {
   udfDosyaAdi,
   udfOlustur,
 } from '../../src/index.ts';
-import type { AautHesapSonucu, HesapSonucu, IcraHesapSonucu } from '../../src/index.ts';
+import type { AautHesapSonucu, AileHesapSonucu, HesapSonucu, IcraHesapSonucu } from '../../src/index.ts';
 import { sha256 } from './tables.ts';
 
 export const surum = () => surumYaz(__MIZAN_SURUM__);
@@ -76,4 +78,18 @@ export async function aautPdfIndir(sonuc: AautHesapSonucu, yaml: string) {
   });
   const blob = await pdfMake.createPdf(tanim).getBlob();
   indir(blob, aautKanitDosyaAdi(sonuc, uretimTarihi(zaman)));
+}
+export async function ailePdfIndir(sonuc: AileHesapSonucu, yaml: string) {
+  const zaman = new Date();
+  const [{ default: pdfMake }, { default: vfs }] = await Promise.all([
+    import('pdfmake/build/pdfmake.js'), import('pdfmake/build/vfs_fonts.js'),
+  ]);
+  pdfMake.addVirtualFileSystem(vfs);
+  const tanim = aileRaporTanimi(sonuc, {
+    surum: surum(),
+    girdiOzeti: await sha256(yaml),
+    uretimZamani: new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' }).format(zaman),
+  });
+  const blob = await pdfMake.createPdf(tanim).getBlob();
+  indir(blob, aileKanitDosyaAdi(sonuc, uretimTarihi(zaman)));
 }

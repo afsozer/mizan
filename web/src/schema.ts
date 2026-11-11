@@ -238,14 +238,115 @@ export const AAUT_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
   },
 ];
 
+const tarafSecenekleri: [string, string][] = [['davaci', 'Davacı eş'], ['davali', 'Davalı eş']];
+const degerKaybiSecenekleri: [string, string][] = [
+  ['baslangic-degeri', 'Katkının başlangıçtaki değeri (TMK m.227/1 c.son)'],
+  ['surum-orani', 'Tasfiye sürüm değeri oranı (TMK m.227/3 yazılı anlaşma)'],
+];
+
+export const AILE_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
+  { ad: 'Dosya', alanlar: [
+    { key: 'dosya', ad: 'Dosya bilgisi', alanlar: [metin('mahkeme', 'Mahkeme'), metin('esasNo', 'Esas numarası'), metin('kaynak', 'Defterdeki kaynak'), metin('altAlan', 'Bilirkişilik alt alanı'), metin('kisaAd', 'Dosya kısa adı', ops), metin('hazirlayan', 'Hazırlayan', ops)] },
+    tarih('hesapTarihi', 'Hesap (tasfiye) tarihi'), tarih('faizBitis', 'Faiz bitiş tarihi', { ...ops, varsayilan: 'Hesap tarihi', dayanak: 'Faiz hesabı bitiş tarihi' }),
+  ] },
+  { ad: 'Evlilik', alanlar: [
+    { key: 'evlilik', ad: 'Evlilik ve mal rejimi', alanlar: [
+      tarih('evlenmeTarihi', 'Evlenme tarihi'),
+      tarih('malRejimiSonaErmeTarihi', 'Mal rejiminin sona erme tarihi', { ipucu: 'Boşanma davasında dava tarihi (TMK m.225/2).' }),
+      metin('sonaErmeNedeni', 'Sona erme nedeni ve olgu kabulü', { tur: 'textarea' }),
+      tarih('davaTarihi', 'Tasfiye / alacak dava tarihi', { ...ops, ipucu: 'Değer artış payında dava tarihinden faiz tercihinde kullanılır.' }),
+      tarih('tasfiyeTarihi', 'Tasfiye (karar) tarihi', { ...ops, varsayilan: 'Hesap tarihi', dayanak: 'TMK m.235/1, m.239/3' }),
+    ] },
+  ] },
+  { ad: 'Mallar', alanlar: [
+    { key: 'mallar', ad: 'Tasfiyeye konu mallar', liste: true, yeni: { ad: '', malik: 'davali', nitelik: 'edinilmis', edinmeDegeri: '', tasfiyeDegeri: '', digerEsKatkilari: [] }, alanlar: [
+      metin('ad', 'Malın tanımı'),
+      sec('malik', 'Malik eş', tarafSecenekleri),
+      sec('nitelik', 'Mal grubu niteliği', [['edinilmis', 'Edinilmiş mal (TMK m.219)'], ['kisisel', 'Kişisel mal (TMK m.220)']], { ...ops, varsayilan: 'Edinilmiş mal', dayanak: 'TMK m.222/3 adi karinesi' }),
+      tarih('edinmeTarihi', 'Edinme tarihi', ops),
+      sayi('edinmeDegeri', 'Edinme (alım) tarihindeki değer (TL)'),
+      sayi('tasfiyeDegeri', 'Tasfiye (karar/güncel) sürüm değeri (TL)'),
+      sayi('malaIliskinBorc', 'Mala ilişkin kalan borç (TL)', { ...ops, ipucu: 'Kredi dışındaki mala ilişkin borç (TMK m.230/2).' }),
+      { key: 'digerEsKatkilari', ad: 'Diğer eşin katkıları (TMK m.227 değer artış payı)', liste: true, yeni: { aciklama: '', katkiTutari: '' }, alanlar: [
+        metin('aciklama', 'Katkı açıklaması'),
+        sayi('katkiTutari', 'Katkı tutarı (TL)'),
+        sayi('katkiTarihiMalDegeri', 'Katkı tarihindeki mal değeri (TL)', { ...ops, varsayilan: 'Edinme değeri', dayanak: 'TMK m.227/1' }),
+        sec('degerKaybiTabani', 'Değer kaybı tabanı', degerKaybiSecenekleri, { ...ops, varsayilan: 'Genel esas', dayanak: 'TMK m.227/1 c.son, m.227/3' }),
+        metin('degerKaybiGerekcesi', 'Değer kaybı yazılı anlaşma gerekçesi', { ...ops, gorunur: g => g.degerKaybiTabani === 'surum-orani' }),
+      ] },
+      { key: 'malikKisiselKatkisi', ad: 'Malik eşin kişisel malından katkısı (TMK m.230)', ...ops, yeni: { aciklama: '', katkiTutari: '' }, gorunur: g => g.nitelik !== 'kisisel', alanlar: [
+        metin('aciklama', 'Kişisel katkı açıklaması'),
+        sayi('katkiTutari', 'Katkı tutarı (TL)'),
+      ] },
+      { key: 'kredi', ad: 'Krediyle edinilen mal oranlaması', ...ops, yeni: { evlilikIciOdenen: '' }, gorunur: g => g.nitelik !== 'kisisel', alanlar: [
+        sayi('digerEsKisiselPesinat', 'Diğer eşin kişisel peşinatı (TL, TMK m.227)', ops),
+        sayi('malikKisiselPesinat', 'Malik eşin kişisel peşinatı (TL, TMK m.230)', ops),
+        sayi('edinilmisPesinat', 'Edinilmiş mallardan ödenen peşinat (TL, TMK m.219)', ops),
+        sayi('cekilenKredi', 'Krediyle karşılanan alım bedeli (TL)', { ...ops, varsayilan: 'Edinme değeri - peşinat toplamı', dayanak: 'Yargıtay 8. HD kredi oranlama ilkesi' }),
+        sayi('evlilikIciOdenen', 'Mal rejimi içinde ödenen kredi toplamı (TL)'),
+        sayi('evlilikSonrasiOdenen', 'Mal rejimi sonrasında ödenen / kalan kredi (TL)', ops),
+        sayi('digerEsKisiselKrediOdemesi', 'Diğer eşin kişisel malından ödediği kredi (TL, TMK m.227)', ops),
+        sec('degerKaybiTabani', 'Değer kaybı tabanı', degerKaybiSecenekleri, ops),
+        metin('degerKaybiGerekcesi', 'Değer kaybı yazılı anlaşma gerekçesi', { ...ops, gorunur: g => g.degerKaybiTabani === 'surum-orani' }),
+      ] },
+    ] },
+  ] },
+  { ad: 'Eklenecek ve Denkleştirme', alanlar: [
+    { key: 'eklenecekDegerler', ad: 'Eklenecek değerler (TMK m.229)', liste: true, yeni: { es: 'davali', tur: 'son-bir-yil-bagis', aciklama: '', tutar: '' }, alanlar: [
+      sec('es', 'İşlemi yapan eş', tarafSecenekleri),
+      sec('tur', 'Eklenecek değer türü', [['son-bir-yil-bagis', 'Son bir yılda rızasız karşılıksız kazandırma (TMK m.229/1-1)'], ['katilma-alacagini-azaltma-kasti', 'Katılma alacağını azaltma kastıyla devir (TMK m.229/1-2)']]),
+      metin('aciklama', 'İşlem açıklaması'),
+      tarih('devirTarihi', 'Devir tarihi', ops),
+      sayi('tutar', 'Tasfiye (karar) tarihindeki değer (TL, TMK m.235/2)'),
+    ] },
+    { key: 'denklestirmeler', ad: 'Denkleştirme kalemleri (TMK m.230)', liste: true, yeni: { es: 'davali', yon: 'edinilmisten-kisisele', aciklama: '', tutar: '' }, ipucu: 'Doğrudan borç ödemesi için yalnız sabit tutar, değer artışlı mala katkı için katkı/edinme/tasfiye değerlerini girin.', alanlar: [
+      sec('es', 'İlgili eş', tarafSecenekleri),
+      sec('yon', 'Kayma yönü', [['edinilmisten-kisisele', 'Edinilmiş maldan kişisel mal borcuna (artık değere +)'], ['kisiselden-edinilmise', 'Kişisel maldan edinilmiş mal borcuna (artık değerden -)']]),
+      metin('aciklama', 'Denkleştirme açıklaması'),
+      sayi('tutar', 'Sabit borç ödemesi tutarı (TL, TMK m.230/1)', ops),
+      sayi('katkiTutari', 'Mala yapılan katkı tutarı (TL, TMK m.230/3)', ops),
+      sayi('edinmeDegeri', 'Malın katkı/edinme tarihindeki değeri (TL)', ops),
+      sayi('tasfiyeDegeri', 'Malın tasfiye (sürüm) değeri (TL)', ops),
+    ] },
+  ] },
+  { ad: 'Esaslar', alanlar: [
+    { key: 'parametreler', ad: 'Tasfiye ve faiz esasları', alanlar: [
+      sec('degerKaybiTabani', 'Değer artış payında değer kaybı tabanı', degerKaybiSecenekleri, { ...ops, varsayilan: 'Katkının başlangıçtaki değeri', dayanak: 'TMK m.227/1 c.son, m.227/3' }),
+      metin('degerKaybiGerekcesi', 'Değer kaybı yazılı anlaşma gerekçesi', { ...ops, gorunur: g => g.degerKaybiTabani === 'surum-orani' }),
+      { key: 'katilmaOrani', ad: 'Sözleşmesel katılma payı oranı (TMK m.237)', ...ops, yeni: { davaci: '0.5', davali: '0.5', gerekce: '' }, alanlar: [
+        sayi('davaci', 'Davacı eşin katılma oranı (0 - 1)'),
+        sayi('davali', 'Davalı eşin katılma oranı (0 - 1)'),
+        gerekce,
+      ] },
+      { key: 'hakkaniyetIndirimi', ad: 'Zina veya hayata kast nedeniyle hakkaniyet indirimi (TMK m.236/2)', ...ops, yeni: { kusurluEs: 'davali', neden: 'zina', indirimOrani: '', gerekce: '' }, ipucu: 'İndirimli yeni pay oranı ya da indirim oranından yalnız birini girin. Yalnız katılma alacağına uygulanır; değer artış payını etkilemez.', alanlar: [
+        sec('kusurluEs', 'Kusurlu eş', tarafSecenekleri),
+        sec('neden', 'Özel boşanma sebebi', [['zina', 'Zina (TMK m.161, m.236/2)'], ['hayata-kast', 'Hayata kast (TMK m.162, m.236/2)']]),
+        sayi('indirimOrani', 'Katılma alacağından indirim oranı (0 - 1)', ops),
+        sayi('yeniPayOrani', 'Kusurlu eşin indirimli pay oranı (0 - 0,5)', ops),
+        gerekce,
+      ] },
+      sec('takasKapsami', 'Takas kapsamı', [['tum-alacaklar', 'Katılma alacağı + değer artış payı birlikte netleştirilir (TMK m.236/1 c.2, TBK m.139)'], ['yalniz-katilma', 'Yalnız katılma alacakları takas edilir']], { ...ops, varsayilan: 'Tüm alacaklar', dayanak: 'TMK m.236/1 c.2' }),
+      sayi('faizGunEsasi', 'Faiz gün esası', { ...ops, varsayilan: '365', dayanak: 'Basit faiz, yıllık yasal faiz / 365 × gün' }),
+      { key: 'degerArtisPayiFaizi', ad: 'Değer artış payı alacağı faiz tercihi (TMK m.227, m.239/3)', ...ops, yeni: { baslangicEsasi: 'tasfiye-tarihi', gerekce: '' }, alanlar: [
+        sec('baslangicEsasi', 'Faiz başlangıç esası', [['tasfiye-tarihi', 'Tasfiye (karar) tarihi'], ['dava-tarihi', 'Dava tarihi'], ['ozel-tarih', 'Özel tarih'], ['yok', 'Faiz hesaplanmasın']]),
+        tarih('baslangicTarihi', 'Özel faiz başlangıç tarihi', { ...ops, gorunur: g => g.baslangicEsasi === 'ozel-tarih' || g.baslangicEsasi === 'dava-tarihi' }),
+        gerekce,
+      ] },
+      { key: 'katilmaAlacagiFaizi', ad: 'Katılma alacağı faiz tercihi (TMK m.239/3)', ...ops, yeni: { baslangicEsasi: 'tasfiye-tarihi', gerekce: '' }, alanlar: [
+        sec('baslangicEsasi', 'Faiz başlangıç esası', [['tasfiye-tarihi', 'Tasfiye (karar) tarihi'], ['ozel-tarih', 'Özel tarih'], ['yok', 'Faiz hesaplanmasın']]),
+        tarih('baslangicTarihi', 'Özel faiz başlangıç tarihi', { ...ops, gorunur: g => g.baslangicEsasi === 'ozel-tarih' }),
+        gerekce,
+      ] },
+    ] },
+  ] },
+];
+
 export function kalemYeni(key: string): Deger {
   return structuredClone(KALEMLER.find(k => k.key === key)?.yeni ?? {});
 }
 
-/** "girdi.kalemler.ihbar.faiz[0].baslangic" gibi bir yolun formdaki alan adı (bulunamazsa boş). */
-export function alanAdi(yol: string): string {
-  const parcalar = yol.replace(/^girdi\.?/, '').replace(/\[\d+\]/g, '').split('.').filter(Boolean);
-  let alanlar: Alan[] = [...BOLUMLER, ...AAUT_BOLUMLER].flatMap(b => b.alanlar);
+function bolumlerdenAlanAdi(parcalar: string[], bolumler: { alanlar: Alan[] }[]): string {
+  let alanlar: Alan[] = bolumler.flatMap(b => b.alanlar);
   let ad = '';
   for (const [i, parca] of parcalar.entries()) {
     if (i === 1 && parcalar[0] === 'kalemler') {
@@ -257,9 +358,22 @@ export function alanAdi(yol: string): string {
     }
     if (parca === 'kalemler') continue;
     const alan = alanlar.find(a => a.key === parca);
-    if (!alan) return ad;
+    if (!alan) return '';
     ad = alan.ad;
     alanlar = alan.alanlar ?? [];
   }
   return ad;
+}
+
+/** "girdi.kalemler.ihbar.faiz[0].baslangic" gibi bir yolun formdaki alan adı (bulunamazsa boş). */
+export function alanAdi(yol: string, alan?: 'iscilik' | 'aaut' | 'aile'): string {
+  const parcalar = yol.replace(/^girdi\.?/, '').replace(/\[\d+\]/g, '').split('.').filter(Boolean);
+  if (alan === 'aaut') return bolumlerdenAlanAdi(parcalar, AAUT_BOLUMLER);
+  if (alan === 'aile') return bolumlerdenAlanAdi(parcalar, AILE_BOLUMLER);
+  if (alan === 'iscilik') return bolumlerdenAlanAdi(parcalar, BOLUMLER);
+  return (
+    bolumlerdenAlanAdi(parcalar, BOLUMLER) ||
+    bolumlerdenAlanAdi(parcalar, AAUT_BOLUMLER) ||
+    bolumlerdenAlanAdi(parcalar, AILE_BOLUMLER)
+  );
 }

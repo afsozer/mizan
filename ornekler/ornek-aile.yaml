@@ -1,0 +1,68 @@
+# mizan örnek girdisi: kurgusal bir aile hukuku mal rejimi tasfiyesi (TMK m.202-241) hesabı.
+# Tarihler YYYY-AA-GG, tutarlar TL, ondalık ayırıcı nokta, oranlar 0-1 arası (%50 = 0.50).
+# Kişisel veri kuralı gereği eşler için kişi adı alanı yoktur; taraflar yalnız "davaci" ve "davali" olarak yazılır.
+
+alan: aile
+
+dosya:
+  mahkeme: Örnek Aile Mahkemesi
+  esasNo: 2026/1
+  kisaAd: ornek-aile            # kanıt dosyası adında kullanılır
+  kaynak: örnek hesap           # defterdeki "Kaynak" sütunu
+  altAlan: "05.01"
+
+hesapTarihi: 2026-10-22
+
+evlilik:
+  evlenmeTarihi: 2016-09-10
+  malRejimiSonaErmeTarihi: 2025-02-15
+  sonaErmeNedeni: Boşanma davasının açılması (TMK m.225/2)
+  davaTarihi: 2025-03-01
+  tasfiyeTarihi: 2026-05-15     # bozma öncesi / tasfiye karar tarihi (TMK m.235/1, m.239/3)
+
+mallar:
+  - ad: Aile konutu (1. mal)
+    malik: davali
+    nitelik: edinilmis
+    edinmeTarihi: 2019-06-15
+    edinmeDegeri: 1000000
+    tasfiyeDegeri: 5000000
+    kredi:
+      digerEsKisiselPesinat: 200000   # davacının kişisel ziynet bozdurma katkısı (%20 -> TMK m.227 DAP)
+      malikKisiselPesinat: 100000     # davalının evlilik öncesi kişisel birikimi (%10 -> TMK m.230)
+      edinilmisPesinat: 100000        # evlilik içi edinilmiş birikim (%10)
+      cekilenKredi: 600000            # konut kredisi (%60)
+      evlilikIciOdenen: 400000        # mal rejimi devam ederken ödenen kredi taksitleri (kredinin 2/3'ü -> malın %40'ı)
+      evlilikSonrasiOdenen: 200000    # mal rejimi sona erdikten sonraya sarkan kredi borcu (kredinin 1/3'ü -> malın %20'si)
+
+  - ad: Binek araç (2. mal)
+    malik: davaci
+    nitelik: edinilmis
+    edinmeTarihi: 2022-04-10
+    edinmeDegeri: 600000
+    tasfiyeDegeri: 1200000
+    digerEsKatkilari:
+      - aciklama: Davalının miras kalan parayla araç alımına katkısı
+        katkiTutari: 150000           # %25 oran -> 300.000 TL değer artış payı alacağı
+
+eklenecekDegerler:
+  - es: davali
+    tur: katilma-alacagini-azaltma-kasti
+    aciklama: Boşanma davasından kısa süre önce üçüncü kişiye devredilen banka mevduatı (TMK m.229/1-2)
+    devirTarihi: 2024-11-01
+    tutar: 300000
+
+denklestirmeler:
+  - es: davaci
+    yon: edinilmisten-kisisele
+    aciklama: Davacının kişisel taşınmazının tadilat borcunun edinilmiş gelirden ödenmesi (TMK m.230/1)
+    tutar: 100000
+
+parametreler:
+  takasKapsami: tum-alacaklar
+  degerArtisPayiFaizi:
+    baslangicEsasi: tasfiye-tarihi
+    gerekce: TMK m.239/3 uyarınca tasfiye/karar tarihinden yasal faiz
+  katilmaAlacagiFaizi:
+    baslangicEsasi: tasfiye-tarihi
+    gerekce: TMK m.239/3 uyarınca tasfiye/karar tarihinden yasal faiz

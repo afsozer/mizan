@@ -2,17 +2,36 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23603691.svg)](https://doi.org/10.5281/zenodo.23603691)
 
-İşçilik alacaklarını bilirkişi raporu düzeyinde hesaplayan komut satırı aracı. Her hesap için
-girdileri, formülü, dayanak maddeyi ve kullanılan resmi tablo satırının kaynağını gösteren tarihli
-bir PDF rapor ve UYAP Doküman Formatı (`.udf`) raporu üretir; yanına bilirkişilik hesap kayıt
-defterine yapıştırılacak satır önerisini yazar.
+İşçilik alacaklarını ve Faz 2 özel hukuk hesaplarını bilirkişi raporu düzeyinde hesaplayan komut
+satırı aracı ve yerel web arayüzü. Her hesap için girdileri, formülü, dayanak maddeyi ve kullanılan
+resmi tablo satırının kaynağını gösteren tarihli bir PDF rapor (işçilik alacaklarında ek olarak UYAP
+Doküman Formatı `.udf` raporu) üretir; yanına bilirkişilik hesap kayıt defterine yapıştırılacak satır
+önerisini yazar.
 
-Faz 1 kapsamı: kıdem tazminatı (dönemsel tavanla), ihbar tazminatı, kötüniyet tazminatı, boşta geçen
-süre ücreti, işe başlatmama tazminatı, yıllık izin ücreti, ödenmeyen ücret alacağı (bakiye maaş),
-ikramiye ve ilave tediye / prim alacağı, fazla çalışma, hafta tatili ve ulusal bayram-genel tatil
-(UBGT) ücretleri; brütten nete dönüşüm (SGK ve işsizlik sigortası işçi payı, gelir vergisi, damga
-vergisi); faiz (kıdemde 1475 s.K. m.14 ve gününde ödenmeyen ücret/ikramiye/boşta geçen süre
-alacaklarında 4857 s.K. m.34 uyarınca mevduata uygulanan en yüksek faiz, diğer kalemlerde yasal faiz).
+Faz 1 kapsamı (`alan: iscilik` veya alan belirtilmemiş girdi): kıdem tazminatı (dönemsel tavanla),
+ihbar tazminatı, kötüniyet tazminatı, boşta geçen süre ücreti, işe başlatmama tazminatı, yıllık izin
+ücreti, ödenmeyen ücret alacağı (bakiye maaş), ikramiye ve ilave tediye / prim alacağı, fazla çalışma,
+hafta tatili ve ulusal bayram-genel tatil (UBGT) ücretleri; brütten nete dönüşüm (SGK ve işsizlik
+sigortası işçi payı, gelir vergisi, damga vergisi); faiz (kıdemde 1475 s.K. m.14 ve gününde ödenmeyen
+ücret/ikramiye/boşta geçen süre alacaklarında 4857 s.K. m.34 uyarınca mevduata uygulanan en yüksek
+faiz, diğer kalemlerde yasal faiz). Yöntem belgesi: [`docs/mizan-hesap-yontemi.md`](docs/mizan-hesap-yontemi.md).
+
+Faz 2 kapsamı:
+- **İcra hukuku (`alan: icra`):** takip kapak hesabı, 3095 s.K. yasal / avans / reeskont / akdi faiz,
+  492 s.K. m.28 başvurma, peşin, tahsil (%4,55 / %9,10 / %11,38 ve hacizden sonra ödenmeyen kısımda
+  yarı tahsil harcı m.23) ve cezaevi yapı pulu (2548 s.K. m.1, %2) harçları, TBK m.100 kısmi ödeme
+  mahsubu ve İİK m.138 tarifeli icra vekalet ücreti. Örnek: [`ornekler/ornek-icra.yaml`](ornekler/ornek-icra.yaml),
+  yöntem: [`docs/mizan-icra-yontemi.md`](docs/mizan-icra-yontemi.md).
+- **Avukatlık Asgari Ücret Tarifesi (`alan: aaut`):** hüküm / hesap tarihindeki yürürlükteki AAÜT
+  üzerinden maktu ve Üçüncü Kısım kademeli nispi vekalet ücreti, m.13 maktu alt sınır / müddeabih üst
+  sınır denetimi, m.9 nafaka / kira, m.10 manevi tazminat, m.6-m.11/4-m.15 indirimli aşama kuralları
+  ve kısmi kabulde davacı / davalı karşı vekalet ücreti. Örnek: [`ornekler/ornek-aaut.yaml`](ornekler/ornek-aaut.yaml),
+  yöntem: [`docs/mizan-aaut-yontemi.md`](docs/mizan-aaut-yontemi.md).
+- **Aile hukuku mal rejimi tasfiyesi (`alan: aile`):** TMK m.202-241 edinilmiş mallara katılma rejimi
+  tasfiyesi; mal mal değer artış payı (m.227), konut/taşıt kredisi oranlaması, eklenecek değerler
+  (m.229), denkleştirme (m.230), artık değer (m.231, eksi bakiye sıfırlanır), katılma alacağı ve
+  hakkaniyet indirimi (m.236), takas ve m.239/3 yasal faiz. Örnek: [`ornekler/ornek-aile.yaml`](ornekler/ornek-aile.yaml),
+  yöntem: [`docs/mizan-aile-yontemi.md`](docs/mizan-aile-yontemi.md).
 
 ## Kurulum
 
@@ -29,6 +48,9 @@ npm test
 
 ```bash
 node bin/mizan.ts hesapla ornekler/ornek-iscilik.yaml --cikti ornekler/cikti
+node bin/mizan.ts hesapla ornekler/ornek-icra.yaml --cikti ornekler/cikti
+node bin/mizan.ts hesapla ornekler/ornek-aaut.yaml --cikti ornekler/cikti
+node bin/mizan.ts hesapla ornekler/ornek-aile.yaml --cikti ornekler/cikti
 ```
 
 Örnek çıktı bu depoda üretilir ama `ornekler/cikti/` git dışında tutulur. Çıktı dizinine üç dosya
@@ -162,8 +184,8 @@ bölümünde "girdi" ya da "varsayılan" diye, dayanağıyla görünür.
 
 Varsayılanı olan esaslar: günlük ücret = aylık / 30; saat ücreti = aylık / 225 (haftalık 45 saat);
 fazla çalışma çarpanı 1,5 (4857 m.41/2); hafta tatili çarpanı 1,5 (Yargıtay uygulaması); UBGT çarpanı
-1 (4857 m.47); hafta = gün / 7 kesirli; faiz basit, yıllık oran / 365 × gün, brüt alacak üzerinden.
-Hepsi girdiyle değiştirilebilir.
+1 (4857 m.47); hafta = gün / 7 kesirli; faiz basit, yıllık oran / 365 × gün, brüt alacak üzerinden;
+hepsi girdiyle değiştirilebilir.
 
 ### Faiz
 
@@ -199,6 +221,9 @@ Hepsi girdiyle değiştirilebilir.
 | `mevduat-faizi.json` | kıdem faizi: bankalarca fiilen uygulanan azami faiz (TCMB, aylık) |
 | `mevduat-faizi-kamu.json` | aynı seri, kamu bankaları |
 | `ubgt-takvimi.json` | 2429 s.K. m.1-2 ulusal bayram ve genel tatil günleri takvimi (2016-2026) |
+| `avans-reeskont-faizi.json` | 3095 s.K. m.2 TCMB reeskont iskonto ve avans faiz oranları |
+| `icra-harclari.json` | 492 s.K. (1) sayılı tarife icra harçları ve 2548 s.K. m.1 cezaevi yapı pulu harcı |
+| `aaut.json` | TBB Avukatlık Asgari Ücret Tarifesi maktu ücretler ve Üçüncü Kısım kademeli dilimler |
 
 Mevduat tabloları `node scripts/mevduat-guncelle.ts` ile TCMB EVDS'den yeniden çekilir. Diğer tablolar
 elle, resmi kaynaktan güncellenir.

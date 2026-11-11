@@ -1,4 +1,12 @@
-import { aautGirdiCoz, aautGirdiMetindenCoz, GirdiHatasi, girdiCoz, girdiMetindenCoz } from '../../src/index.ts';
+import {
+  aautGirdiCoz,
+  aautGirdiMetindenCoz,
+  aileGirdiCoz,
+  aileGirdiMetindenCoz,
+  GirdiHatasi,
+  girdiCoz,
+  girdiMetindenCoz,
+} from '../../src/index.ts';
 import { parse, stringify } from 'yaml';
 
 export type Deger = string | number | boolean | null | Nesne | Deger[];
@@ -29,8 +37,31 @@ export function bosAautFormu(): Nesne {
   };
 }
 
+export function bosAileFormu(): Nesne {
+  return {
+    alan: 'aile',
+    dosya: { mahkeme: '', esasNo: '', kaynak: '', altAlan: 'Aile Hukuku - Mal Rejimi Tasfiyesi' },
+    hesapTarihi: '',
+    evlilik: { evlenmeTarihi: '', malRejimiSonaErmeTarihi: '', sonaErmeNedeni: '' },
+    mallar: [{ ad: '', malik: 'davali', nitelik: 'edinilmis', edinmeDegeri: '', tasfiyeDegeri: '', digerEsKatkilari: [] }],
+    eklenecekDegerler: [],
+    denklestirmeler: [],
+    parametreler: {},
+  };
+}
+
 export function aautFormuMu(form: Nesne): boolean {
   return form.alan === 'aaut';
+}
+
+export function aileFormuMu(form: Nesne): boolean {
+  return form.alan === 'aile';
+}
+
+export function formAlanTuru(form: Nesne): 'iscilik' | 'aaut' | 'aile' {
+  if (form.alan === 'aaut') return 'aaut';
+  if (form.alan === 'aile') return 'aile';
+  return 'iscilik';
 }
 
 /** Form değerlerini şemayla aynı yapıda kopyalar, tanımsız isteğe bağlı alanları çıkarır. */
@@ -47,9 +78,15 @@ export function formdanGirdiKur(form: Nesne): Nesne {
 
 export function yamlForma(metin: string): Nesne {
   const ham = parse(metin) as Nesne | null;
-  if (ham && typeof ham === 'object' && !Array.isArray(ham) && ham.alan === 'aaut') {
-    aautGirdiMetindenCoz(metin);
-    return ham;
+  if (ham && typeof ham === 'object' && !Array.isArray(ham)) {
+    if (ham.alan === 'aaut') {
+      aautGirdiMetindenCoz(metin);
+      return ham;
+    }
+    if (ham.alan === 'aile') {
+      aileGirdiMetindenCoz(metin);
+      return ham;
+    }
   }
   girdiMetindenCoz(metin);
   const parsed = ham as Nesne;
@@ -72,6 +109,7 @@ export function formYamli(form: Nesne): string {
 }
 
 export function formuDogrula(form: Nesne) { return girdiCoz(formdanGirdiKur(form)); }
+export function aileFormuDogrula(form: Nesne) { return aileGirdiCoz(formdanGirdiKur({ ...form, alan: 'aile' })); }
 
 export function aautFormuDogrula(form: Nesne) { return aautGirdiCoz(formdanGirdiKur(form)); }
 

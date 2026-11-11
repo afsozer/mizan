@@ -3,6 +3,9 @@ import {
   aautDefterSatiri,
   aautHesapla,
   aautKanitDosyaAdi,
+  aileDefterSatiri,
+  aileHesapla,
+  aileKanitDosyaAdi,
   defterSatiri,
   hesapla,
   kanitDosyaAdi,
@@ -10,20 +13,23 @@ import {
   TABLO_DOSYALARI,
   tl,
 } from '../../src/index.ts';
-import type { AautHesapSonucu, HesapAlani, HesapSonucu } from '../../src/index.ts';
+import type { AautHesapSonucu, AileHesapSonucu, HesapAlani, HesapSonucu } from '../../src/index.ts';
 import ornekYaml from '../../ornekler/ornek-iscilik.yaml?raw';
 import ornekAautYaml from '../../ornekler/ornek-aaut.yaml?raw';
+import ornekAileYaml from '../../ornekler/ornek-aile.yaml?raw';
 import { Alanlar, alanId } from './Form.tsx';
 import { IcraCalismaAlani } from './IcraPanel.tsx';
-import { AautSonuclar, Sonuclar } from './Results.tsx';
-import { AAUT_BOLUMLER, alanAdi, BOLUMLER, KALEMLER, kalemYeni } from './schema.ts';
+import { AautSonuclar, AileSonuclar, Sonuclar } from './Results.tsx';
+import { AAUT_BOLUMLER, AILE_BOLUMLER, alanAdi, BOLUMLER, KALEMLER, kalemYeni } from './schema.ts';
 import {
   aautFormuDogrula,
-  aautFormuMu,
+  aileFormuDogrula,
   alanDegistir,
   bosAautFormu,
+  bosAileFormu,
   bosForm,
   degerOku,
+  formAlanTuru,
   formdanGirdiKur,
   formuDogrula,
   formYamli,
@@ -34,30 +40,37 @@ import {
 import type { Nesne } from './form-model.ts';
 import { hesapTablolari, paketTablolari, tabloHazirla } from './tables.ts';
 import type { TabloBelgesi } from './tables.ts';
-import { aautPdfIndir, indir, pdfIndir, udfIndir, surum, uretimTarihi } from './exports.ts';
+import { aautPdfIndir, ailePdfIndir, indir, pdfIndir, udfIndir, surum, uretimTarihi } from './exports.ts';
 import { TablolarEkrani } from './TablesView.tsx';
 
 interface Ihtimal { id: number; ad: string; form: Nesne; dokunuldu?: boolean }
 interface Degerlendirme {
-  alan: 'iscilik' | 'aaut';
+  alan: 'iscilik' | 'aaut' | 'aile';
   sonuc: HesapSonucu | null;
   aautSonuc: AautHesapSonucu | null;
+  aileSonuc: AileHesapSonucu | null;
   hata: { yol: string; mesaj: string } | null;
 }
+
 const HATA = (e: unknown) => e instanceof Error ? e.message : String(e);
 function degerlendir(form: Nesne, belgeler: TabloBelgesi[]): Degerlendirme {
-  const alan = aautFormuMu(form) ? 'aaut' : 'iscilik';
+  const alan = formAlanTuru(form);
   try {
     if (alan === 'aaut') {
       const girdi = aautFormuDogrula(form);
-      if (!belgeler.length) return { alan, sonuc: null, aautSonuc: null, hata: null };
-      return { alan, sonuc: null, aautSonuc: aautHesapla(girdi, hesapTablolari(belgeler, undefined)), hata: null };
+      if (!belgeler.length) return { alan, sonuc: null, aautSonuc: null, aileSonuc: null, hata: null };
+      return { alan, sonuc: null, aautSonuc: aautHesapla(girdi, hesapTablolari(belgeler, undefined)), aileSonuc: null, hata: null };
+    }
+    if (alan === 'aile') {
+      const girdi = aileFormuDogrula(form);
+      if (!belgeler.length) return { alan, sonuc: null, aautSonuc: null, aileSonuc: null, hata: null };
+      return { alan, sonuc: null, aautSonuc: null, aileSonuc: aileHesapla(girdi, { yasalFaiz: hesapTablolari(belgeler, undefined).yasalFaiz }), hata: null };
     }
     const girdi = formuDogrula(form);
-    if (!belgeler.length) return { alan, sonuc: null, aautSonuc: null, hata: null };
-    return { alan, sonuc: hesapla(girdi, hesapTablolari(belgeler, girdi.tablolar?.mevduatFaizi)), aautSonuc: null, hata: null };
+    if (!belgeler.length) return { alan, sonuc: null, aautSonuc: null, aileSonuc: null, hata: null };
+    return { alan, sonuc: hesapla(girdi, hesapTablolari(belgeler, girdi.tablolar?.mevduatFaizi)), aautSonuc: null, aileSonuc: null, hata: null };
   } catch (e) {
-    return { alan, sonuc: null, aautSonuc: null, hata: { yol: hataYolu(e), mesaj: HATA(e) } };
+    return { alan, sonuc: null, aautSonuc: null, aileSonuc: null, hata: { yol: hataYolu(e), mesaj: HATA(e) } };
   }
 }
 
@@ -76,11 +89,11 @@ export function App() {
   const [kapandi, kapandiYaz] = useState(false);
   const aktif = ihtimaller.find(i => i.id === aktifId)!;
   const form = aktif.form;
-  const aautMu = aautFormuMu(form);
-  const aktifBolumler = aautMu ? AAUT_BOLUMLER : BOLUMLER;
+  const formAlani = formAlanTuru(form);
+  const aktifBolumler = formAlani === 'aaut' ? AAUT_BOLUMLER : formAlani === 'aile' ? AILE_BOLUMLER : BOLUMLER;
   const degerlendirmeler = useMemo(() => ihtimaller.map(i => degerlendir(i.form, belgeler)), [ihtimaller, belgeler]);
-  const { sonuc, aautSonuc, hata: hamHata } = degerlendirmeler[ihtimaller.indexOf(aktif)]!;
-  const gecerliSonucVar = Boolean(sonuc || aautSonuc);
+  const { sonuc, aautSonuc, aileSonuc, hata: hamHata } = degerlendirmeler[ihtimaller.indexOf(aktif)]!;
+  const gecerliSonucVar = Boolean(sonuc || aautSonuc || aileSonuc);
   // Boş formda kullanıcı daha bir şey yazmadan alanları hatalı göstermemek için
   const hata = aktif.dokunuldu ? hamHata : null;
   const formYaz = (yeni: Nesne) => { ihtimalleriYaz(ihtimaller.map(i => i.id === aktifId ? { ...i, form: yeni, dokunuldu: true } : i)); bildir(''); defterYaz(''); };
@@ -114,8 +127,10 @@ export function App() {
   };
   const hatayaGit = () => {
     const yol = hata?.yol ?? 'girdi';
-    if (aautMu) {
+    if (formAlani === 'aaut') {
       adimYaz(yol.startsWith('girdi.uyusmazlik') ? 1 : 0);
+    } else if (formAlani === 'aile') {
+      adimYaz(yol.startsWith('girdi.evlilik') ? 1 : yol.startsWith('girdi.mallar') ? 2 : yol.startsWith('girdi.eklenecekDegerler') || yol.startsWith('girdi.denklestirmeler') ? 3 : yol.startsWith('girdi.parametreler') ? 4 : 0);
     } else {
       adimYaz(yol.startsWith('girdi.hizmet') ? 1 : yol.startsWith('girdi.ucret') ? 2 : yol.startsWith('girdi.parametreler') ? 3 : yol.startsWith('girdi.kalemler') || yol.startsWith('girdi.tablolar') ? 4 : 0);
     }
@@ -131,9 +146,9 @@ export function App() {
       }
     });
   };
-  const alanSec = (yeniAlan: 'iscilik' | 'aaut') => {
-    if ((yeniAlan === 'aaut') === aautMu) return;
-    const yeniForm = yeniAlan === 'aaut' ? bosAautFormu() : bosForm();
+  const alanSec = (yeniAlan: 'iscilik' | 'aaut' | 'aile') => {
+    if (yeniAlan === formAlani) return;
+    const yeniForm = yeniAlan === 'aaut' ? bosAautFormu() : yeniAlan === 'aile' ? bosAileFormu() : bosForm();
     ihtimalleriYaz(ihtimaller.map(i => i.id === aktifId ? { ...i, form: yeniForm, dokunuldu: false } : i));
     adimYaz(0);
     bildir('');
@@ -178,10 +193,11 @@ export function App() {
     finally { mesgulYaz(false); }
   };
   const pdfOlustur = async () => {
-    if (!sonuc && !aautSonuc) return;
+    if (!gecerliSonucVar) return;
     mesgulYaz(true);
     try {
       if (aautSonuc) await aautPdfIndir(aautSonuc, formYamli(form));
+      else if (aileSonuc) await ailePdfIndir(aileSonuc, formYamli(form));
       else if (sonuc) await pdfIndir(sonuc, formYamli(form));
       bildir('PDF raporu hazırlandı ve indirme başlatıldı.');
     }
@@ -197,10 +213,12 @@ export function App() {
   };
   const [defterMetni, defterYaz] = useState('');
   const defterKopyala = async () => {
-    if (!sonuc && !aautSonuc) return;
+    if (!gecerliSonucVar) return;
     const metin = aautSonuc
       ? aautDefterSatiri(aautSonuc, uretimTarihi(), surum())
-      : defterSatiri(sonuc!, uretimTarihi(), surum());
+      : aileSonuc
+        ? aileDefterSatiri(aileSonuc, uretimTarihi(), surum())
+        : defterSatiri(sonuc!, uretimTarihi(), surum());
     try { await navigator.clipboard.writeText(metin); bildir('Kayıt defteri satırı panoya kopyalandı.'); }
     catch { defterYaz(metin); bildir('Panoya erişilemedi. Aşağıdaki kayıt defteri satırını seçip kopyalayın.'); }
   };
@@ -224,7 +242,7 @@ export function App() {
   if (kapandi) return <main class="kapandi" id="ana-icerik"><span class="marka-adi">mizan<span class="marka-nokta">.</span></span>
     <h1>Sunucu kapatıldı</h1><p>Bu sekmeyi kapatabilirsiniz. Arayüzü yeniden açmak için depo klasöründe <code>npm run arayuz</code> komutunu çalıştırın.</p></main>;
 
-  const alanSecici = <div class="ihtimal-secimi"><label for="aktif-alan">Hesap alanı</label><select id="aktif-alan" value={hesapAlani} onChange={e => { const yeniAlan = e.currentTarget.value as HesapAlani; hesapAlaniYaz(yeniAlan); if (yeniAlan === 'icra') { if (sayfa === 'ihtimaller') sayfaYaz('hesap'); } else { alanSec(yeniAlan); } bildir(''); defterYaz(''); }}><option value="iscilik">İşçilik alacakları</option><option value="icra">İcra takibi ve harç</option><option value="aaut">AAÜT vekalet ücreti</option></select></div>;
+  const alanSecici = <div class="ihtimal-secimi"><label for="aktif-alan">Hesap alanı</label><select id="aktif-alan" value={hesapAlani} onChange={e => { const yeniAlan = e.currentTarget.value as HesapAlani; hesapAlaniYaz(yeniAlan); if (yeniAlan === 'icra') { if (sayfa === 'ihtimaller') sayfaYaz('hesap'); } else { alanSec(yeniAlan); } bildir(''); defterYaz(''); }}><option value="iscilik">İşçilik alacakları</option><option value="icra">İcra takibi ve harç</option><option value="aaut">AAÜT vekalet ücreti</option><option value="aile">Mal rejimi tasfiyesi</option></select></div>;
 
   return <>
     <a class="atla" href="#ana-icerik">İçeriğe geç</a>
@@ -236,13 +254,13 @@ export function App() {
       {baslangicHatasi && <p role="alert" class="hata-kutusu">Tablolar hazırlanamadı: {baslangicHatasi}</p>}
       {!belgeler.length && !baslangicHatasi && <p role="status">Kaynak tabloları hazırlanıyor...</p>}
       {hesapAlani === 'icra' && sayfa !== 'tablolar' && <IcraCalismaAlani alanSecici={alanSecici} sayfa={sayfa} sayfaYaz={sayfaYaz} belgeler={belgeler} bildir={bildir} mesgul={mesgul} mesgulYaz={mesgulYaz} disaridanYaml={disaridanIcraYaml} disaridanYamlTemizle={() => disaridanIcraYamlYaz('')} disYamlYukle={f => void yamlYukle(f)} />}
-      {hesapAlani !== 'icra' && sayfa !== 'tablolar' && <div class="calisma-seridi"><div class="calisma-secimler">{alanSecici}<div class="ihtimal-secimi"><label for="aktif-ihtimal">Çalışılan ihtimal</label><select id="aktif-ihtimal" value={aktifId} onChange={e => { const yeniId = Number(e.currentTarget.value); const secilen = ihtimaller.find(i => i.id === yeniId); aktifiYaz(yeniId); if (secilen) hesapAlaniYaz(aautFormuMu(secilen.form) ? 'aaut' : 'iscilik'); adimYaz(0); bildir(''); defterYaz(''); }}>{ihtimaller.map(i => <option key={i.id} value={i.id}>{i.ad}</option>)}</select></div></div>
-        <div class="araclar"><button onClick={kopyala}>İhtimali kopyala</button><button onClick={() => { formYaz(yamlForma(aautMu ? ornekAautYaml : ornekYaml)); adimYaz(0); sayfaYaz('hesap'); bildir('Kurgusal örnek hesap yüklendi.'); }}>Örnek hesap yükle</button><label class="buton dosya-buton">YAML yükle<input type="file" accept=".yaml,.yml,application/yaml,text/yaml" onChange={e => { const f = e.currentTarget.files?.[0]; if (f) void yamlYukle(f); e.currentTarget.value = ''; }} /></label></div></div>}
+      {hesapAlani !== 'icra' && sayfa !== 'tablolar' && <div class="calisma-seridi"><div class="calisma-secimler">{alanSecici}<div class="ihtimal-secimi"><label for="aktif-ihtimal">Çalışılan ihtimal</label><select id="aktif-ihtimal" value={aktifId} onChange={e => { const yeniId = Number(e.currentTarget.value); const secilen = ihtimaller.find(i => i.id === yeniId); aktifiYaz(yeniId); if (secilen) hesapAlaniYaz(formAlanTuru(secilen.form)); adimYaz(0); bildir(''); defterYaz(''); }}>{ihtimaller.map(i => <option key={i.id} value={i.id}>{i.ad}</option>)}</select></div></div>
+        <div class="araclar"><button onClick={kopyala}>İhtimali kopyala</button><button onClick={() => { formYaz(yamlForma(formAlani === 'aaut' ? ornekAautYaml : formAlani === 'aile' ? ornekAileYaml : ornekYaml)); adimYaz(0); sayfaYaz('hesap'); bildir('Kurgusal örnek hesap yüklendi.'); }}>Örnek hesap yükle</button><label class="buton dosya-buton">YAML yükle<input type="file" accept=".yaml,.yml,application/yaml,text/yaml" onChange={e => { const f = e.currentTarget.files?.[0]; if (f) void yamlYukle(f); e.currentTarget.value = ''; }} /></label></div></div>}
       {hesapAlani !== 'icra' && sayfa === 'hesap' && <div class="hesap-duzeni">
         <section class="form-paneli" aria-label="Hesap girdileri"><div class="bolum-basligi"><span class="bolum-no">{String(guvenliAdim + 1).padStart(2, '0')} / {String(aktifBolumler.length).padStart(2, '0')}</span><h1>{aktifBolumler[guvenliAdim]!.ad}</h1></div>
           <nav class="adimlar" aria-label="Hesap adımları">{aktifBolumler.map((b, i) => <button key={b.ad} aria-current={guvenliAdim === i ? 'step' : undefined} onClick={() => adimYaz(i)}>{b.ad}</button>)}</nav>
           <form onSubmit={e => e.preventDefault()} noValidate>
-            {aautMu || guvenliAdim < 4 ? <Alanlar alanlar={aktifBolumler[guvenliAdim]!.alanlar} form={form} degistir={formYaz} hata={hata} /> : <div id={alanId('girdi.kalemler')} tabIndex={-1}>
+            {formAlani !== 'iscilik' || guvenliAdim < 4 ? <Alanlar alanlar={aktifBolumler[guvenliAdim]!.alanlar} form={form} degistir={formYaz} hata={hata} /> : <div id={alanId('girdi.kalemler')} tabIndex={-1}>
               {KALEMLER.map(k => { const acik = degerOku(form, ['kalemler', k.key]) !== undefined; return <section class={`kalem-formu ${acik ? 'secili' : ''}`} key={k.key} id={alanId(`girdi.kalemler.${k.key}`)} tabIndex={-1}>
                 <label class="kalem-secim"><input type="checkbox" checked={acik} onChange={() => formYaz(alanDegistir(form, ['kalemler', k.key], acik ? undefined : kalemYeni(k.key)))} /><span>{k.ad}<small>{k.dayanak}</small></span></label>
                 {hata?.yol === `girdi.kalemler.${k.key}` && <p class="alan-hatasi">{hataAciklamasi(hata.mesaj)}</p>}
@@ -254,25 +272,26 @@ export function App() {
           <div class="adim-alt"><button disabled={guvenliAdim === 0} onClick={() => adimYaz(guvenliAdim - 1)}>Önceki adım</button><span>* Zorunlu alan</span>{guvenliAdim < aktifBolumler.length - 1 ? <button class="birincil" onClick={() => adimYaz(guvenliAdim + 1)}>Sonraki adım →</button> : <button class="birincil" disabled={!gecerliSonucVar} onClick={() => sayfaYaz('rapor')}>Raporu hazırla →</button>}</div>
         </section>
         <aside class="sonuc-paneli" id="sonuc-paneli" aria-label="Canlı hesap sonucu"><div class="sonuc-basligi"><h2>Hesap özeti</h2><span class={`durum ${gecerliSonucVar ? 'gecerli' : ''}`}>{gecerliSonucVar ? 'Güncel' : 'Eksik girdi'}</span></div>
-          {aautSonuc ? <AautSonuclar sonuc={aautSonuc} /> : sonuc ? <Sonuclar sonuc={sonuc} /> : <div class="bos-sonuc"><h3>Hesap için girdileri tamamlayın</h3>{hata && <div class="hata-kutusu"><p>{alanAdi(hata.yol) ? `${alanAdi(hata.yol)}: ` : ''}{hataAciklamasi(hata.mesaj)}</p><button class="metin-buton" onClick={hatayaGit}>İlgili alana git →</button></div>}</div>}
+          {aautSonuc ? <AautSonuclar sonuc={aautSonuc} /> : aileSonuc ? <AileSonuclar sonuc={aileSonuc} /> : sonuc ? <Sonuclar sonuc={sonuc} /> : <div class="bos-sonuc"><h3>Hesap için girdileri tamamlayın</h3>{hata && <div class="hata-kutusu"><p>{alanAdi(hata.yol, formAlani) ? `${alanAdi(hata.yol, formAlani)}: ` : ''}{hataAciklamasi(hata.mesaj)}</p><button class="metin-buton" onClick={hatayaGit}>İlgili alana git →</button></div>}</div>}
         </aside>
-        <a class="mobil-ozet" href="#sonuc-paneli">{aautSonuc ? <>Davacı <b>{tl(aautSonuc.davaci.hukmedilenUcret)} TL</b><span>Sonuca git</span></> : sonuc ? <>Net <b>{tl(sonuc.toplam.net)} TL</b><span>Sonuca git</span></> : <>Hesap eksik<span>Durumu gör</span></>}</a>
+        <a class="mobil-ozet" href="#sonuc-paneli">{aautSonuc ? <>Davacı <b>{tl(aautSonuc.davaci.hukmedilenUcret)} TL</b><span>Sonuca git</span></> : aileSonuc ? <>Net <b>{tl(aileSonuc.takas.netBakiye)} TL</b><span>Sonuca git</span></> : sonuc ? <>Net <b>{tl(sonuc.toplam.net)} TL</b><span>Sonuca git</span></> : <>Hesap eksik<span>Durumu gör</span></>}</a>
       </div>}
       {hesapAlani !== 'icra' && sayfa === 'ihtimaller' && <section class="ihtimaller-ekrani"><div class="sayfa-basligi"><h1>İhtimalleri karşılaştırın</h1><button class="birincil" onClick={kopyala}>İhtimali kopyala</button></div>
         <div class="ihtimal-listesi">{ihtimaller.map((i, n) => { const d = degerlendirmeler[n]!; return <article class={`ihtimal ${i.id === aktifId ? 'aktif' : ''}`} key={i.id}>
           <label for={`ihtimal-ad-${i.id}`}>İhtimal adı</label><input id={`ihtimal-ad-${i.id}`} value={i.ad} onInput={e => ihtimalleriYaz(ihtimaller.map(o => o.id === i.id ? { ...o, ad: e.currentTarget.value } : o))} />
           <p class="soluk">{String((i.form.dosya as Nesne).mahkeme || 'Mahkeme girilmedi')} · {String((i.form.dosya as Nesne).esasNo || 'Esas numarası girilmedi')}</p>
           {d.aautSonuc ? <><dl class="ihtimal-toplamlari">{[['Davacı / alacaklı vekalet', d.aautSonuc.davaci.hukmedilenUcret], ['Davalı karşı vekalet', d.aautSonuc.davali.hukmedilenUcret], ['Merci maktu alt sınırı', d.aautSonuc.maktuUcret]].map(([ad, v]) => <div key={String(ad)}><dt>{String(ad)}</dt><dd>{tl(v as AautHesapSonucu['maktuUcret'])} TL</dd></div>)}</dl>
-            <details><summary>Tercihleri incele</summary><dl class="bilgi-listesi">{d.aautSonuc.parametreler.map(p => <div key={p.ad}><dt>{p.ad}</dt><dd>{p.deger} ({p.kaynak})</dd></div>)}</dl></details></> : d.sonuc ? <><dl class="ihtimal-toplamlari">{[['Brüt alacak', d.sonuc.toplam.brut], ['Net alacak', d.sonuc.toplam.net], ['İşlemiş faiz', d.sonuc.toplam.faiz]].map(([ad, v]) => <div key={String(ad)}><dt>{String(ad)}</dt><dd>{tl(v as HesapSonucu['toplam']['brut'])} TL</dd></div>)}</dl>
+            <details><summary>Tercihleri incele</summary><dl class="bilgi-listesi">{d.aautSonuc.parametreler.map(p => <div key={p.ad}><dt>{p.ad}</dt><dd>{p.deger} ({p.kaynak})</dd></div>)}</dl></details></> : d.aileSonuc ? <><dl class="ihtimal-toplamlari">{[['Davacı alacağı', `${tl(d.aileSonuc.takas.davaciToplamAlacak)} TL`], ['Net bakiye', `${tl(d.aileSonuc.takas.netBakiye)} TL`], ['İşlemiş faiz', d.aileSonuc.toplamFaiz.davaci.gt(0) && d.aileSonuc.toplamFaiz.davali.gt(0) ? `${tl(d.aileSonuc.toplamFaiz.davaci)} / ${tl(d.aileSonuc.toplamFaiz.davali)} TL` : `${tl(d.aileSonuc.takas.netAlacakli === 'davali' ? d.aileSonuc.toplamFaiz.davali : d.aileSonuc.toplamFaiz.davaci)} TL`]].map(([ad, v]) => <div key={String(ad)}><dt>{String(ad)}</dt><dd>{String(v)}</dd></div>)}</dl>
+            <details><summary>Tercihleri incele</summary><dl class="bilgi-listesi">{d.aileSonuc.parametreler.map(p => <div key={p.ad}><dt>{p.ad}</dt><dd>{p.deger} ({p.kaynak})</dd></div>)}</dl></details></> : d.sonuc ? <><dl class="ihtimal-toplamlari">{[['Brüt alacak', d.sonuc.toplam.brut], ['Net alacak', d.sonuc.toplam.net], ['İşlemiş faiz', d.sonuc.toplam.faiz]].map(([ad, v]) => <div key={String(ad)}><dt>{String(ad)}</dt><dd>{tl(v as HesapSonucu['toplam']['brut'])} TL</dd></div>)}</dl>
             <details><summary>Tercihleri incele</summary><dl class="bilgi-listesi">{d.sonuc.parametreler.map(p => <div key={p.ad}><dt>{p.ad}</dt><dd>{p.deger} ({p.kaynak})</dd></div>)}</dl></details></> : <p class="hata-kutusu">{d.hata ? hataAciklamasi(d.hata.mesaj) : 'Tablolar hazırlanıyor.'}</p>}
-          <div class="ihtimal-araclari"><button onClick={() => { aktifiYaz(i.id); hesapAlaniYaz(aautFormuMu(i.form) ? 'aaut' : 'iscilik'); adimYaz(0); sayfaYaz('hesap'); bildir(''); }}>Bu ihtimali düzenle</button><button class="metin-buton" disabled={ihtimaller.length === 1} onClick={() => { const kalanlar = ihtimaller.filter(o => o.id !== i.id); ihtimalleriYaz(kalanlar); if (aktifId === i.id) { const yeni = kalanlar[0]!; aktifiYaz(yeni.id); hesapAlaniYaz(aautFormuMu(yeni.form) ? 'aaut' : 'iscilik'); } }}>Kaldır</button></div>
+          <div class="ihtimal-araclari"><button onClick={() => { aktifiYaz(i.id); hesapAlaniYaz(formAlanTuru(i.form)); adimYaz(0); sayfaYaz('hesap'); bildir(''); }}>Bu ihtimali düzenle</button><button class="metin-buton" disabled={ihtimaller.length === 1} onClick={() => { const kalanlar = ihtimaller.filter(o => o.id !== i.id); ihtimalleriYaz(kalanlar); if (aktifId === i.id) { const yeni = kalanlar[0]!; aktifiYaz(yeni.id); hesapAlaniYaz(formAlanTuru(yeni.form)); } }}>Kaldır</button></div>
         </article>; })}</div>
       </section>}
       {hesapAlani !== 'icra' && sayfa === 'rapor' && <section class="rapor-ekrani"><div class="sayfa-basligi"><h1>Rapor ve kayıt</h1></div>
-        <div class="rapor-araclari"><button class="birincil" disabled={!gecerliSonucVar || mesgul} onClick={() => void pdfOlustur()}>{mesgul ? 'PDF hazırlanıyor...' : 'PDF raporunu indir'}</button>{!aautMu && <button disabled={!sonuc || mesgul} onClick={() => void udfOlusturIndir()}>UDF indir</button>}<button disabled={!gecerliSonucVar} onClick={() => { const dosyaAdi = aautSonuc ? aautKanitDosyaAdi(aautSonuc, uretimTarihi()) : sonuc ? kanitDosyaAdi(sonuc, uretimTarihi()) : ''; if (dosyaAdi) { indir(formYamli(form), dosyaAdi.replace(/\.pdf$/, '.yaml'), 'application/yaml'); bildir('YAML indirmesi başlatıldı. Girdinin kalıcı kopyasını bu dosyada saklayın.'); } }}>Girdiyi YAML indir</button><button disabled={!gecerliSonucVar} onClick={() => void defterKopyala()}>Defter satırını kopyala</button></div>
-        {!aautMu && <p class="not">Üretilen UDF belgesini resmi kullanımdan önce UYAP Doküman Editör'de açarak elle doğrulayın.</p>}
+        <div class="rapor-araclari"><button class="birincil" disabled={!gecerliSonucVar || mesgul} onClick={() => void pdfOlustur()}>{mesgul ? 'PDF hazırlanıyor...' : 'PDF raporunu indir'}</button>{formAlani === 'iscilik' && <button disabled={!sonuc || mesgul} onClick={() => void udfOlusturIndir()}>UDF indir</button>}<button disabled={!gecerliSonucVar} onClick={() => { const dosyaAdi = aautSonuc ? aautKanitDosyaAdi(aautSonuc, uretimTarihi()) : aileSonuc ? aileKanitDosyaAdi(aileSonuc, uretimTarihi()) : sonuc ? kanitDosyaAdi(sonuc, uretimTarihi()) : ''; if (dosyaAdi) { indir(formYamli(form), dosyaAdi.replace(/\.pdf$/, '.yaml'), 'application/yaml'); bildir('YAML indirmesi başlatıldı. Girdinin kalıcı kopyasını bu dosyada saklayın.'); } }}>Girdiyi YAML indir</button><button disabled={!gecerliSonucVar} onClick={() => void defterKopyala()}>Defter satırını kopyala</button></div>
+        {formAlani === 'iscilik' && <p class="not">Üretilen UDF belgesini resmi kullanımdan önce UYAP Doküman Editör'de açarak elle doğrulayın.</p>}
         {defterMetni && <label class="defter-yedek">Kayıt defteri satırı<textarea readOnly value={defterMetni} rows={6} onFocus={e => e.currentTarget.select()} /></label>}
-        {aautSonuc ? <div class="rapor-onizleme"><AautSonuclar sonuc={aautSonuc} tam /></div> : sonuc ? <div class="rapor-onizleme"><Sonuclar sonuc={sonuc} tam /></div> : <div class="hata-kutusu"><p>{hata ? hataAciklamasi(hata.mesaj) : 'Girdiler henüz tamamlanmadı.'}</p><button onClick={hatayaGit}>Girdileri tamamla</button></div>}
+        {aautSonuc ? <div class="rapor-onizleme"><AautSonuclar sonuc={aautSonuc} tam /></div> : aileSonuc ? <div class="rapor-onizleme"><AileSonuclar sonuc={aileSonuc} tam /></div> : sonuc ? <div class="rapor-onizleme"><Sonuclar sonuc={sonuc} tam /></div> : <div class="hata-kutusu"><p>{hata ? hataAciklamasi(hata.mesaj) : 'Girdiler henüz tamamlanmadı.'}</p><button onClick={hatayaGit}>Girdileri tamamla</button></div>}
       </section>}
       {sayfa === 'tablolar' && <><TablolarEkrani belgeler={belgeler} yukle={f => void tabloYukle(f)} mesgul={mesgul || !belgeler.length} />{hesapAlani === 'iscilik' && <section class="mevduat-paneli">{tabloSecimi}</section>}</>}
     </main>
