@@ -65,6 +65,17 @@ npm run web:build     # web/dist/ altına derler
 npm run web:preview   # derlenmiş sürümü sunar, tarayıcıda açar
 ```
 
+### Sürekli tümleştirme ve GitHub Pages
+
+- `.github/workflows/ci.yml`: her dal itmesinde ve çekme isteğinde Node.js 24 üzerinde kök ve web
+  tip denetimini, birim testlerini, üretim derlemesini, `node bin/mizan.ts tablolar` denetimini ve
+  yazım kuralı kontrolünü çalıştırır.
+- `.github/workflows/pages.yml`: `main` dalına yapılan güncellemelerde testleri çalıştırdıktan sonra
+  `web/dist/` çıktısını GitHub Pages üzerine dağıtır (`https://afsozer.github.io/mizan/`). Depo
+  ayarlarında **Settings > Pages > Build and deployment > Source: GitHub Actions** seçilmelidir.
+  Derleme göreli yollarla (`base: './'`) üretildiği için alt dizinde ek yapılandırma gerekmez;
+  yerel sunucu kapatma düğmesi statik yayında kendiliğinden gizlenir.
+
 ## Girdi dosyası
 
 YAML. Tam örnek: [`ornekler/ornek-iscilik.yaml`](ornekler/ornek-iscilik.yaml). Şema sıkıdır:

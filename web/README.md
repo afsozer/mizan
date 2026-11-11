@@ -23,6 +23,20 @@ sunucusu yalnız `127.0.0.1` adresini dinler. SHA-256 için localhost veya HTTPS
 kurulum için kaynak adresleri göreli üretilir. PDF motoru ve Roboto vfs yalnız rapor istendiğinde,
 uygulamanın kendi dağıtım dosyalarından yüklenir. Yeni paket eklenmedi.
 
+### GitHub Actions ve GitHub Pages dağıtımı
+
+- `.github/workflows/ci.yml` iş akışı her `push` ve `pull_request` tetiklemesinde Node 24 ile
+  `npm ci`, `npm run typecheck`, `npx tsc --noEmit -p web`, `npm test`, `npm run web:build`,
+  `node bin/mizan.ts tablolar` ve yazım kuralı denetimini çalıştırır.
+- `.github/workflows/pages.yml` iş akışı `main` dalına `push` edildiğinde veya `workflow_dispatch`
+  ile elle tetiklendiğinde tam git geçmişiyle (`fetch-depth: 0`, rapora gerçek commit özetinin
+  gömülmesi için) `web/dist` paketini derler ve `actions/deploy-pages@v4` ile yayınlar.
+- GitHub üzerinde canlı yayın (`https://afsozer.github.io/mizan/`) için depo ayarlarında
+  **Settings > Pages > Source: GitHub Actions** seçilmesi yeterlidir. `vite.config.ts` içindeki
+  `base: './'` ayarı sayesinde tüm betik, stil ve dinamik PDF/font parçaları alt dizinde göreli
+  yüklenir; `/__mizan/durum` kontrolü statik yayında sessizce `false` döndüğünden yerel sunucu
+  kapatma düğmesi görünmez.
+
 ## Dosyalar
 
 - `index.html`: Türkçe giriş belgesi ve dış bağlantı isteklerini kısıtlayan CSP.

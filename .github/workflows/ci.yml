@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - '**'
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dogrula:
+    name: Tip, test ve derleme denetimi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu indir
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Node.js kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Bağımlılıkları yükle
+        run: npm ci
+
+      - name: Kök tip denetimi
+        run: npm run typecheck
+
+      - name: Web tip denetimi
+        run: npx tsc --noEmit -p web
+
+      - name: Testleri çalıştır
+        run: npm test
+
+      - name: Web arayüzünü derle
+        run: npm run web:build
+
+      - name: Kaynak tablolarını denetle
+        run: node bin/mizan.ts tablolar
+
+      - name: Yazım kuralı denetimi
+        run: "! git grep -n '[\u00e2\u00ee\u00fb\u00c2\u00ce\u00db\u2014]'"
