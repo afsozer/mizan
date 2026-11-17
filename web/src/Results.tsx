@@ -1,5 +1,21 @@
-import { tl, yuzde, trTarih, tarafAdi, karsiTaraf } from '../../src/index.ts';
-import type { AautHesapSonucu, AautTarafHesabi, AileHesapSonucu, HesapSonucu, KalemSonucu, Kaynak } from '../../src/index.ts';
+import {
+  ICRA_FAIZ_TURU_ADLARI,
+  ICRA_TAKIP_TURU_ADLARI,
+  karsiTaraf,
+  tarafAdi,
+  tl,
+  trTarih,
+  yuzde,
+} from '../../src/index.ts';
+import type {
+  AautHesapSonucu,
+  AautTarafHesabi,
+  AileHesapSonucu,
+  HesapSonucu,
+  IcraHesapSonucu,
+  KalemSonucu,
+  Kaynak,
+} from '../../src/index.ts';
 
 export function VeriTablosu({ basliklar, satirlar, toplam, aciklama }: { basliklar: string[]; satirlar: string[][]; toplam?: string[]; aciklama?: string }) {
   return <div class="tablo-kaydir" tabIndex={0} role="region" aria-label={aciklama ?? basliklar.join(', ')}><table>
@@ -294,6 +310,170 @@ export function AileSonuclar({ sonuc: s, tam = false }: { sonuc: AileHesapSonucu
     {s.notlar.length > 0 && <details class="rapor-bolumu" open><summary>Hesap notları <span>{s.notlar.length}</span></summary><ul>{s.notlar.map((n, i) => <li key={i}>{n}</li>)}</ul></details>}
     <details class="rapor-bolumu" open={tam || undefined}><summary>Hukuki tercihler <span>{s.parametreler.length} esas</span></summary>
       <VeriTablosu basliklar={['Tercih', 'Değer', 'Kaynak', 'Dayanak']} satirlar={s.parametreler.map(p => [p.ad, p.deger, p.kaynak, p.dayanak])} />
+    </details>
+    <details class="rapor-bolumu"><summary>Kullanılan kaynaklar <span>{s.kaynaklar.length} satır</span></summary>{s.kaynaklar.map((k, i) => <section class="kaynak-satiri" key={i}><h4>{k.tablo} · {k.aralik}</h4><p>{k.deger}</p><KaynakBilgisi kaynak={k.kaynak} /></section>)}</details>
+    <details class="rapor-bolumu" open={s.uyarilar.length > 0}><summary>Uyarılar <span>{s.uyarilar.length}</span></summary>{s.uyarilar.length ? <ul>{s.uyarilar.map((u, i) => <li key={i}>{u}</li>)}</ul> : <p>Bu hesap için tablo uyarısı yok.</p>}</details>
+  </>;
+}
+
+export function IcraSonuclar({ sonuc: s, tam = false }: { sonuc: IcraHesapSonucu; tam?: boolean }) {
+  const h = s.harclar;
+  const ozetSatirlari: string[][] = [
+    ['Asıl alacak (anapara)', 'Takip çıkışı anapara', tl(s.asilAlacak)],
+    ["Takip öncesi fer'iler", 'TBK m.121/3 (faiz yürütülmez)', tl(s.takipOncesiToplam)],
+    ['Takip çıkışı toplamı (harç matrahı)', '492 s.K. m.20', tl(s.takipCikisToplami)],
+    ['Başvurma harcı', '492 s.K. (1) sayılı tarife B/I-1', tl(h.basvurmaHarci)],
+    ['Peşin harç', h.pesinHarc.isZero() ? 'Alınmadı (ilamlı / muaf)' : `492 s.K. m.29 (${yuzde(h.pesinHarcOrani)})`, tl(h.pesinHarc)],
+    [
+      'Bakiye tahsil harcı',
+      `492 s.K. B/I-3 (${yuzde(h.uygulananTahsilOrani)} tahsil harcından ${tl(h.mahsupEdilenPesinHarc)} TL peşin harç mahsubu)`,
+      tl(h.bakiyeTahsilHarci),
+    ],
+    ['İcra vekalet ücreti', 'AAÜT / İİK m.138', tl(s.vekaletUcreti)],
+    ['Takip masrafları toplamı', 'İİK m.59', tl(s.toplamMasraf)],
+    ['Takip sonrası işlemiş faiz', ICRA_FAIZ_TURU_ADLARI[s.girdi.takip.faiz.tur], tl(s.toplamTakipSonrasiFaiz)],
+    [
+      'Kısmi ödemeler toplamı (mahsup)',
+      '6098 s.K. TBK m.100',
+      s.toplamKismiOdeme.isZero() ? '0,00' : `-${tl(s.toplamKismiOdeme)}`,
+    ],
+    ['Borçlunun ödeyeceği kapak tutarı', 'Kalan anapara + faiz/gider + bakiye tahsil harcı', tl(s.borclununOdeyecegiKapakTutari)],
+    [
+      'Cezaevleri yapı harcı (alacaklıdan kesilen)',
+      `2548 s.K. m.1 (${yuzde(h.cezaeviHarciOrani)}; borçluya yüklenmez)`,
+      `-${tl(h.cezaeviHarci)}`,
+    ],
+    ['Alacaklıya net ödenecek tutar', 'Tahsil ve cezaevi harçları düşüldükten sonra net reddiyat', tl(s.alacakliyaNetOdenecekTutar)],
+  ];
+
+  return <>
+    <div class="toplamlar">
+      <div><span>Takip çıkışı toplamı</span><strong>{tl(s.takipCikisToplami)} <small>TL</small></strong></div>
+      <div class="ana-toplam"><span>Borçlunun ödeyeceği kapak tutarı</span><strong>{tl(s.borclununOdeyecegiKapakTutari)} <small>TL</small></strong></div>
+      <div><span>Alacaklıya net ödenecek tutar</span><strong>{tl(s.alacakliyaNetOdenecekTutar)} <small>TL</small></strong></div>
+    </div>
+    <p class="soluk sonuc-aciklama">
+      {ICRA_TAKIP_TURU_ADLARI[s.takipTuru]} · Takip sonrası faiz {tl(s.toplamTakipSonrasiFaiz)} TL. 2548 s.K. m.1 gereği %2 cezaevi yapı harcı borçluya yüklenmez.
+    </p>
+    <div class="kalem-listesi">
+      <details class="sonuc-kalemi" open={tam || true}>
+        <summary>
+          <span class="kalem-adi">Kapak hesabı ve harçlar özeti</span>
+          <span class="kalem-net">{tl(s.borclununOdeyecegiKapakTutari)} <small>TL kapak</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Asıl <b>{tl(s.asilAlacak)}</b></span>
+            <span>Bakiye tahsil harcı <b>{tl(h.bakiyeTahsilHarci)}</b></span>
+            <span>Faiz <b>{tl(s.toplamTakipSonrasiFaiz)}</b></span>
+            {!s.toplamKismiOdeme.isZero() && <span>Kısmi ödeme <b>-{tl(s.toplamKismiOdeme)}</b></span>}
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={['Kalem', 'Dayanak / Açıklama', 'Tutar (TL)']}
+            satirlar={ozetSatirlari}
+            aciklama="İcra kapak hesabı özeti"
+          />
+        </div>
+      </details>
+
+      {s.takipOncesiKalemler.length > 0 && <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary>
+          <span class="kalem-adi">Takip öncesi kalemler (TBK m.121/3)</span>
+          <span class="kalem-net">{tl(s.takipOncesiToplam)} <small>TL</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti"><span>{s.takipOncesiKalemler.length} kalem</span></span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={['Kalem', 'Açıklama', 'Tutar (TL)']}
+            satirlar={s.takipOncesiKalemler.map(k => [k.ad, k.aciklama ?? '-', tl(k.tutar)])}
+            toplam={['Toplam', '', tl(s.takipOncesiToplam)]}
+            aciklama="Takip öncesi kalemler"
+          />
+        </div>
+      </details>}
+
+      {s.masraflar.length > 0 && <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary>
+          <span class="kalem-adi">Takip masrafları (İİK m.59)</span>
+          <span class="kalem-net">{tl(s.toplamMasraf)} <small>TL</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti"><span>{s.masraflar.length} masraf</span></span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={['Tarih', 'Açıklama', 'Tutar (TL)']}
+            satirlar={s.masraflar.map(m => [trTarih(m.tarih), m.aciklama, tl(m.tutar)])}
+            toplam={['Toplam', '', tl(s.toplamMasraf)]}
+            aciklama="Takip masrafları"
+          />
+        </div>
+      </details>}
+
+      {s.kismiOdemeAdimlari.length > 0 && <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary>
+          <span class="kalem-adi">TBK m.100 kısmi ödeme mahsubu ({s.kismiOdemeAdimlari.length} ödeme)</span>
+          <span class="kalem-net">-{tl(s.toplamKismiOdeme)} <small>TL</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Kalan asıl alacak <b>{tl(s.kalanAsilAlacak)}</b></span>
+            <span>Kalan faiz/gider <b>{tl(s.kalanFaizVeGider)}</b></span>
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={[
+              '#',
+              'Tarih',
+              'Ödeme (TL)',
+              'Dönem faizi (TL)',
+              'Faiz/giderden düşülen (TL)',
+              'Anaparadan düşülen (TL)',
+              'Kalan faiz/gider (TL)',
+              'Kalan anapara (TL)',
+            ]}
+            satirlar={s.kismiOdemeAdimlari.map(a => [
+              String(a.sira),
+              trTarih(a.tarih),
+              tl(a.odemeTutari),
+              tl(a.donemFaizi.toplam),
+              tl(a.faizVeGiderdenMahsup),
+              tl(a.asilAlacaktanMahsup),
+              tl(a.kalanFaizVeGider),
+              tl(a.kalanAsilAlacak),
+            ])}
+            aciklama="TBK m.100 kısmi ödeme mahsup adımları"
+          />
+        </div>
+      </details>}
+
+      <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary>
+          <span class="kalem-adi">Takip sonrası faiz kesitleri</span>
+          <span class="kalem-net">{tl(s.toplamTakipSonrasiFaiz)} <small>TL</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>{ICRA_FAIZ_TURU_ADLARI[s.girdi.takip.faiz.tur]}</span>
+            <span>{s.faizDonemleri.length} dönem</span>
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          {s.faizDonemleri.map((fd, i) => <section key={i}>
+            <h4>{fd.aciklama} · Matrah {tl(fd.matrah)} TL</h4>
+            <p class="soluk">{fd.tabloAdi} · {fd.gerekce}</p>
+            {fd.kesitler.length > 0 ? <VeriTablosu
+              basliklar={['Dönem', 'Gün', 'Yıllık oran', 'Faiz (TL)']}
+              satirlar={fd.kesitler.map(x => [`${trTarih(x.baslangic)} - ${trTarih(x.bitis)}`, String(x.gun), yuzde(x.oran), tl(x.tutar)])}
+              toplam={['Dönem toplamı', '', '', tl(fd.toplam)]}
+              aciklama={fd.aciklama}
+            /> : <p>Bu dönemde faiz işlememiştir.</p>}
+          </section>)}
+        </div>
+      </details>
+    </div>
+    <details class="rapor-bolumu" open={tam || undefined}><summary>Hukuki dayanaklar <span>{s.dayanaklar.length} esas</span></summary>
+      <ul>{s.dayanaklar.map((d, i) => <li key={i}>{d}</li>)}</ul>
     </details>
     <details class="rapor-bolumu"><summary>Kullanılan kaynaklar <span>{s.kaynaklar.length} satır</span></summary>{s.kaynaklar.map((k, i) => <section class="kaynak-satiri" key={i}><h4>{k.tablo} · {k.aralik}</h4><p>{k.deger}</p><KaynakBilgisi kaynak={k.kaynak} /></section>)}</details>
     <details class="rapor-bolumu" open={s.uyarilar.length > 0}><summary>Uyarılar <span>{s.uyarilar.length}</span></summary>{s.uyarilar.length ? <ul>{s.uyarilar.map((u, i) => <li key={i}>{u}</li>)}</ul> : <p>Bu hesap için tablo uyarısı yok.</p>}</details>

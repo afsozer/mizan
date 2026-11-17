@@ -57,6 +57,12 @@ function FormAlani({ alan, yol, form, degistir, hata }: FormProps & { alan: Alan
     if (adres === 'girdi.uyusmazlik.asama' && (!v || v === 'karar')) {
       sonuc = alanDegistir(sonuc, ['uyusmazlik', 'asamaGerekcesi'], undefined);
     }
+    if (adres === 'girdi.takip.takipTuru' && v === 'ilamli') {
+      sonuc = alanDegistir(sonuc, ['takip', 'pesinHarcAlindiMi'], undefined);
+    }
+    if (adres === 'girdi.takip.faiz.tur' && v !== 'sozlesme') {
+      sonuc = alanDegistir(sonuc, ['takip', 'faiz', 'sozlesmeOrani'], undefined);
+    }
     degistir(sonuc);
   };
   const aciklama = <>{alan.ipucu && <span class="ipucu">{alan.ipucu}</span>}
