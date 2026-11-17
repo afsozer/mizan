@@ -22,3 +22,4 @@ export type {
 export { aautHesapla, kademeliNispiHesapla } from './hesap.ts';
 export type { AautDilimHesabi, AautHesapSonucu, AautTarafHesabi } from './hesap.ts';
 export { aautDefterSatiri, aautKanitDosyaAdi, aautRaporTanimi } from './rapor.ts';
+export { aautUdfDosyaAdi, aautUdfOlustur, aautUdfXmlOlustur } from './udf.ts';

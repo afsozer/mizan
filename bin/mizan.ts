@@ -4,11 +4,33 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { herhangiGirdiOku } from '../src/node/girdi-dosya.ts';
 import { hesapla } from '../src/hesap.ts';
-import { icraDefterSatiri, icraHesapla, icraKanitDosyaAdi, icraRaporTanimi } from '../src/icra/index.ts';
-import { aautDefterSatiri, aautHesapla, aautKanitDosyaAdi, aautRaporTanimi } from '../src/aaut/index.ts';
-import { aileDefterSatiri, aileHesapla, aileKanitDosyaAdi, aileRaporTanimi, tarafAdi } from '../src/aile/index.ts';
+import {
+  icraDefterSatiri,
+  icraHesapla,
+  icraKanitDosyaAdi,
+  icraRaporTanimi,
+  icraUdfDosyaAdi,
+  icraUdfOlustur,
+} from '../src/icra/index.ts';
+import {
+  aautDefterSatiri,
+  aautHesapla,
+  aautKanitDosyaAdi,
+  aautRaporTanimi,
+  aautUdfDosyaAdi,
+  aautUdfOlustur,
+} from '../src/aaut/index.ts';
+import {
+  aileDefterSatiri,
+  aileHesapla,
+  aileKanitDosyaAdi,
+  aileRaporTanimi,
+  aileUdfDosyaAdi,
+  aileUdfOlustur,
+  tarafAdi,
+} from '../src/aile/index.ts';
 import { tl } from '../src/para.ts';
-import { raporTanimi } from '../src/rapor/pdf.ts';
+import { raporTanimi, type RaporBilgisi } from '../src/rapor/pdf.ts';
 import { udfOlustur, udfDosyaAdi } from '../src/rapor/udf.ts';
 import { pdfYaz } from '../src/node/pdf-yaz.ts';
 import { defterSatiri, kanitDosyaAdi } from '../src/rapor/defter.ts';
@@ -38,6 +60,33 @@ function uretimZamani(): string {
   return `${trTarih(bugun())} ${ss}:${dk}`;
 }
 
+async function ciktilariYaz(
+  dizin: string,
+  pdfAdi: string,
+  pdfTanim: Record<string, unknown>,
+  udfAdi: string,
+  udfBayt: Uint8Array,
+  satir: string,
+): Promise<{ pdfYolu: string; udfYolu: string; defterYolu: string }> {
+  const pdfYolu = join(dizin, pdfAdi);
+  await pdfYaz(pdfTanim, pdfYolu);
+  const udfYolu = join(dizin, udfAdi);
+  writeFileSync(udfYolu, udfBayt);
+  const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
+  writeFileSync(defterYolu, satir + '\n');
+  return { pdfYolu, udfYolu, defterYolu };
+}
+
+function raporYollariniYaz(
+  cikti: { pdfYolu: string; udfYolu: string; defterYolu: string },
+  satir: string,
+  udfBosluk = ' ',
+): void {
+  console.log(`\nRapor: ${cikti.pdfYolu}`);
+  console.log(`UDF:${udfBosluk}${cikti.udfYolu} (resmi kullanımdan önce UYAP Doküman Editör'de elle doğrulayın)`);
+  console.log(`Defter satırı (${cikti.defterYolu}):\n${satir}`);
+}
+
 async function hesaplaKomutu(arg: string[]): Promise<void> {
   const yol = arg[0];
   if (!yol) throw new Error('Girdi dosyası verilmedi.\n\n' + YARDIM);
@@ -46,16 +95,20 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
   const tarih = bugun();
   const dizin = resolve(secenek(arg, '--cikti') ?? '.');
   mkdirSync(dizin, { recursive: true });
+  const raporBilgi: RaporBilgisi = { uretimZamani: uretimZamani(), surum, girdiOzeti: okunan.ozet };
 
   if (okunan.alan === 'icra') {
-    const { girdi, ozet } = okunan;
+    const { girdi } = okunan;
     const sonuc = icraHesapla(girdi, tablolariYukle());
-    const pdfAdi = icraKanitDosyaAdi(sonuc, tarih);
-    const pdfYolu = join(dizin, pdfAdi);
-    await pdfYaz(icraRaporTanimi(sonuc, { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet }), pdfYolu);
     const satir = icraDefterSatiri(sonuc, tarih, surum);
-    const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
-    writeFileSync(defterYolu, satir + '\n');
+    const cikti = await ciktilariYaz(
+      dizin,
+      icraKanitDosyaAdi(sonuc, tarih),
+      icraRaporTanimi(sonuc, raporBilgi),
+      icraUdfDosyaAdi(sonuc, tarih),
+      icraUdfOlustur(sonuc, raporBilgi),
+      satir,
+    );
 
     console.log(`${'Takip çıkışı toplamı'.padEnd(38)} ${tl(sonuc.takipCikisToplami).padStart(16)} TL`);
     console.log(`${'Takip sonrası faiz toplamı'.padEnd(38)} ${tl(sonuc.toplamTakipSonrasiFaiz).padStart(16)} TL`);
@@ -64,20 +117,22 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
     console.log(`${'Cezaevleri yapı harcı (%2)'.padEnd(38)} ${tl(sonuc.harclar.cezaeviHarci).padStart(16)} TL`);
     console.log(`${'Alacaklıya net ödenecek tutar'.padEnd(38)} ${tl(sonuc.alacakliyaNetOdenecekTutar).padStart(16)} TL`);
     for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
-    console.log(`\nRapor: ${pdfYolu}`);
-    console.log(`Defter satırı (${defterYolu}):\n${satir}`);
+    raporYollariniYaz(cikti, satir);
     return;
   }
 
   if (okunan.alan === 'aaut') {
-    const { girdi, ozet } = okunan;
+    const { girdi } = okunan;
     const sonuc = aautHesapla(girdi, tablolariYukle());
-    const pdfAdi = aautKanitDosyaAdi(sonuc, tarih);
-    const pdfYolu = join(dizin, pdfAdi);
-    await pdfYaz(aautRaporTanimi(sonuc, { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet }), pdfYolu);
     const satir = aautDefterSatiri(sonuc, tarih, surum);
-    const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
-    writeFileSync(defterYolu, satir + '\n');
+    const cikti = await ciktilariYaz(
+      dizin,
+      aautKanitDosyaAdi(sonuc, tarih),
+      aautRaporTanimi(sonuc, raporBilgi),
+      aautUdfDosyaAdi(sonuc, tarih),
+      aautUdfOlustur(sonuc, raporBilgi),
+      satir,
+    );
 
     console.log(`${'Tarife dönemi'.padEnd(38)} ${sonuc.tarifeDonemi} (${sonuc.merciAdi})`);
     if (!sonuc.davaci.hukmedilenUcret.isZero() || girdi.uyusmazlik.kabulTutari.gt(0)) {
@@ -87,20 +142,22 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
       console.log(`${sonuc.davali.baslik.padEnd(38)} ${tl(sonuc.davali.hukmedilenUcret).padStart(14)} TL`);
     }
     for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
-    console.log(`\nRapor: ${pdfYolu}`);
-    console.log(`Defter satırı (${defterYolu}):\n${satir}`);
+    raporYollariniYaz(cikti, satir);
     return;
   }
 
   if (okunan.alan === 'aile') {
-    const { girdi, ozet } = okunan;
+    const { girdi } = okunan;
     const sonuc = aileHesapla(girdi, tablolariYukle());
-    const pdfAdi = aileKanitDosyaAdi(sonuc, tarih);
-    const pdfYolu = join(dizin, pdfAdi);
-    await pdfYaz(aileRaporTanimi(sonuc, { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet }), pdfYolu);
     const satir = aileDefterSatiri(sonuc, tarih, surum);
-    const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
-    writeFileSync(defterYolu, satir + '\n');
+    const cikti = await ciktilariYaz(
+      dizin,
+      aileKanitDosyaAdi(sonuc, tarih),
+      aileRaporTanimi(sonuc, raporBilgi),
+      aileUdfDosyaAdi(sonuc, tarih),
+      aileUdfOlustur(sonuc, raporBilgi),
+      satir,
+    );
 
     console.log(`${'Davacı değer artış payı'.padEnd(38)} ${tl(sonuc.takas.davaciDegerArtisPayi).padStart(14)} TL`);
     console.log(`${'Davalı değer artış payı'.padEnd(38)} ${tl(sonuc.takas.davaliDegerArtisPayi).padStart(14)} TL`);
@@ -115,31 +172,28 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
         : `faiz ${tl(sonuc.takas.netAlacakli === 'davali' ? sonuc.toplamFaiz.davali : sonuc.toplamFaiz.davaci)}`;
     console.log(`${netEtiket.padEnd(38)} ${tl(sonuc.takas.netBakiye).padStart(14)} TL  ${faizOzeti}`);
     for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
-    console.log(`\nRapor: ${pdfYolu}`);
-    console.log(`Defter satırı (${defterYolu}):\n${satir}`);
+    raporYollariniYaz(cikti, satir);
     return;
   }
 
-  const { girdi, ozet } = okunan;
+  const { girdi } = okunan;
   const sonuc = hesapla(girdi, tablolariYukle({ mevduatFaizi: girdi.tablolar?.mevduatFaizi }));
-  const pdfAdi = kanitDosyaAdi(sonuc, tarih);
-  const pdfYolu = join(dizin, pdfAdi);
-  const raporBilgi = { uretimZamani: uretimZamani(), surum, girdiOzeti: ozet };
-  await pdfYaz(raporTanimi(sonuc, raporBilgi), pdfYolu);
-  const udfYolu = join(dizin, udfDosyaAdi(sonuc, tarih));
-  writeFileSync(udfYolu, udfOlustur(sonuc, raporBilgi));
   const satir = defterSatiri(sonuc, tarih, surum);
-  const defterYolu = pdfYolu.replace(/\.pdf$/, '.defter.md');
-  writeFileSync(defterYolu, satir + '\n');
+  const cikti = await ciktilariYaz(
+    dizin,
+    kanitDosyaAdi(sonuc, tarih),
+    raporTanimi(sonuc, raporBilgi),
+    udfDosyaAdi(sonuc, tarih),
+    udfOlustur(sonuc, raporBilgi),
+    satir,
+  );
 
   for (const k of sonuc.kalemler) {
     console.log(`${k.ad.padEnd(38)} brüt ${tl(k.brut).padStart(14)}  net ${tl(k.net).padStart(14)}`);
   }
   console.log(`${'Toplam'.padEnd(38)} brüt ${tl(sonuc.toplam.brut).padStart(14)}  net ${tl(sonuc.toplam.net).padStart(14)}  faiz ${tl(sonuc.toplam.faiz)}`);
   for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);
-  console.log(`\nRapor: ${pdfYolu}`);
-  console.log(`UDF:   ${udfYolu} (resmi kullanımdan önce UYAP Doküman Editör'de elle doğrulayın)`);
-  console.log(`Defter satırı (${defterYolu}):\n${satir}`);
+  raporYollariniYaz(cikti, satir, '   ');
 }
 
 function tablolarKomutu(): void {

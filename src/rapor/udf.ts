@@ -6,7 +6,7 @@ import type { KalemKodu } from '../girdi.ts';
 import type { HesapSonucu, KalemSonucu } from '../hesap.ts';
 import { Decimal, tl, topla, yuzde } from '../para.ts';
 import { trTarih } from '../tarih.ts';
-import type { Kaynak } from '../tablolar.ts';
+import type { Kaynak, KaynakSatiri } from '../tablolar.ts';
 import { donemYaz, sureAciklamasi } from '../kalemler/ortak.ts';
 import type { RaporBilgisi } from './pdf.ts';
 import { kanitDosyaAdi } from './defter.ts';
@@ -105,7 +105,7 @@ export function udfDosyaAdi(s: HesapSonucu, uretimTarihi: string): string {
   return kanitDosyaAdi(s, uretimTarihi).replace(/\.pdf$/, '.udf');
 }
 
-interface ParagrafSecenek {
+export interface ParagrafSecenek {
   hiza?: '0' | '1' | '2' | '3';
   kalin?: boolean;
   italik?: boolean;
@@ -115,16 +115,17 @@ interface ParagrafSecenek {
   solGirinti?: number;
 }
 
-interface TabloSecenek {
+export interface TabloSecenek {
   genislikler?: number[];
   sag?: number[];
   toplam?: string[];
+  kalinSatirlar?: number[];
   kenarlik?: 'borderCell' | 'borderNone';
 }
 
 type BelgeBloku =
   | { tur: 'paragraf'; metin: string; secenek: ParagrafSecenek }
-  | { tur: 'anahtarDeger'; satirlar: [string, string][] }
+  | { tur: 'anahtarDeger'; satirlar: [string, string][]; solGenislik: number }
   | { tur: 'tablo'; basliklar: string[]; satirlar: string[][]; secenek: TabloSecenek };
 
 function temizTekSatir(metin: string): string {
@@ -134,7 +135,7 @@ function temizTekSatir(metin: string): string {
     .trim();
 }
 
-class UdfKurucu {
+export class UdfKurucu {
   private bloklar: BelgeBloku[] = [];
 
   paragraf(metin: string, secenek: ParagrafSecenek = {}): void {
@@ -159,9 +160,9 @@ class UdfKurucu {
     }
   }
 
-  ikiSutun(satirlar: [string, string][]): void {
+  ikiSutun(satirlar: [string, string][], solGenislik = 150): void {
     if (satirlar.length === 0) return;
-    this.bloklar.push({ tur: 'anahtarDeger', satirlar });
+    this.bloklar.push({ tur: 'anahtarDeger', satirlar, solGenislik });
   }
 
   tablo(basliklar: string[], satirlar: string[][], secenek: TabloSecenek = {}): void {
@@ -206,6 +207,8 @@ class UdfKurucu {
       if (blok.tur === 'anahtarDeger') {
         const satirXml: string[] = [];
         const sonSatirIndex = blok.satirlar.length - 1;
+        const solGenislik = Math.min(Math.max(Math.round(blok.solGenislik), 1), 479);
+        const sagGenislik = 480 - solGenislik;
         blok.satirlar.forEach(([anahtar, deger], rIdx) => {
           const sonSatirMi = sonBlokMu && rIdx === sonSatirIndex;
           const temizAnahtar = temizTekSatir(anahtar) || '-';
@@ -220,7 +223,7 @@ class UdfKurucu {
           );
         });
         elemanlar.push(
-          `<table tableName="Sabit" columnCount="2" columnSpans="150,330" border="borderNone">${satirXml.join('')}</table>`,
+          `<table tableName="Sabit" columnCount="2" columnSpans="${solGenislik},${sagGenislik}" border="borderNone">${satirXml.join('')}</table>`,
         );
         return;
       }
@@ -232,11 +235,12 @@ class UdfKurucu {
           ? blok.secenek.genislikler
           : blok.basliklar.map((_, idx) => (idx === 0 ? 480 - tabanGenislik * (sutunSayisi - 1) : tabanGenislik));
       const sag = new Set(blok.secenek.sag ?? []);
+      const kalinSatirlar = new Set(blok.secenek.kalinSatirlar ?? []);
       const kenarlik = blok.secenek.kenarlik ?? 'borderCell';
 
       const tumSatirlar: { hucreler: string[]; kalin: boolean; tip: 'headerRow' | 'dataRow' }[] = [
         { hucreler: blok.basliklar, kalin: true, tip: 'headerRow' },
-        ...blok.satirlar.map((h) => ({ hucreler: h, kalin: false, tip: 'dataRow' as const })),
+        ...blok.satirlar.map((h, idx) => ({ hucreler: h, kalin: kalinSatirlar.has(idx), tip: 'dataRow' as const })),
       ];
       if (blok.secenek.toplam) {
         tumSatirlar.push({ hucreler: blok.secenek.toplam, kalin: true, tip: 'dataRow' });
@@ -283,12 +287,99 @@ class UdfKurucu {
   }
 }
 
-function kaynakYaz(k: Kaynak): string {
+export const UDF_DOGRULAMA_UYARISI =
+  "Üretilen UDF belgesi resmi kullanımdan önce UYAP Doküman Editör'de açılarak elle doğrulanmalıdır.";
+
+export function udfPaketle(xml: string): Uint8Array {
+  return zipTekDosya('content.xml', new TextEncoder().encode(xml));
+}
+
+export function kaynakYaz(k: Kaynak): string {
   const parca = [k.ad];
   if (k.resmiGazete) parca.push(`RG ${trTarih(k.resmiGazete.tarih)}/${k.resmiGazete.sayi}`);
   if (k.belge) parca.push(k.belge);
   if (k.url) parca.push(k.url);
   return parca.join(' · ');
+}
+
+export interface FaizKesitSatiri {
+  baslangic: string;
+  bitis: string;
+  gun: number;
+  oran: Decimal;
+  tutar: Decimal;
+}
+
+export function faizKesitTablosuEkle(
+  kurucu: UdfKurucu,
+  kesitler: FaizKesitSatiri[],
+  toplamTutar: Decimal,
+  secenek: { toplamEtiketi?: string; oranBos?: string; genislikler?: number[] } = {},
+): void {
+  const toplamGun = String(topla(kesitler.map((x) => new Decimal(x.gun))));
+  kurucu.tablo(
+    ['Dönem', 'Gün', 'Yıllık oran', 'Faiz (TL)'],
+    kesitler.map((x) => [
+      `${trTarih(x.baslangic)} - ${trTarih(x.bitis)}`,
+      String(x.gun),
+      yuzde(x.oran),
+      tl(x.tutar),
+    ]),
+    {
+      genislikler: secenek.genislikler,
+      sag: [1, 2, 3],
+      toplam: [secenek.toplamEtiketi ?? 'Toplam', toplamGun, secenek.oranBos ?? '-', tl(toplamTutar)],
+    },
+  );
+}
+
+export function kaynakTablolariEkle(
+  kurucu: UdfKurucu,
+  kaynaklar: KaynakSatiri[],
+  degerGenislik = 120,
+): void {
+  const kaynakGenislik = 480 - 95 - degerGenislik;
+  for (const tabloAdi of [...new Set(kaynaklar.map((k) => k.tablo))]) {
+    const satirlar = kaynaklar.filter((k) => k.tablo === tabloAdi);
+    const ortakDogrulama = satirlar.every((k) => k.kaynak.dogrulama === satirlar[0]!.kaynak.dogrulama);
+    kurucu.etiket(tabloAdi);
+    const aciklama = satirlar[0]!.tabloAciklamasi;
+    if (aciklama) kurucu.paragraf(aciklama);
+    if (ortakDogrulama) {
+      kurucu.paragraf(`Doğrulama: ${satirlar[0]!.kaynak.dogrulama}`);
+    }
+    kurucu.tablo(
+      ['Yürürlük', 'Değer', 'Kaynak'],
+      satirlar.map((k) => [
+        k.aralik,
+        k.deger,
+        kaynakYaz(k.kaynak) + (ortakDogrulama ? '' : ` · Doğrulama: ${k.kaynak.dogrulama}`),
+      ]),
+      { genislikler: [95, degerGenislik, kaynakGenislik] },
+    );
+  }
+}
+
+export function tabloOzetleriEkle(
+  kurucu: UdfKurucu,
+  tabloOzetleri: { ad: string; dogrulamaTarihi: string; ozet: string }[],
+  genislikler: number[] = [120, 80, 280],
+): void {
+  kurucu.tablo(
+    ['Tablo dosyası', 'Doğrulama tarihi', 'SHA-256'],
+    tabloOzetleri.map((t) => [t.ad, t.dogrulamaTarihi === '-' ? '-' : trTarih(t.dogrulamaTarihi), t.ozet]),
+    { genislikler },
+  );
+}
+
+export function hesapKimligiEkle(kurucu: UdfKurucu, bilgi: RaporBilgisi, solGenislik = 150): void {
+  kurucu.ikiSutun(
+    [
+      ['Araç', bilgi.surum],
+      ['Girdi dosyası SHA-256', bilgi.girdiOzeti],
+    ],
+    solGenislik,
+  );
 }
 
 function faizTuruAdi(tur: string, kod?: KalemKodu): string {
@@ -354,16 +445,7 @@ function kalemBolumuEkle(kurucu: UdfKurucu, k: KalemSonucu, no: number): void {
         { sag: [1, 3, 4], toplam: ['Toplam', toplamGun, '-', '-', tl(f.toplam)] },
       );
     } else {
-      kurucu.tablo(
-        ['Dönem', 'Gün', 'Yıllık oran', 'Faiz (TL)'],
-        f.kesitler.map((x) => [
-          `${trTarih(x.baslangic)} - ${trTarih(x.bitis)}`,
-          String(x.gun),
-          yuzde(x.oran),
-          tl(x.tutar),
-        ]),
-        { sag: [1, 2, 3], toplam: ['Toplam', toplamGun, '-', tl(f.toplam)] },
-      );
+      faizKesitTablosuEkle(kurucu, f.kesitler, f.toplam);
     }
   }
 
@@ -546,37 +628,12 @@ export function udfXmlOlustur(s: HesapSonucu, bilgi: RaporBilgisi): string {
 
   // 5. Kullanilan Resmi Tablo Satirlari ve Kaynaklari
   kurucu.baslik('5. Kullanılan Resmi Tablo Satırları ve Kaynakları', 1);
-  for (const tabloAdi of [...new Set(s.kaynaklar.map((k) => k.tablo))]) {
-    const satirlar = s.kaynaklar.filter((k) => k.tablo === tabloAdi);
-    const ortakDogrulama = satirlar.every((k) => k.kaynak.dogrulama === satirlar[0]!.kaynak.dogrulama);
-    kurucu.etiket(tabloAdi);
-    const aciklama = satirlar[0]!.tabloAciklamasi;
-    if (aciklama) kurucu.paragraf(aciklama);
-    if (ortakDogrulama) {
-      kurucu.paragraf(`Doğrulama: ${satirlar[0]!.kaynak.dogrulama}`);
-    }
-    kurucu.tablo(
-      ['Yürürlük', 'Değer', 'Kaynak'],
-      satirlar.map((k) => [
-        k.aralik,
-        k.deger,
-        kaynakYaz(k.kaynak) + (ortakDogrulama ? '' : ` · Doğrulama: ${k.kaynak.dogrulama}`),
-      ]),
-      { genislikler: [95, 120, 265] },
-    );
-  }
+  kaynakTablolariEkle(kurucu, s.kaynaklar, 120);
 
   // 6. Kanit ve Dogrulama Bilgileri
   kurucu.baslik('6. Kanıt ve Doğrulama Bilgileri', 1);
-  kurucu.ikiSutun([
-    ['Araç', bilgi.surum],
-    ['Girdi dosyası SHA-256', bilgi.girdiOzeti],
-  ]);
-  kurucu.tablo(
-    ['Tablo dosyası', 'Doğrulama tarihi', 'SHA-256'],
-    s.tabloOzetleri.map((t) => [t.ad, t.dogrulamaTarihi === '-' ? '-' : trTarih(t.dogrulamaTarihi), t.ozet]),
-    { genislikler: [120, 80, 280] },
-  );
+  hesapKimligiEkle(kurucu, bilgi);
+  tabloOzetleriEkle(kurucu, s.tabloOzetleri, [120, 80, 280]);
   kurucu.etiket('Sınırlar ve uyarılar');
   kurucu.maddeler([
     ...s.uyarilar,
@@ -591,14 +648,12 @@ export function udfXmlOlustur(s: HesapSonucu, bilgi: RaporBilgisi): string {
       ? 'Asgari ücret gelir ve damga vergisi istisnası, hesap tarihinin ayında başka ücret ödenmediği varsayımıyla bir kez uygulanmıştır.'
       : 'Asgari ücret gelir ve damga vergisi istisnası uygulanmamıştır (parametreler.vergi.asgariUcretIstisnasi).',
     'Tablo değerleri, tablonun doğrulama tarihine kadar resmi kaynaktan kontrol edilmiştir; kaynak bağlantıları 5. bölümdedir.',
-    "Üretilen UDF belgesi resmi kullanımdan önce UYAP Doküman Editör'de açılarak elle doğrulanmalıdır.",
+    UDF_DOGRULAMA_UYARISI,
   ]);
 
   return kurucu.xmlUret();
 }
 
 export function udfOlustur(sonuc: HesapSonucu, bilgi: RaporBilgisi): Uint8Array {
-  const xml = udfXmlOlustur(sonuc, bilgi);
-  const xmlBayt = new TextEncoder().encode(xml);
-  return zipTekDosya('content.xml', xmlBayt);
+  return udfPaketle(udfXmlOlustur(sonuc, bilgi));
 }

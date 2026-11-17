@@ -28,3 +28,4 @@ export {
   type KismiOdemeAdimi,
 } from './hesap.ts';
 export { icraDefterSatiri, icraKanitDosyaAdi, icraRaporTanimi } from './rapor.ts';
+export { icraUdfDosyaAdi, icraUdfOlustur, icraUdfXmlOlustur } from './udf.ts';

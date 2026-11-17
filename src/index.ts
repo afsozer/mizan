@@ -65,6 +65,8 @@ export {
   icraHesapla,
   icraKanitDosyaAdi,
   icraRaporTanimi,
+  icraUdfDosyaAdi,
+  icraUdfOlustur,
   metindenAlanOku,
 } from './icra/index.ts';
 export type {
@@ -100,6 +102,8 @@ export {
   aautHesapla,
   aautKanitDosyaAdi,
   aautRaporTanimi,
+  aautUdfDosyaAdi,
+  aautUdfOlustur,
   kademeliNispiHesapla,
 } from './aaut/index.ts';
 export type {
@@ -120,6 +124,8 @@ export {
   aileRaporTanimi,
   aileDefterSatiri,
   aileKanitDosyaAdi,
+  aileUdfDosyaAdi,
+  aileUdfOlustur,
   tarafAdi,
   karsiTaraf,
 } from './aile/index.ts';

@@ -1,10 +1,32 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
-import { girdiOku } from '../src/node/girdi-dosya.ts';
+import { aautGirdiOku, aileGirdiOku, girdiOku, icraGirdiOku } from '../src/node/girdi-dosya.ts';
 import { tablolariYukle } from '../src/node/tablolar-dosya.ts';
-import { hesapla, udfOlustur, udfDosyaAdi, kanitDosyaAdi } from '../src/index.ts';
-import { crc32Hesapla, udfXmlOlustur, zipTekDosya } from '../src/rapor/udf.ts';
+import {
+  aautGirdiCoz,
+  aautHesapla,
+  aautKanitDosyaAdi,
+  aautUdfDosyaAdi,
+  aautUdfOlustur,
+  aileGirdiCoz,
+  aileHesapla,
+  aileKanitDosyaAdi,
+  aileUdfDosyaAdi,
+  aileUdfOlustur,
+  hesapla,
+  icraHesapla,
+  icraKanitDosyaAdi,
+  icraUdfDosyaAdi,
+  icraUdfOlustur,
+  kanitDosyaAdi,
+  udfDosyaAdi,
+  udfOlustur,
+} from '../src/index.ts';
+import { aautUdfXmlOlustur } from '../src/aaut/index.ts';
+import { aileUdfXmlOlustur } from '../src/aile/index.ts';
+import { icraUdfXmlOlustur } from '../src/icra/index.ts';
+import { UDF_DOGRULAMA_UYARISI, crc32Hesapla, udfXmlOlustur, zipTekDosya } from '../src/rapor/udf.ts';
 import { girdi, testTablolari } from './yardimci.ts';
 
 function ziptenCikar(zipBayt: Uint8Array): {
@@ -59,6 +81,83 @@ function cdataHavuzunuCoz(xml: string): string {
   const parcalar = [...eslesme[1]!.matchAll(/<!\[CDATA\[([\s\S]*?)\]\]>/g)].map((m) => m[1]!);
   assert.ok(parcalar.length >= 1, 'CDATA blogu bulunmali');
   return parcalar.join('');
+}
+
+function udfBelgesiniDogrula(
+  udfBayt: Uint8Array,
+  beklenenXml: string,
+  beklenenMetinler: string[],
+): { xml: string; havuz: string; dilimler: string[]; elementsXml: string } {
+  assert.equal(udfBayt[0], 0x50); // 'P'
+  assert.equal(udfBayt[1], 0x4b); // 'K'
+  assert.equal(udfBayt[2], 0x03);
+  assert.equal(udfBayt[3], 0x04);
+
+  const cikan = ziptenCikar(udfBayt);
+  assert.equal(cikan.dosyaAdi, 'content.xml');
+  const hesaplananCrc = crc32Hesapla(cikan.icerikBayt);
+  assert.equal(cikan.crcYerel, hesaplananCrc);
+  assert.equal(cikan.crcMerkezi, hesaplananCrc);
+
+  const xml = new TextDecoder('utf-8', { fatal: true }).decode(cikan.icerikBayt);
+  assert.equal(xml, beklenenXml);
+  assert.match(xml, /<template format_id="1\.8">/);
+  assert.match(
+    xml,
+    /<pageFormat mediaSizeName="1" leftMargin="56\.69" rightMargin="56\.69" topMargin="56\.69" bottomMargin="56\.69"/,
+  );
+  assert.match(xml, /<elements resolver="hvl-default">/);
+  assert.match(xml, /<table tableName="Sabit"/);
+  assert.ok(!/[\x00-\x08\x0B\x0C\x0E-\x1F\uD800-\uDFFF\uFFFE\uFFFF]/.test(xml));
+
+  for (const m of xml.matchAll(/columnSpans="([^"]+)"/g)) {
+    const genislikler = m[1]!.split(',').map(Number);
+    assert.ok(genislikler.every((g) => Number.isInteger(g) && g > 0), `Gecersiz columnSpans: ${m[1]}`);
+    const toplamGenislik = genislikler.reduce((a, b) => a + b, 0);
+    assert.ok(toplamGenislik <= 480 && toplamGenislik === 480, `columnSpans toplami 480 olmali: ${m[1]}`);
+  }
+
+  const havuz = cdataHavuzunuCoz(xml);
+  const havuzBaytUzunlugu = new TextEncoder().encode(havuz).byteLength;
+  assert.ok(havuzBaytUzunlugu > havuz.length, 'UTF-8 bayt sayisi karakter sayisindan buyuk olmali');
+  for (const harf of ['ç', 'ğ', 'ı', 'ö', 'ş', 'ü', 'İ', 'Ö', 'Ü']) {
+    assert.ok(havuz.includes(harf), `Havuzda '${harf}' karakteri bulunmali`);
+  }
+
+  const elementsBolumu = xml.match(/<elements[^>]*>([\s\S]*?)<\/elements>/);
+  assert.ok(elementsBolumu, '<elements> bolumu bulunmali');
+  const contentEtiketleri = [...elementsBolumu[1]!.matchAll(/<content\s+([^>]+?)\/>/g)];
+  assert.ok(contentEtiketleri.length > 20, 'Yeterli sayida <content> dilimi olmali');
+
+  let beklenenOffset = 0;
+  const dilimler: string[] = [];
+  for (const [etiketIndex, eslesme] of contentEtiketleri.entries()) {
+    const oznitelikler = eslesme[1]!;
+    const startMatch = oznitelikler.match(/startOffset="(\d+)"/);
+    const lenMatch = oznitelikler.match(/length="(\d+)"/);
+    assert.ok(startMatch && lenMatch, `${etiketIndex}. <content> etiketinde startOffset ve length olmali`);
+    const startOffset = Number(startMatch[1]);
+    const length = Number(lenMatch[1]);
+
+    assert.equal(startOffset, beklenenOffset, `${etiketIndex}. dilimde startOffset kesintisiz ilerlemeli`);
+    assert.ok(length > 0, `${etiketIndex}. dilimde length pozitif olmali`);
+    assert.ok(startOffset + length <= havuz.length, `${etiketIndex}. dilim havuz sinirini asmamali`);
+
+    const parca = havuz.slice(startOffset, startOffset + length);
+    assert.equal(parca.length, length);
+    assert.equal(Array.from(parca).length, length);
+    dilimler.push(parca);
+    beklenenOffset += length;
+  }
+
+  assert.equal(beklenenOffset, havuz.length);
+  assert.equal(dilimler.join(''), havuz);
+
+  for (const beklenen of beklenenMetinler) {
+    assert.ok(havuz.includes(beklenen), `UDF metninde '${beklenen}' bulunmali`);
+  }
+
+  return { xml, havuz, dilimler, elementsXml: elementsBolumu[1]! };
 }
 
 test('CRC-32 standart vektoru ve ZIP store kabi dogrulamasi', () => {
@@ -309,4 +408,187 @@ test('UDF raporu yeni kalem tercihlerini, 4857 s.K. m.34 faiz adini ve SGK/zaman
   ]) {
     assert.ok(havuz.includes(beklenen), `UDF metninde '${beklenen}' bulunmali`);
   }
+});
+
+test('ornek-icra.yaml ile uretilen UDF: ZIP, CRC32, 9 sutunlu TBK m.100 tablosu ve offset tutarliligi', () => {
+  const { girdi: g, ozet } = icraGirdiOku(join(import.meta.dirname, '..', 'ornekler', 'ornek-icra.yaml'));
+  const s = icraHesapla(g, tablolariYukle());
+  const bilgi = { uretimZamani: '17.11.2026 10:30', surum: 'mizan 0.2.0 (test)', girdiOzeti: ozet };
+
+  assert.equal(icraKanitDosyaAdi(s, '2026-11-17'), '2026-11-17_ornek-icra-2026-1_60.05.pdf');
+  assert.equal(icraUdfDosyaAdi(s, '2026-11-17'), '2026-11-17_ornek-icra-2026-1_60.05.udf');
+
+  const udfBayt = icraUdfOlustur(s, bilgi);
+  const beklenenXml = icraUdfXmlOlustur(s, bilgi);
+  const { xml, havuz, dilimler, elementsXml } = udfBelgesiniDogrula(udfBayt, beklenenXml, [
+    'İCRA KAPAK HESABI RAPORU',
+    'Örnek İcra Dairesi 2026/1',
+    '1. Kapak Hesabı Özeti',
+    'Takip çıkışı toplamı (harç matrahı)',
+    'Borçlunun ödeyeceği kapak tutarı',
+    'Alacaklıya net ödenecek tutar',
+    '2. Takip Çıkışı, Masraflar ve Esaslar',
+    'Takip Öncesi Kalemler',
+    'Takip Masrafları',
+    '3. Harç Hesabı (492 s.K. ve 2548 s.K.)',
+    '4. Takip Sonrası Faiz Hesabı',
+    '5. TBK m.100 Kısmi Ödemelerin Mahsubu',
+    '6. Hukuki Dayanaklar, Sınırlar ve Resmi Kaynaklar',
+    '7. Hesap Kimliği',
+    'mizan 0.2.0 (test)',
+    ozet,
+    UDF_DOGRULAMA_UYARISI,
+  ]);
+
+  assert.equal(dilimler[0], 'İCRA KAPAK HESABI RAPORU\n');
+  assert.match(elementsXml, /<table tableName="Sabit" columnCount="9" columnSpans="20,56,56,54,62,58,58,56,60"/);
+  assert.ok(xml.includes('columnCount="9"'));
+
+  const kapakOffset = havuz.indexOf('Borçlunun ödeyeceği kapak tutarı\t');
+  assert.ok(kapakOffset > 0);
+  assert.match(
+    elementsXml,
+    new RegExp(`<content startOffset="${kapakOffset}" length="33" bold="true" \\/>`),
+  );
+});
+
+test('ornek-aaut.yaml ve maktu AAÜT ile uretilen UDF: ZIP, CRC32, taraf bolumleri ve offset tutarliligi', () => {
+  const { girdi: g, ozet } = aautGirdiOku(join(import.meta.dirname, '..', 'ornekler', 'ornek-aaut.yaml'));
+  const tablolar = tablolariYukle();
+  const s = aautHesapla(g, tablolar);
+  const bilgi = { uretimZamani: '17.11.2026 10:35', surum: 'mizan 0.2.0 (test)', girdiOzeti: ozet };
+
+  assert.equal(aautKanitDosyaAdi(s, '2026-11-17'), '2026-11-17_ornek-asliye-hukuk-2026-10_60.02.pdf');
+  assert.equal(aautUdfDosyaAdi(s, '2026-11-17'), '2026-11-17_ornek-asliye-hukuk-2026-10_60.02.udf');
+
+  const udfBayt = aautUdfOlustur(s, bilgi);
+  const beklenenXml = aautUdfXmlOlustur(s, bilgi);
+  const { dilimler } = udfBelgesiniDogrula(udfBayt, beklenenXml, [
+    'AAÜT VEKALET ÜCRETİ HESAP RAPORU',
+    'Örnek Asliye Hukuk Mahkemesi 2026/10',
+    '1. Özet',
+    '2. Girdiler',
+    '3. Hukuki tercihler ve tarife esasları',
+    '4. Taraf bazında vekalet ücreti hesapları',
+    '4.1 Davacı vekili lehine karşı vekalet ücreti',
+    '4.2 Davalı vekili lehine karşı vekalet ücreti',
+    'Üçüncü Kısım kademeli dilim hesabı',
+    '276.000,00 TL',
+    '112.000,00 TL',
+    '5. Kullanılan tablo satırları ve resmi kaynakları',
+    '6. Sınırlar ve uyarılar',
+    '7. Hesap kimliği',
+    'mizan 0.2.0 (test)',
+    ozet,
+    UDF_DOGRULAMA_UYARISI,
+  ]);
+  assert.equal(dilimler[0], 'AAÜT VEKALET ÜCRETİ HESAP RAPORU\n');
+
+  // Maktu is dalinda da CDATA/offset/ZIP gecerli olmali
+  const maktuGirdi = aautGirdiCoz({
+    alan: 'aaut',
+    dosya: { mahkeme: 'Örnek 1. Ağır Ceza Mahkemesi', esasNo: '2026/5', kaynak: 'kendi dosyam', altAlan: '60.02' },
+    hesapTarihi: '2026-11-10',
+    uyusmazlik: { merci: 'agir-ceza', tur: 'maktu', maktuSonuc: 'ret' },
+  });
+  const maktuSonuc = aautHesapla(maktuGirdi, tablolar);
+  const maktuBilgi = { uretimZamani: '17.11.2026 10:40', surum: 'mizan 0.2.0 (test)', girdiOzeti: 'sha256-maktu' };
+  udfBelgesiniDogrula(aautUdfOlustur(maktuSonuc, maktuBilgi), aautUdfXmlOlustur(maktuSonuc, maktuBilgi), [
+    'Maktu iş (ret)',
+    '86.000,00 TL',
+    UDF_DOGRULAMA_UYARISI,
+  ]);
+});
+
+test('ornek-aile.yaml ve bos mal rejimi girdisiyle uretilen UDF: ZIP, CRC32, 8 sutunlu tablo ve offset tutarliligi', () => {
+  const { girdi: g, ozet } = aileGirdiOku(join(import.meta.dirname, '..', 'ornekler', 'ornek-aile.yaml'));
+  const tablolar = tablolariYukle();
+  const s = aileHesapla(g, { yasalFaiz: tablolar.yasalFaiz });
+  const bilgi = { uretimZamani: '17.11.2026 10:45', surum: 'mizan 0.2.0 (test)', girdiOzeti: ozet };
+
+  assert.equal(aileKanitDosyaAdi(s, '2026-11-17'), '2026-11-17_ornek-aile-2026-1_05.01.pdf');
+  assert.equal(aileUdfDosyaAdi(s, '2026-11-17'), '2026-11-17_ornek-aile-2026-1_05.01.udf');
+
+  const udfBayt = aileUdfOlustur(s, bilgi);
+  const beklenenXml = aileUdfXmlOlustur(s, bilgi);
+  const { dilimler, elementsXml } = udfBelgesiniDogrula(udfBayt, beklenenXml, [
+    'MAL REJİMİ TASFİYESİ (DEĞER ARTIŞ PAYI VE KATILMA ALACAĞI) HESAP RAPORU',
+    'Örnek Aile Mahkemesi 2026/1',
+    '1. Tasfiye özeti ve net bakiye',
+    '1.600.000,00 TL',
+    '2. Girdiler',
+    '3. Hukuki tercihler ve hesap esasları',
+    '4. Mal mal oranlama ve değer artış payı hesabı',
+    '4.1 Aile konutu (1. mal)',
+    '4.2 Binek araç (2. mal)',
+    'Konut / taşıt kredisi ve peşinat oranlaması',
+    'Eklenecek değerler (TMK m.229, m.235/2)',
+    'Kişisel mallar ile edinilmiş mallar arasında denkleştirme (TMK m.230)',
+    '5. Artık değer ve katılma alacağı tablosu (TMK m.231, m.236)',
+    '6. Yasal faiz hesabı (TMK m.239/3)',
+    '7. Kullanılan tablo satırları ve resmi kaynakları',
+    '8. Sınırlar ve uyarılar',
+    '9. Hesap kimliği',
+    'mizan 0.2.0 (test)',
+    ozet,
+    UDF_DOGRULAMA_UYARISI,
+  ]);
+
+  assert.equal(dilimler[0], 'MAL REJİMİ TASFİYESİ (DEĞER ARTIŞ PAYI VE KATILMA ALACAĞI) HESAP RAPORU\n');
+  assert.match(elementsXml, /<table tableName="Sabit" columnCount="8" columnSpans="93,40,44,58,58,65,60,62"/);
+
+  // Mal satiri olmayan denklestirme senaryosu ve yalniz kisisel mal senaryosunda da ZIP/CDATA/offset tutarli olmali
+  const malsizGirdi = aileGirdiCoz({
+    alan: 'aile',
+    dosya: { mahkeme: 'Örnek 2. Aile Mahkemesi', esasNo: '2026/2', kaynak: 'kendi dosyam', altAlan: '05.01' },
+    hesapTarihi: '2026-10-22',
+    evlilik: {
+      evlenmeTarihi: '2019-01-01',
+      malRejimiSonaErmeTarihi: '2025-01-01',
+      sonaErmeNedeni: 'Boşanma',
+    },
+    mallar: [],
+    denklestirmeler: [
+      {
+        es: 'davaci',
+        yon: 'edinilmisten-kisisele',
+        aciklama: 'Edinilmiş gelirden kişisel borç ödemesi',
+        tutar: 100000,
+      },
+    ],
+  });
+  const malsizSonuc = aileHesapla(malsizGirdi, { yasalFaiz: tablolar.yasalFaiz });
+  const malsizBilgi = { uretimZamani: '17.11.2026 10:50', surum: 'mizan 0.2.0 (test)', girdiOzeti: 'sha256-malsiz' };
+  udfBelgesiniDogrula(aileUdfOlustur(malsizSonuc, malsizBilgi), aileUdfXmlOlustur(malsizSonuc, malsizBilgi), [
+    'Girdide mal satırı bulunmamaktadır.',
+    '50.000,00',
+    UDF_DOGRULAMA_UYARISI,
+  ]);
+
+  const kisiselGirdi = aileGirdiCoz({
+    alan: 'aile',
+    dosya: { mahkeme: 'Örnek 3. Aile Mahkemesi', esasNo: '2026/3', kaynak: 'kendi dosyam', altAlan: '05.01' },
+    hesapTarihi: '2026-10-22',
+    evlilik: {
+      evlenmeTarihi: '2019-01-01',
+      malRejimiSonaErmeTarihi: '2025-01-01',
+      sonaErmeNedeni: 'Boşanma',
+    },
+    mallar: [
+      {
+        ad: 'Miras kalan arsa',
+        malik: 'davaci',
+        nitelik: 'kisisel',
+        edinmeDegeri: 200000,
+        tasfiyeDegeri: 300000,
+      },
+    ],
+  });
+  const kisiselSonuc = aileHesapla(kisiselGirdi, { yasalFaiz: tablolar.yasalFaiz });
+  const kisiselBilgi = { uretimZamani: '17.11.2026 10:52', surum: 'mizan 0.2.0 (test)', girdiOzeti: 'sha256-kisisel' };
+  udfBelgesiniDogrula(aileUdfOlustur(kisiselSonuc, kisiselBilgi), aileUdfXmlOlustur(kisiselSonuc, kisiselBilgi), [
+    'Faize konu alacak doğmamıştır.',
+    'Bu hesapta dönemli faiz tablosu satırı kullanılmamıştır.',
+    UDF_DOGRULAMA_UYARISI,
+  ]);
 });
