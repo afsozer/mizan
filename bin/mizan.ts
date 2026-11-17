@@ -112,8 +112,14 @@ async function hesaplaKomutu(arg: string[]): Promise<void> {
 
     console.log(`${'Takip çıkışı toplamı'.padEnd(38)} ${tl(sonuc.takipCikisToplami).padStart(16)} TL`);
     console.log(`${'Takip sonrası faiz toplamı'.padEnd(38)} ${tl(sonuc.toplamTakipSonrasiFaiz).padStart(16)} TL`);
+    if (sonuc.harclar.odemelerdenKesilenTahsilHarci.gt(0)) {
+      console.log(`${'Ödemelerden kesilen tahsil harcı'.padEnd(38)} ${tl(sonuc.harclar.odemelerdenKesilenTahsilHarci).padStart(16)} TL`);
+    }
     console.log(`${'Bakiye tahsil harcı'.padEnd(38)} ${tl(sonuc.harclar.bakiyeTahsilHarci).padStart(16)} TL`);
     console.log(`${'Borçlunun ödeyeceği kapak tutarı'.padEnd(38)} ${tl(sonuc.borclununOdeyecegiKapakTutari).padStart(16)} TL`);
+    if (sonuc.harclar.odemelerdenKesilenCezaeviHarci.gt(0)) {
+      console.log(`${'Ödemelerden kesilen cezaevi harcı'.padEnd(38)} ${tl(sonuc.harclar.odemelerdenKesilenCezaeviHarci).padStart(16)} TL`);
+    }
     console.log(`${'Cezaevleri yapı harcı (%2)'.padEnd(38)} ${tl(sonuc.harclar.cezaeviHarci).padStart(16)} TL`);
     console.log(`${'Alacaklıya net ödenecek tutar'.padEnd(38)} ${tl(sonuc.alacakliyaNetOdenecekTutar).padStart(16)} TL`);
     for (const u of sonuc.uyarilar) console.error(`Uyarı: ${u}`);

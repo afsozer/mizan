@@ -63,6 +63,11 @@ function FormAlani({ alan, yol, form, degistir, hata }: FormProps & { alan: Alan
     if (adres === 'girdi.takip.faiz.tur' && v !== 'sozlesme') {
       sonuc = alanDegistir(sonuc, ['takip', 'faiz', 'sozlesmeOrani'], undefined);
     }
+    if (/^girdi\.takip\.kismiOdemeler\[\d+\]\.tahsilYeri$/.test(adres) && v === 'haricen') {
+      const satirYol = yol.slice(0, -1);
+      sonuc = alanDegistir(sonuc, [...satirYol, 'tahsilHarciOrani'], undefined);
+      sonuc = alanDegistir(sonuc, [...satirYol, 'kesilenTahsilHarci'], undefined);
+    }
     degistir(sonuc);
   };
   const aciklama = <>{alan.ipucu && <span class="ipucu">{alan.ipucu}</span>}

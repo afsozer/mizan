@@ -9,6 +9,7 @@ import type {
   IcraMasrafi,
   IcraTakipTuru,
   TahsilHarciAsamasi,
+  TahsilYeri,
   TakipOncesiKalem,
 } from './girdi.ts';
 
@@ -44,8 +45,11 @@ export interface IcraHarclariSonucu {
   uygulananTahsilOrani: Decimal;
   hesaplananTahsilHarci: Decimal;
   mahsupEdilenPesinHarc: Decimal;
+  odemelerdenKesilenTahsilHarci: Decimal;
   bakiyeTahsilHarci: Decimal;
   cezaeviHarciOrani: Decimal;
+  hesaplananCezaeviHarci: Decimal;
+  odemelerdenKesilenCezaeviHarci: Decimal;
   cezaeviHarci: Decimal;
 }
 
@@ -53,7 +57,10 @@ export interface KismiOdemeAdimi {
   sira: number;
   tarih: string;
   aciklama: string;
+  tahsilYeri: TahsilYeri;
   odemeTutari: Decimal;
+  kesilenTahsilHarci: Decimal;
+  alacakliyaMahsupEdilen: Decimal;
   oncekiAsilAlacak: Decimal;
   donemFaizi: IcraFaizDonemi;
   donemMasrafi: Decimal;
@@ -243,7 +250,7 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   const hesaplananTahsilHarci = kurus(harcMatrahi.times(uygulananTahsilOrani));
   // 492 s.K. m.29/2: Peşin alınan harçlar takip sonunda alınacak asıl harca mahsup olunur.
   const mahsupEdilenPesinHarc = Decimal.min(hesaplananTahsilHarci, pesinHarc);
-  const bakiyeTahsilHarci = hesaplananTahsilHarci.minus(mahsupEdilenPesinHarc);
+  const toplamBakiyeTahsilHarci = Decimal.max(d(0), hesaplananTahsilHarci.minus(mahsupEdilenPesinHarc));
 
   // 2548 s.K. m.1: Cezaevleri yapı harcı (%2) alacaklıya ödenecek paradan kesilir, borçluya yüklenmez.
   // Ödeme/icra emri tebliğinden önce ödemede veya satış öncesi takipten feragatte icra veznesince
@@ -252,24 +259,7 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
     takip.tahsilHarciAsamasi !== 'tebligden-once' &&
     !(takip.feragatVarMi && takip.tahsilHarciAsamasi !== 'satistan-sonra');
   const cezaeviHarciOrani = cezaeviHarciDogduMu ? d(hesapTarihiHarcSatiri.cezaeviHarciOrani) : d(0);
-  const cezaeviHarci = cezaeviHarciDogduMu ? kurus(harcMatrahi.times(cezaeviHarciOrani)) : d(0);
-
-  const harclar: IcraHarclariSonucu = {
-    harcMatrahi,
-    basvurmaHarci,
-    pesinHarcOrani,
-    pesinHarc,
-    tahsilHarciAsamasi: takip.tahsilHarciAsamasi,
-    bazTahsilOrani,
-    feragatVarMi: takip.feragatVarMi,
-    feragatIndirimiUygulandiMi,
-    uygulananTahsilOrani,
-    hesaplananTahsilHarci,
-    mahsupEdilenPesinHarc,
-    bakiyeTahsilHarci,
-    cezaeviHarciOrani,
-    cezaeviHarci,
-  };
+  const hesaplananCezaeviHarci = cezaeviHarciDogduMu ? kurus(harcMatrahi.times(cezaeviHarciOrani)) : d(0);
 
   const siraliMasraflar = [...takip.masraflar].sort((a, b) => karsilastir(a.tarih, b.tarih));
   const siraliOdemeler = [...takip.kismiOdemeler].sort((a, b) => karsilastir(a.tarih, b.tarih));
@@ -284,6 +274,12 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
     .plus(basvurmaHarci)
     .plus(mahsupEdilenPesinHarc)
     .plus(takip.vekaletUcreti);
+
+  // 492 s.K. m.28/1-b ve Yargıtay 12. HD 2022/10807 E., 2023/3309 K.: Vezne tahsilatlarından
+  // doğan tahsil harcı ödemeden ayrıştırılır; 2548 s.K. m.1 cezaevi harcı ise brüt reddiyattan kesilir.
+  let kalanBakiyeTahsilHarci = toplamBakiyeTahsilHarci;
+  let kesilenTahsilHarciToplami = d(0);
+  let kesilenCezaeviHarciToplami = d(0);
 
   let oncekiTarih = takip.takipTarihi;
   let masrafIndeksi = 0;
@@ -302,6 +298,7 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
 
   const faizDonemleri: IcraFaizDonemi[] = [];
   const kismiOdemeAdimlari: KismiOdemeAdimi[] = [];
+  const tahsilHarciUyarilari: string[] = [];
   const fazlaOdemeUyarilari: string[] = [];
 
   siraliOdemeler.forEach((odeme, idx) => {
@@ -326,10 +323,35 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
     const donemMasrafi = masraflariTopla(odeme.tarih);
     const mahsupOncesiFaizVeGider = devredenFaizVeGider.plus(donemFaizi.toplam).plus(donemMasrafi);
 
-    const faizVeGiderdenMahsup = Decimal.min(odeme.tutar, mahsupOncesiFaizVeGider);
+    const yer: TahsilYeri = odeme.tahsilYeri ?? 'vezne';
+    let odemedenKesilenTahsilHarci = d(0);
+    if (yer === 'vezne') {
+      if (odeme.kesilenTahsilHarci !== undefined) {
+        odemedenKesilenTahsilHarci = kurus(odeme.kesilenTahsilHarci);
+        if (odemedenKesilenTahsilHarci.gt(kalanBakiyeTahsilHarci)) {
+          tahsilHarciUyarilari.push(
+            `${sira}. kısmi ödemede (${trTarih(odeme.tarih)}) kesilen ${tl(odemedenKesilenTahsilHarci)} TL tahsil harcı kalan bakiye tahsil harcını (${tl(kalanBakiyeTahsilHarci)} TL) aşmaktadır (İİK m.15; Yargıtay 12. HD 11.05.2023, 2022/10807 E., 2023/3309 K.); gerçek kesinti tutarı ödemeden düşülüp kalan borç açık bırakılmıştır.`,
+          );
+        }
+      } else {
+        const oran = odeme.tahsilHarciOrani ?? uygulananTahsilOrani;
+        const asamaBakiyeTavani = Decimal.max(
+          d(0),
+          kurus(harcMatrahi.times(oran)).minus(mahsupEdilenPesinHarc).minus(kesilenTahsilHarciToplami),
+        );
+        const ustSinir = Decimal.min(kalanBakiyeTahsilHarci, asamaBakiyeTavani);
+        odemedenKesilenTahsilHarci = Decimal.min(ustSinir, kurus(odeme.tutar.times(oran)));
+      }
+    }
+
+    kesilenTahsilHarciToplami = kesilenTahsilHarciToplami.plus(odemedenKesilenTahsilHarci);
+    kalanBakiyeTahsilHarci = Decimal.max(d(0), kalanBakiyeTahsilHarci.minus(odemedenKesilenTahsilHarci));
+    const alacakliyaMahsupEdilen = odeme.tutar.minus(odemedenKesilenTahsilHarci);
+
+    const faizVeGiderdenMahsup = Decimal.min(alacakliyaMahsupEdilen, mahsupOncesiFaizVeGider);
     const kalanFaizVeGider = mahsupOncesiFaizVeGider.minus(faizVeGiderdenMahsup);
 
-    const artanOdeme = odeme.tutar.minus(faizVeGiderdenMahsup);
+    const artanOdeme = alacakliyaMahsupEdilen.minus(faizVeGiderdenMahsup);
     const asilAlacaktanMahsup = Decimal.min(artanOdeme, kalanAsilAlacak);
     const fazlaOdeme = artanOdeme.minus(asilAlacaktanMahsup);
     if (fazlaOdeme.gt(0)) {
@@ -337,6 +359,14 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
         `${sira}. kısmi ödemede (${trTarih(odeme.tarih)}) dosya borcunu aşan ${tl(fazlaOdeme)} TL fazla ödeme oluştu.`,
       );
     }
+
+    if (yer === 'vezne' && cezaeviHarciDogduMu) {
+      const reddiyatBrut = alacakliyaMahsupEdilen.minus(fazlaOdeme);
+      const kalanCezaeviTavani = Decimal.max(d(0), hesaplananCezaeviHarci.minus(kesilenCezaeviHarciToplami));
+      const kesilenCezaeviHarci = Decimal.min(kalanCezaeviTavani, kurus(reddiyatBrut.times(cezaeviHarciOrani)));
+      kesilenCezaeviHarciToplami = kesilenCezaeviHarciToplami.plus(kesilenCezaeviHarci);
+    }
+
     kalanAsilAlacak = kalanAsilAlacak.minus(asilAlacaktanMahsup);
     devredenFaizVeGider = kalanFaizVeGider;
     oncekiTarih = odeme.tarih;
@@ -345,7 +375,10 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
       sira,
       tarih: odeme.tarih,
       aciklama: odeme.aciklama,
+      tahsilYeri: yer,
       odemeTutari: odeme.tutar,
+      kesilenTahsilHarci: odemedenKesilenTahsilHarci,
+      alacakliyaMahsupEdilen,
       oncekiAsilAlacak,
       donemFaizi,
       donemMasrafi,
@@ -382,23 +415,48 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   const kalanFaizVeGider = devredenFaizVeGider.plus(sonDonemFaizi.toplam).plus(kalanMasraf);
   const toplamTakipSonrasiFaiz = topla(faizDonemleri.map((fd) => fd.toplam));
 
+  const harclar: IcraHarclariSonucu = {
+    harcMatrahi,
+    basvurmaHarci,
+    pesinHarcOrani,
+    pesinHarc,
+    tahsilHarciAsamasi: takip.tahsilHarciAsamasi,
+    bazTahsilOrani,
+    feragatVarMi: takip.feragatVarMi,
+    feragatIndirimiUygulandiMi,
+    uygulananTahsilOrani,
+    hesaplananTahsilHarci,
+    mahsupEdilenPesinHarc,
+    odemelerdenKesilenTahsilHarci: kesilenTahsilHarciToplami,
+    bakiyeTahsilHarci: kalanBakiyeTahsilHarci,
+    cezaeviHarciOrani,
+    hesaplananCezaeviHarci,
+    odemelerdenKesilenCezaeviHarci: kesilenCezaeviHarciToplami,
+    cezaeviHarci: Decimal.max(d(0), hesaplananCezaeviHarci.minus(kesilenCezaeviHarciToplami)),
+  };
+
   const alacakliBrutAlacagi = kalanAsilAlacak.plus(kalanFaizVeGider);
-  const borclununOdeyecegiKapakTutari = alacakliBrutAlacagi.plus(bakiyeTahsilHarci);
-  const alacakliyaNetOdenecekTutar = Decimal.max(d(0), alacakliBrutAlacagi.minus(cezaeviHarci));
+  const borclununOdeyecegiKapakTutari = alacakliBrutAlacagi.plus(kalanBakiyeTahsilHarci);
+  const alacakliyaNetOdenecekTutar = Decimal.max(d(0), alacakliBrutAlacagi.minus(harclar.cezaeviHarci));
 
   const dayanaklar: string[] = [
-    '492 s.K. Harçlar Kanunu m.20, m.28, m.29 ve (1) sayılı tarife B/I-1, B/I-3 (başvurma harcı, peşin harç, icra tahsil harcı ve peşin harcın tahsil harcından mahsubu)',
+    '492 s.K. Harçlar Kanunu m.20, m.28/1-b, m.29/2 ve (1) sayılı tarife B/I-1, B/I-3 (başvurma harcı, peşin harç, icra tahsil harcı ve peşin harcın tahsil harcından mahsubu)',
     '2548 s.K. Ceza Evleriyle Mahkeme Binaları İnşası Karşılığı Olarak Alınacak Harçlar ve Mahkumlara Ödettirilecek Yiyecek Bedelleri Hakkında Kanun m.1 (%2 cezaevi yapı harcı; alacaklıya ödenecek paradan kesilir, borçluya yüklenmez)',
     '6098 s.K. Türk Borçlar Kanunu m.100 (kısmi ödemelerin öncelikle işlemiş faiz ve giderlerden, artanının asıl alacaktan mahsubu) ve m.121/3 (işlemiş faize faiz yürütülememesi / bileşik faiz yasağı)',
     '3095 s.K. Kanuni Faiz ve Temerrüt Faizine İlişkin Kanun m.1, m.2 ve m.3 (yasal faiz, reeskont ve ticari temerrüt/avans faizi oranları)',
   ];
+  if (siraliOdemeler.length > 0) {
+    dayanaklar.push(
+      'İİK m.15 ve Yargıtay 12. HD 11.05.2023, 2022/10807 E., 2023/3309 K. (vezne tahsilatlarında tahsil harcının ödenen paradan ayrıştırılması, kalan tutarın alacaklı alacağına mahsubu)',
+    );
+  }
   if (takip.feragatVarMi) {
     dayanaklar.push(
       '492 s.K. Harçlar Kanunu m.23 (icra takibinden vazgeçme/feragat halinde tahsil harcının yarı oranında alınması; satıştan sonra vazgeçmede tam harç)',
     );
   }
 
-  const uyarilar = [...kaynaklar.uyarilar, ...fazlaOdemeUyarilari];
+  const uyarilar = [...kaynaklar.uyarilar, ...tahsilHarciUyarilari, ...fazlaOdemeUyarilari];
   if (pesinHarc.gt(mahsupEdilenPesinHarc)) {
     uyarilar.push(
       `492 s.K. m.29 ve m.31 gereği tahsil harcından mahsup edilemeyen ${tl(pesinHarc.minus(mahsupEdilenPesinHarc))} TL peşin harç borçluya yüklenmemiş olup alacaklıya iadeye tabidir.`,

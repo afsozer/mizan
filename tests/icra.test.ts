@@ -69,6 +69,83 @@ test('alan ayrımı ve kişisel veri / şema denetimi', () => {
     () => temelIcraGirdisi({ takip: { faiz: { tur: 'sozlesme', gerekce: 'sözleşme' } } }),
     (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.faiz.sozlesmeOrani' && /sozlesmeOrani/.test(err.message),
   );
+
+  // Kısmi ödeme tahsilYeri / tahsilHarciOrani / kesilenTahsilHarci geçerlilik denetimleri
+  assert.throws(
+    () =>
+      temelIcraGirdisi({
+        takip: {
+          kismiOdemeler: [
+            { tarih: '2026-02-01', tutar: 1000, tahsilYeri: 'haricen', tahsilHarciOrani: 0.0455 },
+          ],
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.kismiOdemeler[0].tahsilHarciOrani',
+  );
+  assert.throws(
+    () =>
+      temelIcraGirdisi({
+        takip: {
+          kismiOdemeler: [
+            { tarih: '2026-02-01', tutar: 1000, tahsilYeri: 'haricen', kesilenTahsilHarci: 45 },
+          ],
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.kismiOdemeler[0].kesilenTahsilHarci',
+  );
+  assert.throws(
+    () =>
+      temelIcraGirdisi({
+        takip: {
+          kismiOdemeler: [
+            { tarih: '2026-02-01', tutar: 1000, tahsilHarciOrani: 0.0455, kesilenTahsilHarci: 45 },
+          ],
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.kismiOdemeler[0].kesilenTahsilHarci',
+  );
+  assert.throws(
+    () =>
+      temelIcraGirdisi({
+        takip: {
+          kismiOdemeler: [{ tarih: '2026-02-01', tutar: 1000, kesilenTahsilHarci: 1001 }],
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.kismiOdemeler[0].kesilenTahsilHarci',
+  );
+  assert.throws(
+    () =>
+      temelIcraGirdisi({
+        takip: {
+          kismiOdemeler: [{ tarih: '2026-02-01', tutar: 1000, kesilenTahsilHarci: -1 }],
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.kismiOdemeler[0].kesilenTahsilHarci',
+  );
+  assert.throws(
+    () =>
+      temelIcraGirdisi({
+        takip: {
+          kismiOdemeler: [{ tarih: '2026-02-01', tutar: 1000, tahsilHarciOrani: -0.01 }],
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.kismiOdemeler[0].tahsilHarciOrani',
+  );
+  assert.throws(
+    () =>
+      temelIcraGirdisi({
+        takip: {
+          kismiOdemeler: [{ tarih: '2026-02-01', tutar: 1000, tahsilHarciOrani: 1.01 }],
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.kismiOdemeler[0].tahsilHarciOrani',
+  );
+  assert.equal(
+    temelIcraGirdisi({
+      takip: { kismiOdemeler: [{ tarih: '2026-02-01', tutar: 1000, tahsilHarciOrani: 0 }] },
+    }).takip.kismiOdemeler[0]?.tahsilHarciOrani?.toString(),
+    '0',
+  );
 });
 
 test('492 s.K. harçlar, peşin harç mahsubu, feragat indirimi ve 2548 s.K. cezaevi harcı ayrımı', () => {
@@ -175,8 +252,8 @@ test('TBK m.100 çoklu kısmi ödeme mahsubu ve TCMB avans faizi oran değişim 
       vekaletUcreti: 10000,
       masraflar: [{ tarih: '2025-12-01', tutar: 1000, aciklama: 'Tebligat ve haciz gideri' }],
       kismiOdemeler: [
-        { tarih: '2026-01-19', tutar: 15000, aciklama: '1. kısmi ödeme (faiz ve gideri aşmayan)' },
-        { tarih: '2026-02-18', tutar: 30000, aciklama: '2. kısmi ödeme (anaparayı azaltan)' },
+        { tarih: '2026-01-19', tutar: 15000, aciklama: '1. kısmi ödeme (faiz ve gideri aşmayan)', tahsilYeri: 'haricen' },
+        { tarih: '2026-02-18', tutar: 30000, aciklama: '2. kısmi ödeme (anaparayı azaltan)', tahsilYeri: 'haricen' },
       ],
     },
   });
@@ -250,4 +327,136 @@ test('uçtan uca: ornekler/ornek-icra.yaml ile PDF rapor ve defter satırı üre
   await pdfYaz(tanim, yol);
   assert.equal(readFileSync(yol).subarray(0, 5).toString(), '%PDF-');
   assert.ok(statSync(yol).size > 10_000);
+});
+
+test('492 s.K. m.28/1-b ve Yargıtay 12. HD 2022/10807 E.: vezne kısmi ödemesinde tahsil ve cezaevi harcı ayrıştırılır', () => {
+  const tablolar = tablolariYukle();
+  const g = temelIcraGirdisi({
+    hesapTarihi: '2026-09-02',
+    takip: {
+      takipTarihi: '2026-08-14',
+      takipTuru: 'ilamsiz',
+      asilAlacak: 10000,
+      takipOncesiKalemler: [],
+      faiz: { tur: 'yasal', gerekce: '3095 s.K. m.1 yasal faiz' },
+      pesinHarcAlindiMi: true,
+      tahsilHarciAsamasi: 'hacizden-once',
+      feragatVarMi: false,
+      vekaletUcreti: 6750,
+      masraflar: [
+        { tarih: '2026-08-14', tutar: 530, aciklama: 'Tebligat ve dosya masrafı' },
+        { tarih: '2026-08-20', tutar: 104, aciklama: 'Sorgu gideri' },
+      ],
+      kismiOdemeler: [{ tarih: '2026-09-02', tutar: 18724, aciklama: 'Vezne kısmi ödemesi' }],
+    },
+  });
+
+  const s = icraHesapla(g, tablolar);
+  assert.equal(s.harclar.basvurmaHarci.toFixed(2), '732.00');
+  assert.equal(s.harclar.pesinHarc.toFixed(2), '50.00');
+  assert.equal(s.harclar.hesaplananTahsilHarci.toFixed(2), '455.00');
+  assert.equal(s.harclar.mahsupEdilenPesinHarc.toFixed(2), '50.00');
+
+  const adim = s.kismiOdemeAdimlari[0]!;
+  assert.equal(adim.tahsilYeri, 'vezne');
+  assert.equal(adim.donemFaizi.toplam.toFixed(2), '161.37');
+  assert.equal(adim.kesilenTahsilHarci.toFixed(2), '405.00');
+  assert.equal(adim.alacakliyaMahsupEdilen.toFixed(2), '18319.00');
+  assert.equal(adim.kalanAsilAlacak.toFixed(2), '8.37');
+
+  assert.equal(s.harclar.odemelerdenKesilenTahsilHarci.toFixed(2), '405.00');
+  assert.equal(s.harclar.bakiyeTahsilHarci.toFixed(2), '0.00');
+  assert.equal(s.harclar.hesaplananCezaeviHarci.toFixed(2), '200.00');
+  assert.equal(s.harclar.odemelerdenKesilenCezaeviHarci.toFixed(2), '200.00');
+  assert.equal(s.harclar.cezaeviHarci.toFixed(2), '0.00');
+  assert.equal(s.borclununOdeyecegiKapakTutari.toFixed(2), '8.37');
+  assert.equal(s.alacakliyaNetOdenecekTutar.toFixed(2), '8.37');
+  assert.equal(s.uyarilar.length, 0);
+
+  const raporMetni = JSON.stringify(
+    icraRaporTanimi(s, { uretimZamani: '17.11.2026 12:00', surum: 'mizan test', girdiOzeti: 'sha256-vezne' }),
+  );
+  assert.ok(raporMetni.includes('Tahsil yeri'));
+  assert.ok(raporMetni.includes('Harç kesintisi (TL)'));
+  assert.ok(raporMetni.includes('Alacaklıya mahsup (TL)'));
+  assert.ok(raporMetni.includes('Ödemelerden kesilen tahsil harcı'));
+  assert.ok(raporMetni.includes('Ödemelerden kesilen cezaevi harcı'));
+});
+
+test('aşamalı tahsilHarciOrani (%4,55 + %9,10 tavan sınırı) ve karma vezne/haricen ödemeleri', () => {
+  const tablolar = tablolariYukle();
+  const g = temelIcraGirdisi({
+    hesapTarihi: '2026-01-10',
+    takip: {
+      takipTarihi: '2026-01-10',
+      takipTuru: 'ilamsiz',
+      asilAlacak: 100000,
+      takipOncesiKalemler: [],
+      faiz: { tur: 'yasal', gerekce: '3095 s.K. m.1' },
+      pesinHarcAlindiMi: true,
+      tahsilHarciAsamasi: 'satistan-once',
+      feragatVarMi: false,
+      vekaletUcreti: 60000,
+      masraflar: [],
+      kismiOdemeler: [
+        { tarih: '2026-01-10', tutar: 100000, tahsilYeri: 'vezne', tahsilHarciOrani: 0.0455, aciklama: 'Haciz öncesi vezne' },
+        { tarih: '2026-01-10', tutar: 10000, tahsilYeri: 'haricen', aciklama: 'Haricen kısmi tahsilat' },
+        { tarih: '2026-01-10', tutar: 55000, tahsilYeri: 'vezne', aciklama: 'Haciz sonrası vezne' },
+      ],
+    },
+  });
+
+  const s = icraHesapla(g, tablolar);
+  // 1. adım: 100.000 * 0,0455 = 4.550; aşama tavanı = 4.550 - 500 (peşin) = 4.050 -> 4.050 kesilir
+  assert.equal(s.kismiOdemeAdimlari[0]!.tahsilYeri, 'vezne');
+  assert.equal(s.kismiOdemeAdimlari[0]!.kesilenTahsilHarci.toFixed(2), '4050.00');
+  assert.equal(s.kismiOdemeAdimlari[0]!.alacakliyaMahsupEdilen.toFixed(2), '95950.00');
+  // 2. adım: haricen -> 0 kesinti
+  assert.equal(s.kismiOdemeAdimlari[1]!.tahsilYeri, 'haricen');
+  assert.equal(s.kismiOdemeAdimlari[1]!.kesilenTahsilHarci.toFixed(2), '0.00');
+  assert.equal(s.kismiOdemeAdimlari[1]!.alacakliyaMahsupEdilen.toFixed(2), '10000.00');
+  // 3. adım: 55.000 * 0,091 = 5.005; kalan %9,10 tavanı = 9.100 - 500 - 4.050 = 4.550 -> 4.550 kesilir
+  assert.equal(s.kismiOdemeAdimlari[2]!.tahsilYeri, 'vezne');
+  assert.equal(s.kismiOdemeAdimlari[2]!.kesilenTahsilHarci.toFixed(2), '4550.00');
+  assert.equal(s.kismiOdemeAdimlari[2]!.alacakliyaMahsupEdilen.toFixed(2), '50450.00');
+
+  assert.equal(s.harclar.odemelerdenKesilenTahsilHarci.toFixed(2), '8600.00');
+  assert.equal(s.harclar.bakiyeTahsilHarci.toFixed(2), '0.00');
+  assert.equal(s.harclar.odemelerdenKesilenCezaeviHarci.toFixed(2), '2000.00');
+  assert.equal(s.harclar.cezaeviHarci.toFixed(2), '0.00');
+  assert.equal(s.kalanAsilAlacak.toFixed(2), '4832.00');
+  assert.equal(s.borclununOdeyecegiKapakTutari.toFixed(2), '4832.00');
+  assert.equal(s.alacakliyaNetOdenecekTutar.toFixed(2), '4832.00');
+});
+
+test('makbuzda kesilenTahsilHarci kalan bakiye harcı aşarsa İİK m.15 uyarısı verilir ve gerçek kesinti düşülür', () => {
+  const tablolar = tablolariYukle();
+  const g = temelIcraGirdisi({
+    hesapTarihi: '2026-01-10',
+    takip: {
+      takipTarihi: '2026-01-10',
+      takipTuru: 'ilamsiz',
+      asilAlacak: 10000,
+      takipOncesiKalemler: [],
+      faiz: { tur: 'yasal', gerekce: '3095 s.K. m.1' },
+      pesinHarcAlindiMi: true,
+      tahsilHarciAsamasi: 'hacizden-once',
+      feragatVarMi: false,
+      vekaletUcreti: 0,
+      masraflar: [],
+      kismiOdemeler: [
+        { tarih: '2026-01-10', tutar: 10000, tahsilYeri: 'vezne', kesilenTahsilHarci: 600, aciklama: 'Makbuz kesintisi' },
+      ],
+    },
+  });
+
+  const s = icraHesapla(g, tablolar);
+  assert.ok(s.uyarilar.some((u) => u.includes('İİK m.15') && u.includes('2022/10807 E., 2023/3309 K.')));
+  assert.equal(s.kismiOdemeAdimlari[0]!.kesilenTahsilHarci.toFixed(2), '600.00');
+  assert.equal(s.kismiOdemeAdimlari[0]!.alacakliyaMahsupEdilen.toFixed(2), '9400.00');
+  assert.equal(s.harclar.odemelerdenKesilenTahsilHarci.toFixed(2), '600.00');
+  assert.equal(s.harclar.bakiyeTahsilHarci.toFixed(2), '0.00');
+  // Başlangıç borcu: 10.000 + 732 + 50 = 10.782; 9.400 mahsup sonrası kalan asıl alacak = 1.382,00 TL
+  assert.equal(s.kalanAsilAlacak.toFixed(2), '1382.00');
+  assert.equal(s.borclununOdeyecegiKapakTutari.toFixed(2), '1382.00');
 });

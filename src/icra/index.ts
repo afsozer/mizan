@@ -13,6 +13,7 @@ export {
   type IcraTakipTuru,
   type KismiOdeme,
   type TahsilHarciAsamasi,
+  type TahsilYeri,
   type TakipOncesiKalem,
 } from './girdi.ts';
 export {
@@ -27,5 +28,13 @@ export {
   type IcraHesapSonucu,
   type KismiOdemeAdimi,
 } from './hesap.ts';
-export { icraDefterSatiri, icraKanitDosyaAdi, icraRaporTanimi } from './rapor.ts';
+export {
+  ICRA_KISMI_ODEME_BASLIKLARI,
+  icraDefterSatiri,
+  icraHarcSatirlari,
+  icraKanitDosyaAdi,
+  icraKismiOdemeSatirlari,
+  icraOzetSatirlari,
+  icraRaporTanimi,
+} from './rapor.ts';
 export { icraUdfDosyaAdi, icraUdfOlustur, icraUdfXmlOlustur } from './udf.ts';

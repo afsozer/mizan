@@ -1,17 +1,23 @@
 import {
   aautKanitDosyaAdi,
   aautRaporTanimi,
+  aautUdfDosyaAdi,
+  aautUdfOlustur,
   aileKanitDosyaAdi,
   aileRaporTanimi,
+  aileUdfDosyaAdi,
+  aileUdfOlustur,
   icraKanitDosyaAdi,
   icraRaporTanimi,
+  icraUdfDosyaAdi,
+  icraUdfOlustur,
   kanitDosyaAdi,
   raporTanimi,
   surumYaz,
   udfDosyaAdi,
   udfOlustur,
 } from '../../src/index.ts';
-import type { AautHesapSonucu, AileHesapSonucu, HesapSonucu, IcraHesapSonucu } from '../../src/index.ts';
+import type { AautHesapSonucu, AileHesapSonucu, HesapSonucu, IcraHesapSonucu, RaporBilgisi } from '../../src/index.ts';
 import { sha256 } from './tables.ts';
 
 export const surum = () => surumYaz(__MIZAN_SURUM__);
@@ -26,70 +32,69 @@ export function indir(icerik: string | Blob, ad: string, tur = 'text/plain;chars
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 30_000);
 }
-export async function pdfIndir(sonuc: HesapSonucu, yaml: string) {
+
+async function raporBilgisiKur(yaml: string, zaman: Date): Promise<RaporBilgisi> {
+  return {
+    surum: surum(),
+    girdiOzeti: await sha256(yaml),
+    uretimZamani: new Intl.DateTimeFormat('tr-TR', {
+      timeZone: 'Europe/Istanbul',
+      dateStyle: 'short',
+      timeStyle: 'short',
+    }).format(zaman),
+  };
+}
+
+async function pdfDosyasiIndir<T>(
+  sonuc: T,
+  yaml: string,
+  tanimiKur: (s: T, bilgi: RaporBilgisi) => Record<string, unknown>,
+  dosyaAdi: (s: T, tarih: string) => string,
+) {
   const zaman = new Date();
   const [{ default: pdfMake }, { default: vfs }] = await Promise.all([
     import('pdfmake/build/pdfmake.js'), import('pdfmake/build/vfs_fonts.js'),
   ]);
   pdfMake.addVirtualFileSystem(vfs);
-  const tanim = raporTanimi(sonuc, {
-    surum: surum(),
-    girdiOzeti: await sha256(yaml),
-    uretimZamani: new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' }).format(zaman),
-  });
+  const tanim = tanimiKur(sonuc, await raporBilgisiKur(yaml, zaman));
   const blob = await pdfMake.createPdf(tanim).getBlob();
-  indir(blob, kanitDosyaAdi(sonuc, uretimTarihi(zaman)));
+  indir(blob, dosyaAdi(sonuc, uretimTarihi(zaman)));
 }
-export async function udfIndir(sonuc: HesapSonucu, yaml: string) {
+
+async function udfDosyasiIndir<T>(
+  sonuc: T,
+  yaml: string,
+  olustur: (s: T, bilgi: RaporBilgisi) => Uint8Array,
+  dosyaAdi: (s: T, tarih: string) => string,
+) {
   const zaman = new Date();
-  const baytlar = udfOlustur(sonuc, {
-    surum: surum(),
-    girdiOzeti: await sha256(yaml),
-    uretimZamani: new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' }).format(zaman),
-  });
+  const baytlar = olustur(sonuc, await raporBilgisiKur(yaml, zaman));
   const kopya = new Uint8Array(baytlar.byteLength);
   kopya.set(baytlar);
-  indir(new Blob([kopya.buffer], { type: 'application/zip' }), udfDosyaAdi(sonuc, uretimTarihi(zaman)));
+  indir(new Blob([kopya.buffer], { type: 'application/zip' }), dosyaAdi(sonuc, uretimTarihi(zaman)));
+}
+
+export async function pdfIndir(sonuc: HesapSonucu, yaml: string) {
+  await pdfDosyasiIndir(sonuc, yaml, raporTanimi, kanitDosyaAdi);
+}
+export async function udfIndir(sonuc: HesapSonucu, yaml: string) {
+  await udfDosyasiIndir(sonuc, yaml, udfOlustur, udfDosyaAdi);
 }
 export async function icraPdfIndir(sonuc: IcraHesapSonucu, yaml: string) {
-  const zaman = new Date();
-  const [{ default: pdfMake }, { default: vfs }] = await Promise.all([
-    import('pdfmake/build/pdfmake.js'), import('pdfmake/build/vfs_fonts.js'),
-  ]);
-  pdfMake.addVirtualFileSystem(vfs);
-  const tanim = icraRaporTanimi(sonuc, {
-    surum: surum(),
-    girdiOzeti: await sha256(yaml),
-    uretimZamani: new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' }).format(zaman),
-  });
-  const blob = await pdfMake.createPdf(tanim).getBlob();
-  indir(blob, icraKanitDosyaAdi(sonuc, uretimTarihi(zaman)));
+  await pdfDosyasiIndir(sonuc, yaml, icraRaporTanimi, icraKanitDosyaAdi);
+}
+export async function icraUdfIndir(sonuc: IcraHesapSonucu, yaml: string) {
+  await udfDosyasiIndir(sonuc, yaml, icraUdfOlustur, icraUdfDosyaAdi);
 }
 export async function aautPdfIndir(sonuc: AautHesapSonucu, yaml: string) {
-  const zaman = new Date();
-  const [{ default: pdfMake }, { default: vfs }] = await Promise.all([
-    import('pdfmake/build/pdfmake.js'), import('pdfmake/build/vfs_fonts.js'),
-  ]);
-  pdfMake.addVirtualFileSystem(vfs);
-  const tanim = aautRaporTanimi(sonuc, {
-    surum: surum(),
-    girdiOzeti: await sha256(yaml),
-    uretimZamani: new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' }).format(zaman),
-  });
-  const blob = await pdfMake.createPdf(tanim).getBlob();
-  indir(blob, aautKanitDosyaAdi(sonuc, uretimTarihi(zaman)));
+  await pdfDosyasiIndir(sonuc, yaml, aautRaporTanimi, aautKanitDosyaAdi);
+}
+export async function aautUdfIndir(sonuc: AautHesapSonucu, yaml: string) {
+  await udfDosyasiIndir(sonuc, yaml, aautUdfOlustur, aautUdfDosyaAdi);
 }
 export async function ailePdfIndir(sonuc: AileHesapSonucu, yaml: string) {
-  const zaman = new Date();
-  const [{ default: pdfMake }, { default: vfs }] = await Promise.all([
-    import('pdfmake/build/pdfmake.js'), import('pdfmake/build/vfs_fonts.js'),
-  ]);
-  pdfMake.addVirtualFileSystem(vfs);
-  const tanim = aileRaporTanimi(sonuc, {
-    surum: surum(),
-    girdiOzeti: await sha256(yaml),
-    uretimZamani: new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'short', timeStyle: 'short' }).format(zaman),
-  });
-  const blob = await pdfMake.createPdf(tanim).getBlob();
-  indir(blob, aileKanitDosyaAdi(sonuc, uretimTarihi(zaman)));
+  await pdfDosyasiIndir(sonuc, yaml, aileRaporTanimi, aileKanitDosyaAdi);
+}
+export async function aileUdfIndir(sonuc: AileHesapSonucu, yaml: string) {
+  await udfDosyasiIndir(sonuc, yaml, aileUdfOlustur, aileUdfDosyaAdi);
 }

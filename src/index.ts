@@ -55,6 +55,7 @@ export { Decimal, tl, yuzde, sayi } from './para.ts';
 export { trTarih, sureYaz } from './tarih.ts';
 export {
   ICRA_FAIZ_TURU_ADLARI,
+  ICRA_KISMI_ODEME_BASLIKLARI,
   ICRA_TAKIP_TURU_ADLARI,
   TAHSIL_ASAMA_ADLARI,
   alanOku,
@@ -62,8 +63,11 @@ export {
   icraDonemFaiziHesapla,
   icraGirdiCoz,
   icraGirdiMetindenCoz,
+  icraHarcSatirlari,
   icraHesapla,
   icraKanitDosyaAdi,
+  icraKismiOdemeSatirlari,
+  icraOzetSatirlari,
   icraRaporTanimi,
   icraUdfDosyaAdi,
   icraUdfOlustur,
@@ -84,6 +88,7 @@ export type {
   KismiOdeme,
   KismiOdemeAdimi,
   TahsilHarciAsamasi,
+  TahsilYeri,
   TakipOncesiKalem,
 } from './icra/index.ts';
 export {

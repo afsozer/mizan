@@ -75,6 +75,15 @@ $$\text{Bakiye Tahsil Harcı} = \text{Hesaplanan Tahsil Harcı} - \text{Mahsup E
 
 * **Feragat (Vazgeçme) İndirimi (492 s.K. m.23):** İcra takibinden vazgeçilmesi (`feragatVarMi: true`) halinde tahsil harcı yarı oranında (`1/2`) alınır. Ancak **492 s.K. m.23 c.2** uyarınca haczedilen mal satılıp paraya çevrildikten sonra (`satistan-sonra`) vazgeçilirse indirim uygulanmaz ve tahsil harcı tam (`%11,38`) olarak alınır.
 
+### 4.4 Vezne Kısmi Ödemelerinde Tahsil Harcı Ayrıştırılması (492 s.K. m.28/1-b, m.29/2; İİK m.15; Yargıtay 12. HD 11.05.2023, 2022/10807 E., 2023/3309 K.)
+
+492 s.K. m.28/1-b uyarınca icra tahsil harcı alacağın ödenmesi sırasında doğar; İİK m.15 ve Yargıtay 12. HD'nin 11.05.2023 tarihli 2022/10807 E., 2023/3309 K. sayılı kararı gereğince icra veznesine yapılan her kısmi ödemeden öncelikle bu ödemeye isabet eden tahsil harcı kesilir, kalan tutar alacaklıya ödenerek TBK m.100 sırasıyla borçtan mahsup edilir.
+
+* **Tahsil yeri (`tahsilYeri`):** Her kısmi ödemede `'vezne'` (belirtilmezse varsayılan) veya `'haricen'` seçilebilir. `'haricen'` ödemede vezne tahsil harcı ve cezaevi harcı kesintisi yapılmaz; ödemenin tamamı alacaklıya mahsup edilir ve bakiye tahsil harcı borçlu kapak hesabında kalır.
+* **Gerçek kesinti tutarı (`kesilenTahsilHarci`):** Vezne makbuzunda tahsil harcı kesintisi ayrıca biliniyorsa doğrudan bu tutar ödemeden ayrıştırılır. Makbuz kesintisinin kalan bakiye tahsil harcını aşması halinde `İİK m.15` ve `Yargıtay 12. HD 2022/10807 E., 2023/3309 K.` atıflı uyarı verilir, gerçek kesilen tutar ödemeden düşülür ve kalan borç açık bırakılır.
+* **Aşamalı oran ve tavan (`tahsilHarciOrani`):** Gerçek kesinti verilmemişse ödemenin yapıldığı aşama oranı (`tahsilHarciOrani`, verilmezse dosyanın `uygulananTahsilOrani` değeri) uygulanır. Kesilecek harç hem dosya genelindeki kalan bakiye tahsil harcını hem de o aşamanın harç matrahı üzerinden hesaplanan tavanını (`kurus(harçMatrahı * oran) - mahsupEdilenPeşinHarc - öncekiKesintiler`) aşamaz.
+* **Kalan bakiye tahsil harcı:** Ödemelerden kesilen tahsil harçları düştükten sonra kalan bakiye harç (`bakiyeTahsilHarci`), `borclununOdeyecegiKapakTutari` içinde borçluya yüklenir.
+
 ---
 
 ## 5. Cezaevleri Yapı Harcı (2548 s.K. m.1)
@@ -83,9 +92,10 @@ $$\text{Bakiye Tahsil Harcı} = \text{Hesaplanan Tahsil Harcı} - \text{Mahsup E
 
 * İcra dairelerince miktar ve kıymeti muayyen olan ilamlı ve ilamsız alacaklardan **%2** oranında cezaevleri yapı harcı alınır.
 * Kanunun açık hükmü gereğince bu harç **alacaklıdan tahsil olunur; borçluya yükletilemez**.
+* İcra veznesine yapılan kısmi ödemelerde (`tahsilYeri: 'vezne'`, tebliğden önce veya satış öncesi feragat dışındaki aşamalarda), alacaklıya reddiyata konu brüt tutar (`alacakliyaMahsupEdilen - fazlaOdeme`) üzerinden kümülatif `hesaplananCezaeviHarci` tavanını aşmayacak şekilde %2 cezaevi harcı kesilir. Kalan bakiye cezaevi yapı harcı (`hesaplananCezaeviHarci - odemelerdenKesilenCezaeviHarci`) sonuçtaki alacaklı net reddiyatından düşülür.
 * Bu nedenle `mizan` raporunda iki ayrı sonuç satırı üretilir:
-  1. **Borçlunun ödeyeceği kapak tutarı:** Kalan asıl alacak + kalan faiz ve giderler + bakiye tahsil harcı (cezaevi harcı dahil değildir).
-  2. **Alacaklıya net ödenecek tutar:** Borçlunun ödediği kapak tutarından bakiye tahsil harcı ve %2 cezaevleri yapı harcı düşüldükten sonra alacaklıya yapılacak net reddiyat tutarıdır.
+  1. **Borçlunun ödeyeceği kapak tutarı:** Kalan asıl alacak + kalan faiz ve giderler + kalan bakiye tahsil harcı (cezaevi harcı dahil değildir).
+  2. **Alacaklıya net ödenecek tutar:** Alacaklı brüt alacağından kalan bakiye cezaevleri yapı harcı düşüldükten sonra alacaklıya yapılacak net reddiyat tutarıdır.
 
 ---
 
@@ -94,9 +104,12 @@ $$\text{Bakiye Tahsil Harcı} = \text{Hesaplanan Tahsil Harcı} - \text{Mahsup E
 6098 sayılı TBK m.100/1 (*"Borçlu, faiz veya giderleri ödemede gecikmiş değilse, kısmen yaptığı ödemeyi ana borçtan düşme hakkına sahiptir"*) ve m.121/3 uyarınca dosyaya yapılan her kısmi ödemede şu adımlar sırasıyla uygulanır:
 
 1. Önceki işlem tarihinden (takip tarihi veya bir önceki kısmi ödeme tarihi) kısmi ödeme tarihine kadar **kalan asıl alacak** üzerinden işlemiş dönem faizi (`donemFaizi`) hesaplanır.
-2. Bu döneme kadar yapılmış takip giderleri (`donemMasrafi`) ve dönem faizi, faiz üretmeyen alacak havuzuna (`mahsupOncesiFaizVeGider`) eklenir. Başlangıçta bu havuzda takip öncesi fer'iler, başvurma harcı, alacaklıca yatırılan peşin harç ve icra vekalet ücreti yer alır.
-3. Yapılan kısmi ödeme öncelikle bu faiz ve gider havuzundan mahsup edilir:
-   $$\text{Faiz ve Giderden Mahsup} = \min(\text{Ödeme Tutarı}, \text{Mahsup Öncesi Faiz ve Gider})$$
-4. Ödeme tutarının faiz ve giderleri aşan kısmı varsa, kalan asıl alacaktan düşülür:
-   $$\text{Asıl Alacaktan Mahsup} = \min(\text{Ödeme Tutarı} - \text{Faiz ve Giderden Mahsup}, \text{Kalan Asıl Alacak})$$
-5. Ödeme tarihinden sonraki dönemde faiz, yalnızca indirgenmiş yeni `kalanAsilAlacak` üzerinden işlemeye devam eder; `kalanFaizVeGider` havuzuna hiçbir surette faiz yürütülmez.
+2. Bu döneme kadar yapılmış takip giderleri (`donemMasrafi`) ve dönem faizi, faiz üretmeyen alacak havuzuna (`mahsupOncesiFaizVeGider`) eklenir. Başlangıçta bu havuzda takip öncesi fer'iler, başvurma harcı, tahsil harcından mahsup edilen peşin harç ve icra vekalet ücreti yer alır.
+3. Ödeme vezneye yapılmışsa yukarıdaki 4.4 bölümüne göre `odemedenKesilenTahsilHarci` ayrıştırılır (`haricen` ise `0,00 TL`). Alacaklı alacağına mahsup edilecek tutar belirlenir:
+   $$\text{Alacaklıya Mahsup Edilen} = \text{Ödeme Tutarı} - \text{Ödemeden Kesilen Tahsil Harcı}$$
+4. Alacaklıya mahsup edilen tutar öncelikle faiz ve gider havuzundan düşülür:
+   $$\text{Faiz ve Giderden Mahsup} = \min(\text{Alacaklıya Mahsup Edilen}, \text{Mahsup Öncesi Faiz ve Gider})$$
+5. Faiz ve giderleri aşan kısım varsa, kalan asıl alacaktan düşülür:
+   $$\text{Asıl Alacaktan Mahsup} = \min(\text{Alacaklıya Mahsup Edilen} - \text{Faiz ve Giderden Mahsup}, \text{Kalan Asıl Alacak})$$
+6. Vezne ödemesinde fazla ödeme dışındaki brüt reddiyat üzerinden %2 cezaevi harcı kesintisi kümülatif tavan dahilinde güncellenir.
+7. Ödeme tarihinden sonraki dönemde faiz, yalnızca indirgenmiş yeni `kalanAsilAlacak` üzerinden işlemeye devam eder; `kalanFaizVeGider` havuzuna hiçbir surette faiz yürütülmez.

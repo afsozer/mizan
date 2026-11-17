@@ -18,7 +18,14 @@ import {
   TAHSIL_ASAMA_ADLARI,
   type IcraHesapSonucu,
 } from './hesap.ts';
-import { icraKanitDosyaAdi } from './rapor.ts';
+import {
+  ICRA_KISMI_ODEME_ACIKLAMASI,
+  ICRA_KISMI_ODEME_BASLIKLARI,
+  icraHarcSatirlari,
+  icraKanitDosyaAdi,
+  icraKismiOdemeSatirlari,
+  icraOzetSatirlari,
+} from './rapor.ts';
 
 /** YYYY-AA-GG_icradairesi-esas_altalan.udf */
 export function icraUdfDosyaAdi(sonuc: IcraHesapSonucu, uretimTarihi: string): string {
@@ -46,37 +53,10 @@ export function icraUdfXmlOlustur(s: IcraHesapSonucu, bilgi: RaporBilgisi): stri
 
   // 1. Kapak Hesabı Özeti
   kurucu.baslik('1. Kapak Hesabı Özeti', 1);
-  const ozetSatirlari: string[][] = [
-    ['Asıl alacak (takip çıkışı anapara)', 'Anapara', tl(s.asilAlacak)],
-    ["Takip öncesi birikmiş faiz ve fer'iler", 'TBK m.121/3 (faiz yürütülmez)', tl(s.takipOncesiToplam)],
-    ['Takip çıkışı toplamı (harç matrahı)', '492 s.K. m.20', tl(s.takipCikisToplami)],
-    ['Başvurma harcı', '492 s.K. (1) sayılı tarife B/I-1', tl(h.basvurmaHarci)],
-    [
-      'Peşin harç (alacaklıca yatırılan)',
-      g.takip.pesinHarcAlindiMi ? `492 s.K. m.29 (${yuzde(h.pesinHarcOrani)})` : 'Alınmadı (ilamlı / muaf)',
-      tl(h.pesinHarc),
-    ],
-    [
-      'Bakiye icra tahsil harcı',
-      `492 s.K. B/I-3 (${yuzde(h.uygulananTahsilOrani)} tahsil harcından ${tl(h.mahsupEdilenPesinHarc)} TL peşin harç mahsubu)`,
-      tl(h.bakiyeTahsilHarci),
-    ],
-    ['İcra vekalet ücreti', 'AAÜT / İİK m.138', tl(s.vekaletUcreti)],
-    ['Takip masrafları toplamı', 'İİK m.59', tl(s.toplamMasraf)],
-    ['Takip sonrası işlemiş faiz toplamı', ICRA_FAIZ_TURU_ADLARI[g.takip.faiz.tur], tl(s.toplamTakipSonrasiFaiz)],
-    ['Kısmi ödemeler toplamı (mahsup)', '6098 s.K. TBK m.100', s.toplamKismiOdeme.isZero() ? '0,00' : '-' + tl(s.toplamKismiOdeme)],
-    ['Borçlunun ödeyeceği kapak tutarı', 'Kalan anapara + faiz/gider + bakiye tahsil harcı', tl(s.borclununOdeyecegiKapakTutari)],
-    [
-      'Cezaevleri yapı harcı (alacaklıdan kesilen)',
-      `2548 s.K. m.1 (${yuzde(h.cezaeviHarciOrani)}; borçluya yüklenmez)`,
-      '-' + tl(h.cezaeviHarci),
-    ],
-    ['Alacaklıya net ödenecek tutar', 'Tahsil ve cezaevi harçları düşüldükten sonra net reddiyat', tl(s.alacakliyaNetOdenecekTutar)],
-  ];
-  kurucu.tablo(['Kalem', 'Dayanak / Açıklama', 'Tutar (TL)'], ozetSatirlari, {
+  kurucu.tablo(['Kalem', 'Dayanak / Açıklama', 'Tutar (TL)'], icraOzetSatirlari(s), {
     genislikler: [165, 225, 90],
     sag: [2],
-    kalinSatirlar: [2, 10, 12],
+    kalinSatirlar: [2, 11, 14],
   });
 
   // 2. Takip Çıkışı, Masraflar ve Esaslar
@@ -118,34 +98,10 @@ export function icraUdfXmlOlustur(s: IcraHesapSonucu, bilgi: RaporBilgisi): stri
 
   // 3. Harç Hesabı
   kurucu.baslik('3. Harç Hesabı (492 s.K. ve 2548 s.K.)', 1);
-  const harcSatirlari: string[][] = [
-    ['Harç matrahı (takip çıkışı)', '492 s.K. m.20 (takip sonrası faiz matraha girmez)', '-', tl(h.harcMatrahi)],
-    ['Başvurma harcı', '492 s.K. (1) sayılı tarife B/I-1 (maktu)', '-', tl(h.basvurmaHarci)],
-    [
-      'Peşin harç',
-      g.takip.pesinHarcAlindiMi ? '492 s.K. m.28-29 (ilamsız takipte takip çıkışı üzerinden)' : '492 s.K. m.29 (alınmadı)',
-      g.takip.pesinHarcAlindiMi ? yuzde(h.pesinHarcOrani) : '%0',
-      tl(h.pesinHarc),
-    ],
-    [
-      'İcra tahsil harcı (hesaplanan)',
-      `${TAHSIL_ASAMA_ADLARI[h.tahsilHarciAsamasi]}${h.feragatIndirimiUygulandiMi ? ' · 492 s.K. m.23 feragat 1/2 indirimi' : ''}`,
-      yuzde(h.uygulananTahsilOrani),
-      tl(h.hesaplananTahsilHarci),
-    ],
-    ['Mahsup edilen peşin harç', '492 s.K. m.29/2 (tahsil harcından mahsup)', '-', '-' + tl(h.mahsupEdilenPesinHarc)],
-    ['Bakiye tahsil harcı (borçlu öder)', 'Tahsil harcı - mahsup edilen peşin harç', '-', tl(h.bakiyeTahsilHarci)],
-    [
-      'Cezaevleri yapı harcı (alacaklı öder)',
-      '2548 s.K. m.1 (alacaklıya ödenecek paradan kesilir, borçluya yüklenmez)',
-      yuzde(h.cezaeviHarciOrani),
-      tl(h.cezaeviHarci),
-    ],
-  ];
-  kurucu.tablo(['Harç kalemi', 'Hukuki dayanak ve açıklama', 'Oran', 'Tutar (TL)'], harcSatirlari, {
+  kurucu.tablo(['Harç kalemi', 'Hukuki dayanak ve açıklama', 'Oran', 'Tutar (TL)'], icraHarcSatirlari(s), {
     genislikler: [130, 220, 50, 80],
     sag: [2, 3],
-    kalinSatirlar: [5, 6],
+    kalinSatirlar: [6, 9],
   });
 
   // 4. Takip Sonrası Faiz Hesabı
@@ -166,37 +122,11 @@ export function icraUdfXmlOlustur(s: IcraHesapSonucu, bilgi: RaporBilgisi): stri
   // 5. TBK m.100 Kısmi Ödemelerin Mahsubu
   if (s.kismiOdemeAdimlari.length > 0) {
     kurucu.baslik('5. TBK m.100 Kısmi Ödemelerin Mahsubu', 1);
-    kurucu.paragraf(
-      '6098 s.K. TBK m.100/1 uyarınca her kısmi ödeme tarihine kadar işlemiş faiz ve takip giderleri hesaplanmış; yapılan ödeme öncelikle faiz ve giderlerden, artan tutar ise asıl alacaktan düşülmüştür. TBK m.121/3 uyarınca işlemiş faize tekrar faiz yürütülmemiştir.',
-    );
-    kurucu.tablo(
-      [
-        '#',
-        'Ödeme tarihi',
-        'Ödeme (TL)',
-        'Dönem faizi (TL)',
-        'Mahsup öncesi faiz/gider (TL)',
-        'Faiz/giderden düşülen (TL)',
-        'Anaparadan düşülen (TL)',
-        'Kalan faiz/gider (TL)',
-        'Kalan anapara (TL)',
-      ],
-      s.kismiOdemeAdimlari.map((adim) => [
-        String(adim.sira),
-        trTarih(adim.tarih),
-        tl(adim.odemeTutari),
-        tl(adim.donemFaizi.toplam),
-        tl(adim.mahsupOncesiFaizVeGider),
-        tl(adim.faizVeGiderdenMahsup),
-        tl(adim.asilAlacaktanMahsup),
-        tl(adim.kalanFaizVeGider),
-        tl(adim.kalanAsilAlacak),
-      ]),
-      {
-        genislikler: [20, 56, 56, 54, 62, 58, 58, 56, 60],
-        sag: [0, 2, 3, 4, 5, 6, 7, 8],
-      },
-    );
+    kurucu.paragraf(ICRA_KISMI_ODEME_ACIKLAMASI);
+    kurucu.tablo(ICRA_KISMI_ODEME_BASLIKLARI, icraKismiOdemeSatirlari(s), {
+      genislikler: [16, 46, 34, 44, 40, 44, 40, 46, 42, 42, 42, 44],
+      sag: [0, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    });
   }
 
   // 6. Hukuki Dayanaklar, Sınırlar ve Resmi Kaynaklar

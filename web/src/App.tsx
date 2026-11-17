@@ -48,7 +48,19 @@ import {
 import type { Nesne } from './form-model.ts';
 import { hesapTablolari, paketTablolari, tabloHazirla } from './tables.ts';
 import type { TabloBelgesi } from './tables.ts';
-import { aautPdfIndir, ailePdfIndir, icraPdfIndir, indir, pdfIndir, udfIndir, surum, uretimTarihi } from './exports.ts';
+import {
+  aautPdfIndir,
+  aautUdfIndir,
+  ailePdfIndir,
+  aileUdfIndir,
+  icraPdfIndir,
+  icraUdfIndir,
+  indir,
+  pdfIndir,
+  surum,
+  udfIndir,
+  uretimTarihi,
+} from './exports.ts';
 import { TablolarEkrani } from './TablesView.tsx';
 
 interface Ihtimal { id: number; ad: string; form: Nesne; dokunuldu?: boolean }
@@ -229,9 +241,15 @@ export function App() {
     finally { mesgulYaz(false); }
   };
   const udfOlusturIndir = async () => {
-    if (!sonuc) return;
+    if (!gecerliSonucVar) return;
     mesgulYaz(true);
-    try { await udfIndir(sonuc, formYamli(form)); bildir("UDF raporu hazırlandı ve indirme başlatıldı. Resmi kullanımdan önce UYAP Doküman Editör'de elle doğrulayın."); }
+    try {
+      if (icraSonuc) await icraUdfIndir(icraSonuc, formYamli(form));
+      else if (aautSonuc) await aautUdfIndir(aautSonuc, formYamli(form));
+      else if (aileSonuc) await aileUdfIndir(aileSonuc, formYamli(form));
+      else if (sonuc) await udfIndir(sonuc, formYamli(form));
+      bildir("UDF raporu hazırlandı ve indirme başlatıldı. Resmi gönderim öncesinde UYAP Doküman Editör'de açıp kontrol edin.");
+    }
     catch (e) { bildir(`UDF oluşturulamadı: ${HATA(e)}`); }
     finally { mesgulYaz(false); }
   };
@@ -321,8 +339,8 @@ export function App() {
         </article>; })}</div>
       </section>}
       {sayfa === 'rapor' && <section class="rapor-ekrani"><div class="sayfa-basligi"><h1>Rapor ve kayıt</h1></div>
-        <div class="rapor-araclari"><button class="birincil" disabled={!gecerliSonucVar || mesgul} onClick={() => void pdfOlustur()}>{mesgul ? 'PDF hazırlanıyor...' : 'PDF raporunu indir'}</button>{formAlani === 'iscilik' && <button disabled={!sonuc || mesgul} onClick={() => void udfOlusturIndir()}>UDF indir</button>}<button disabled={!gecerliSonucVar} onClick={() => { const dosyaAdi = icraSonuc ? icraKanitDosyaAdi(icraSonuc, uretimTarihi()) : aautSonuc ? aautKanitDosyaAdi(aautSonuc, uretimTarihi()) : aileSonuc ? aileKanitDosyaAdi(aileSonuc, uretimTarihi()) : sonuc ? kanitDosyaAdi(sonuc, uretimTarihi()) : ''; if (dosyaAdi) { indir(formYamli(form), dosyaAdi.replace(/\.pdf$/, '.yaml'), 'application/yaml'); bildir('YAML indirmesi başlatıldı. Girdinin kalıcı kopyasını bu dosyada saklayın.'); } }}>Girdiyi YAML indir</button><button disabled={!gecerliSonucVar} onClick={() => void defterKopyala()}>Defter satırını kopyala</button></div>
-        {formAlani === 'iscilik' && <p class="not">Üretilen UDF belgesini resmi kullanımdan önce UYAP Doküman Editör'de açarak elle doğrulayın.</p>}
+        <div class="rapor-araclari"><button class="birincil" disabled={!gecerliSonucVar || mesgul} onClick={() => void pdfOlustur()}>{mesgul ? 'PDF hazırlanıyor...' : 'PDF raporunu indir'}</button><button disabled={!gecerliSonucVar || mesgul} onClick={() => void udfOlusturIndir()}>UDF indir</button><button disabled={!gecerliSonucVar} onClick={() => { const dosyaAdi = icraSonuc ? icraKanitDosyaAdi(icraSonuc, uretimTarihi()) : aautSonuc ? aautKanitDosyaAdi(aautSonuc, uretimTarihi()) : aileSonuc ? aileKanitDosyaAdi(aileSonuc, uretimTarihi()) : sonuc ? kanitDosyaAdi(sonuc, uretimTarihi()) : ''; if (dosyaAdi) { indir(formYamli(form), dosyaAdi.replace(/\.pdf$/, '.yaml'), 'application/yaml'); bildir('YAML indirmesi başlatıldı. Girdinin kalıcı kopyasını bu dosyada saklayın.'); } }}>Girdiyi YAML indir</button><button disabled={!gecerliSonucVar} onClick={() => void defterKopyala()}>Defter satırını kopyala</button></div>
+        <p class="not">İndirilen .udf belgeleri resmi gönderim öncesinde UYAP Doküman Editör'de açılarak elle kontrol edilmelidir.</p>
         {defterMetni && <label class="defter-yedek">Kayıt defteri satırı<textarea readOnly value={defterMetni} rows={6} onFocus={e => e.currentTarget.select()} /></label>}
         {icraSonuc ? <div class="rapor-onizleme"><IcraSonuclar sonuc={icraSonuc} tam /></div> : aautSonuc ? <div class="rapor-onizleme"><AautSonuclar sonuc={aautSonuc} tam /></div> : aileSonuc ? <div class="rapor-onizleme"><AileSonuclar sonuc={aileSonuc} tam /></div> : sonuc ? <div class="rapor-onizleme"><Sonuclar sonuc={sonuc} tam /></div> : <div class="hata-kutusu"><p>{hata ? hataAciklamasi(hata.mesaj) : 'Girdiler henüz tamamlanmadı.'}</p><button onClick={hatayaGit}>Girdileri tamamla</button></div>}
       </section>}

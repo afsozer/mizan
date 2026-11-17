@@ -33,10 +33,15 @@ export interface IcraMasrafi {
   tutar: Decimal;
 }
 
+export type TahsilYeri = 'vezne' | 'haricen';
+
 export interface KismiOdeme {
   tarih: string;
   tutar: Decimal;
   aciklama: string;
+  tahsilYeri?: TahsilYeri;
+  tahsilHarciOrani?: Decimal;
+  kesilenTahsilHarci?: Decimal;
 }
 
 export interface IcraTakipGirdisi {
@@ -158,9 +163,9 @@ class Okuyucu {
     return s;
   }
 
-  oran(alan: string): Decimal {
+  oran(alan: string, sifirIzinli = false): Decimal {
     const s = this.sayi(alan);
-    if (s.lte(0) || s.gt(1)) {
+    if ((sifirIzinli ? s.lt(0) : s.lte(0)) || s.gt(1)) {
       alanHatasi(`${this.yer}.${alan}`, 'oran 0 ile 1 arasında yazılır (%30 -> 0.30)');
     }
     return s;
@@ -313,7 +318,7 @@ export function icraGirdiCoz(veri: unknown): IcraGirdisi {
 
   const kismiOdemeler: KismiOdeme[] = t.var('kismiOdemeler')
     ? t.liste('kismiOdemeler').map((ko) => {
-        ko.izinli(['tarih', 'tutar', 'aciklama']);
+        ko.izinli(['tarih', 'tutar', 'aciklama', 'tahsilYeri', 'tahsilHarciOrani', 'kesilenTahsilHarci']);
         const tarih = ko.tarih('tarih');
         if (karsilastir(tarih, takipTarihi) < 0 || karsilastir(tarih, hesapTarihi) > 0) {
           alanHatasi(`${ko.yer}.tarih`, 'kısmi ödeme tarihi takipTarihi ile hesapTarihi arasında olmalı');
@@ -323,7 +328,48 @@ export function icraGirdiCoz(veri: unknown): IcraGirdisi {
           alanHatasi(`${ko.yer}.tutar`, 'kısmi ödeme tutarı 0 değerinden büyük olmalı');
         }
         const aciklama = ko.var('aciklama') ? ko.metin('aciklama') : 'Kısmi ödeme';
-        return { tarih, tutar, aciklama };
+        const tahsilYeri = ko.var('tahsilYeri')
+          ? ko.secenek('tahsilYeri', ['vezne', 'haricen'] as const)
+          : undefined;
+        const tahsilHarciOrani = ko.var('tahsilHarciOrani')
+          ? ko.oran('tahsilHarciOrani', true)
+          : undefined;
+        const kesilenTahsilHarci = ko.var('kesilenTahsilHarci')
+          ? ko.tutar('kesilenTahsilHarci')
+          : undefined;
+
+        if (kesilenTahsilHarci !== undefined && kesilenTahsilHarci.gt(tutar)) {
+          alanHatasi(`${ko.yer}.kesilenTahsilHarci`, 'kesilen tahsil harcı ödeme tutarından büyük olamaz');
+        }
+        if (tahsilYeri === 'haricen') {
+          if (tahsilHarciOrani !== undefined) {
+            alanHatasi(
+              `${ko.yer}.tahsilHarciOrani`,
+              'tahsilYeri "haricen" iken tahsilHarciOrani verilemez',
+            );
+          }
+          if (kesilenTahsilHarci !== undefined) {
+            alanHatasi(
+              `${ko.yer}.kesilenTahsilHarci`,
+              'tahsilYeri "haricen" iken kesilenTahsilHarci verilemez',
+            );
+          }
+        }
+        if (tahsilHarciOrani !== undefined && kesilenTahsilHarci !== undefined) {
+          alanHatasi(
+            `${ko.yer}.kesilenTahsilHarci`,
+            'aynı ödemede tahsilHarciOrani ve kesilenTahsilHarci birlikte verilemez',
+          );
+        }
+
+        return {
+          tarih,
+          tutar,
+          aciklama,
+          ...(tahsilYeri !== undefined ? { tahsilYeri } : {}),
+          ...(tahsilHarciOrani !== undefined ? { tahsilHarciOrani } : {}),
+          ...(kesilenTahsilHarci !== undefined ? { kesilenTahsilHarci } : {}),
+        };
       })
     : [];
 

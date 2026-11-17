@@ -410,7 +410,7 @@ test('UDF raporu yeni kalem tercihlerini, 4857 s.K. m.34 faiz adini ve SGK/zaman
   }
 });
 
-test('ornek-icra.yaml ile uretilen UDF: ZIP, CRC32, 9 sutunlu TBK m.100 tablosu ve offset tutarliligi', () => {
+test('ornek-icra.yaml ile uretilen UDF: ZIP, CRC32, 12 sutunlu TBK m.100 tablosu ve offset tutarliligi', () => {
   const { girdi: g, ozet } = icraGirdiOku(join(import.meta.dirname, '..', 'ornekler', 'ornek-icra.yaml'));
   const s = icraHesapla(g, tablolariYukle());
   const bilgi = { uretimZamani: '17.11.2026 10:30', surum: 'mizan 0.2.0 (test)', girdiOzeti: ozet };
@@ -425,7 +425,9 @@ test('ornek-icra.yaml ile uretilen UDF: ZIP, CRC32, 9 sutunlu TBK m.100 tablosu 
     'Örnek İcra Dairesi 2026/1',
     '1. Kapak Hesabı Özeti',
     'Takip çıkışı toplamı (harç matrahı)',
+    'Ödemelerden kesilen tahsil harcı',
     'Borçlunun ödeyeceği kapak tutarı',
+    'Ödemelerden kesilen cezaevi harcı',
     'Alacaklıya net ödenecek tutar',
     '2. Takip Çıkışı, Masraflar ve Esaslar',
     'Takip Öncesi Kalemler',
@@ -433,6 +435,9 @@ test('ornek-icra.yaml ile uretilen UDF: ZIP, CRC32, 9 sutunlu TBK m.100 tablosu 
     '3. Harç Hesabı (492 s.K. ve 2548 s.K.)',
     '4. Takip Sonrası Faiz Hesabı',
     '5. TBK m.100 Kısmi Ödemelerin Mahsubu',
+    'Tahsil yeri',
+    'Harç kesintisi (TL)',
+    'Alacaklıya mahsup (TL)',
     '6. Hukuki Dayanaklar, Sınırlar ve Resmi Kaynaklar',
     '7. Hesap Kimliği',
     'mizan 0.2.0 (test)',
@@ -441,8 +446,8 @@ test('ornek-icra.yaml ile uretilen UDF: ZIP, CRC32, 9 sutunlu TBK m.100 tablosu 
   ]);
 
   assert.equal(dilimler[0], 'İCRA KAPAK HESABI RAPORU\n');
-  assert.match(elementsXml, /<table tableName="Sabit" columnCount="9" columnSpans="20,56,56,54,62,58,58,56,60"/);
-  assert.ok(xml.includes('columnCount="9"'));
+  assert.match(elementsXml, /<table tableName="Sabit" columnCount="12" columnSpans="16,46,34,44,40,44,40,46,42,42,42,44"/);
+  assert.ok(xml.includes('columnCount="12"'));
 
   const kapakOffset = havuz.indexOf('Borçlunun ödeyeceği kapak tutarı\t');
   assert.ok(kapakOffset > 0);

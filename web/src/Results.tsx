@@ -1,6 +1,10 @@
 import {
   ICRA_FAIZ_TURU_ADLARI,
+  ICRA_KISMI_ODEME_BASLIKLARI,
   ICRA_TAKIP_TURU_ADLARI,
+  icraHarcSatirlari,
+  icraKismiOdemeSatirlari,
+  icraOzetSatirlari,
   karsiTaraf,
   tarafAdi,
   tl,
@@ -318,33 +322,9 @@ export function AileSonuclar({ sonuc: s, tam = false }: { sonuc: AileHesapSonucu
 
 export function IcraSonuclar({ sonuc: s, tam = false }: { sonuc: IcraHesapSonucu; tam?: boolean }) {
   const h = s.harclar;
-  const ozetSatirlari: string[][] = [
-    ['Asıl alacak (anapara)', 'Takip çıkışı anapara', tl(s.asilAlacak)],
-    ["Takip öncesi fer'iler", 'TBK m.121/3 (faiz yürütülmez)', tl(s.takipOncesiToplam)],
-    ['Takip çıkışı toplamı (harç matrahı)', '492 s.K. m.20', tl(s.takipCikisToplami)],
-    ['Başvurma harcı', '492 s.K. (1) sayılı tarife B/I-1', tl(h.basvurmaHarci)],
-    ['Peşin harç', h.pesinHarc.isZero() ? 'Alınmadı (ilamlı / muaf)' : `492 s.K. m.29 (${yuzde(h.pesinHarcOrani)})`, tl(h.pesinHarc)],
-    [
-      'Bakiye tahsil harcı',
-      `492 s.K. B/I-3 (${yuzde(h.uygulananTahsilOrani)} tahsil harcından ${tl(h.mahsupEdilenPesinHarc)} TL peşin harç mahsubu)`,
-      tl(h.bakiyeTahsilHarci),
-    ],
-    ['İcra vekalet ücreti', 'AAÜT / İİK m.138', tl(s.vekaletUcreti)],
-    ['Takip masrafları toplamı', 'İİK m.59', tl(s.toplamMasraf)],
-    ['Takip sonrası işlemiş faiz', ICRA_FAIZ_TURU_ADLARI[s.girdi.takip.faiz.tur], tl(s.toplamTakipSonrasiFaiz)],
-    [
-      'Kısmi ödemeler toplamı (mahsup)',
-      '6098 s.K. TBK m.100',
-      s.toplamKismiOdeme.isZero() ? '0,00' : `-${tl(s.toplamKismiOdeme)}`,
-    ],
-    ['Borçlunun ödeyeceği kapak tutarı', 'Kalan anapara + faiz/gider + bakiye tahsil harcı', tl(s.borclununOdeyecegiKapakTutari)],
-    [
-      'Cezaevleri yapı harcı (alacaklıdan kesilen)',
-      `2548 s.K. m.1 (${yuzde(h.cezaeviHarciOrani)}; borçluya yüklenmez)`,
-      `-${tl(h.cezaeviHarci)}`,
-    ],
-    ['Alacaklıya net ödenecek tutar', 'Tahsil ve cezaevi harçları düşüldükten sonra net reddiyat', tl(s.alacakliyaNetOdenecekTutar)],
-  ];
+  const ozetSatirlari = icraOzetSatirlari(s);
+  const harcSatirlari = icraHarcSatirlari(s);
+  const kismiOdemeSatirlari = icraKismiOdemeSatirlari(s);
 
   return <>
     <div class="toplamlar">
@@ -373,6 +353,27 @@ export function IcraSonuclar({ sonuc: s, tam = false }: { sonuc: IcraHesapSonucu
             basliklar={['Kalem', 'Dayanak / Açıklama', 'Tutar (TL)']}
             satirlar={ozetSatirlari}
             aciklama="İcra kapak hesabı özeti"
+          />
+        </div>
+      </details>
+
+      <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary>
+          <span class="kalem-adi">Harç hesabı (492 s.K. ve 2548 s.K.)</span>
+          <span class="kalem-net">{tl(h.bakiyeTahsilHarci)} <small>TL bakiye tahsil</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Hesaplanan tahsil <b>{tl(h.hesaplananTahsilHarci)}</b></span>
+            {h.odemelerdenKesilenTahsilHarci.gt(0) && <span>Kesilen tahsil <b>{tl(h.odemelerdenKesilenTahsilHarci)}</b></span>}
+            <span>Bakiye cezaevi <b>{tl(h.cezaeviHarci)}</b></span>
+            {h.odemelerdenKesilenCezaeviHarci.gt(0) && <span>Kesilen cezaevi <b>{tl(h.odemelerdenKesilenCezaeviHarci)}</b></span>}
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={['Harç kalemi', 'Hukuki dayanak ve açıklama', 'Oran', 'Tutar (TL)']}
+            satirlar={harcSatirlari}
+            aciklama="Harç hesabı ve ödeme kesintileri"
           />
         </div>
       </details>
@@ -417,32 +418,15 @@ export function IcraSonuclar({ sonuc: s, tam = false }: { sonuc: IcraHesapSonucu
           <span class="kalem-net">-{tl(s.toplamKismiOdeme)} <small>TL</small></span>
           <span class="ac-isareti" aria-hidden="true">+</span>
           <span class="kalem-ozeti">
+            {h.odemelerdenKesilenTahsilHarci.gt(0) && <span>Harç kesintisi <b>{tl(h.odemelerdenKesilenTahsilHarci)}</b></span>}
             <span>Kalan asıl alacak <b>{tl(s.kalanAsilAlacak)}</b></span>
             <span>Kalan faiz/gider <b>{tl(s.kalanFaizVeGider)}</b></span>
           </span>
         </summary>
         <div class="kalem-detayi">
           <VeriTablosu
-            basliklar={[
-              '#',
-              'Tarih',
-              'Ödeme (TL)',
-              'Dönem faizi (TL)',
-              'Faiz/giderden düşülen (TL)',
-              'Anaparadan düşülen (TL)',
-              'Kalan faiz/gider (TL)',
-              'Kalan anapara (TL)',
-            ]}
-            satirlar={s.kismiOdemeAdimlari.map(a => [
-              String(a.sira),
-              trTarih(a.tarih),
-              tl(a.odemeTutari),
-              tl(a.donemFaizi.toplam),
-              tl(a.faizVeGiderdenMahsup),
-              tl(a.asilAlacaktanMahsup),
-              tl(a.kalanFaizVeGider),
-              tl(a.kalanAsilAlacak),
-            ])}
+            basliklar={ICRA_KISMI_ODEME_BASLIKLARI}
+            satirlar={kismiOdemeSatirlari}
             aciklama="TBK m.100 kısmi ödeme mahsup adımları"
           />
         </div>

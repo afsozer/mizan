@@ -305,10 +305,35 @@ export const ICRA_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
             liste: true,
             ...ops,
             yeni: { tarih: '', tutar: '' },
-            ipucu: 'Kısmi ödemeler önce ödeme tarihine kadar işlemiş faiz ve takip giderlerinden, artanı asıl alacaktan düşülür.',
+            ipucu: 'Vezne tahsilatlarından önce 492 s.K. tahsil harcı ayrıştırılır; alacaklıya mahsup edilen tutar önce faiz ve giderlerden, artanı asıl alacaktan düşülür.',
             alanlar: [
               tarih('tarih', 'Ödeme tarihi'),
               sayi('tutar', 'Ödeme tutarı (TL)'),
+              sec(
+                'tahsilYeri',
+                'Tahsil yeri',
+                [
+                  ['vezne', 'İcra veznesi (tahsil harcı ayrıştırılır)'],
+                  ['haricen', 'Haricen tahsil (harç kesintisi yok)'],
+                ],
+                {
+                  ...ops,
+                  varsayilan: 'İcra veznesi',
+                  dayanak: '492 s.K. m.28/1-b',
+                },
+              ),
+              sayi('tahsilHarciOrani', 'Ödeme aşamasına özgü tahsil harcı oranı (0 - 1)', {
+                ...ops,
+                gorunur: g => g.tahsilYeri !== 'haricen',
+                varsayilan: 'Dosyanın tahsil harcı oranı',
+                dayanak: '492 s.K. (1) sayılı tarife B/I-3 (makbuz kesintisi yoksa; örn. %4,55 için 0.0455)',
+              }),
+              sayi('kesilenTahsilHarci', 'Makbuzdaki gerçek tahsil harcı kesintisi (TL)', {
+                ...ops,
+                gorunur: g => g.tahsilYeri !== 'haricen',
+                varsayilan: 'Orana göre hesaplanır',
+                dayanak: '492 s.K. m.28/1-b, İİK m.15 (oranla birlikte verilmez)',
+              }),
               metin('aciklama', 'Açıklama', {
                 ...ops,
                 varsayilan: 'Kısmi ödeme',
