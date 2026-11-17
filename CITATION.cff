@@ -3,18 +3,27 @@ message: "Bu yazılımı kullanırsanız lütfen aşağıdaki künyeyle atıf ya
 type: software
 title: "mizan"
 abstract: >-
-  Calculation tool for Turkish employment receivables at the level of a court
-  expert report. For each item it produces a dated PDF report showing the
-  inputs, the formula, the statutory basis and the source of every official
-  table row used. Covers severance and notice pay (with periodic ceilings),
-  annual leave, overtime, weekly rest and public holiday pay, gross to net
-  conversion and interest. Legal choices are explicit parameters. Command line
-  tool and a serverless web interface sharing the same calculation core.
+  Calculation tool for Turkish legal claims at the level of a court expert
+  report, covering employment receivables, enforcement cover accounts, statutory
+  attorney fees and matrimonial property regime liquidation. For each item it
+  produces a dated PDF report (and UYAP .udf document format output for
+  employment claims) showing the inputs, the formula, the statutory basis and
+  the source of every official table row used. Phase 1 covers severance, notice
+  and bad-faith pay, reinstatement items (idle-period pay and non-reinstatement
+  compensation), annual leave (including pre-2003 Law No. 1475 tiers), unpaid
+  wages and bonuses, overtime, weekly rest, public holiday pay with calendar
+  derivation, 2026 9x social security ceiling, statute of limitations clipping,
+  gross-to-net conversion and interest. Phase 2 adds enforcement cover account,
+  3095 interest, Law No. 492 and Law No. 2548 fees and Turkish Code of
+  Obligations Art. 100 partial payment imputation; Minimum Attorney Fee Tariff
+  (AAUT, including 2026-2027); and liquidation of the participation in acquired
+  property regime under Turkish Civil Code Arts. 202-241. Legal choices are
+  explicit parameters, shared between the CLI and a serverless web interface.
 authors:
   - family-names: "Sözer"
     given-names: "Alpaslan Fatih"
-version: "0.1.1"
-date-released: "2026-10-23"
+version: "0.2.0"
+date-released: "2026-11-17"
 license: AGPL-3.0-only
 repository-code: "https://github.com/afsozer/mizan"
 doi: "10.5281/zenodo.23603691"
@@ -23,6 +32,10 @@ keywords:
   - employment-law
   - labour-receivables
   - severance-pay
+  - enforcement-law
+  - attorney-fee-tariff
+  - matrimonial-property-regime
+  - uyap-udf
   - court-expert-report
   - legal-calculation
   - bilirkisi
