@@ -460,3 +460,308 @@ test('makbuzda kesilenTahsilHarci kalan bakiye harcı aşarsa İİK m.15 uyarıs
   assert.equal(s.kalanAsilAlacak.toFixed(2), '1382.00');
   assert.equal(s.borclununOdeyecegiKapakTutari.toFixed(2), '1382.00');
 });
+
+test('alacakKalemleri ve faiz.baslangicTarihi şema geçerlilik denetimleri', () => {
+  assert.throws(
+    () =>
+      icraGirdiCoz({
+        alan: 'icra',
+        dosya: { mahkeme: 'Örnek İcra', esasNo: '2026/2', kaynak: 'test', altAlan: '60.05' },
+        hesapTarihi: '2026-05-01',
+        takip: {
+          takipTarihi: '2026-01-10',
+          takipTuru: 'ilamsiz',
+          asilAlacak: 1000,
+          alacakKalemleri: [
+            {
+              ad: 'Ana kalem',
+              tutar: 1000,
+              faiz: { tur: 'yasal', gerekce: 'yasal faiz' },
+            },
+          ],
+          tahsilHarciAsamasi: 'hacizden-once',
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.asilAlacak',
+  );
+
+  assert.throws(
+    () =>
+      icraGirdiCoz({
+        alan: 'icra',
+        dosya: { mahkeme: 'Örnek İcra', esasNo: '2026/2', kaynak: 'test', altAlan: '60.05' },
+        hesapTarihi: '2026-05-01',
+        takip: {
+          takipTarihi: '2026-01-10',
+          takipTuru: 'ilamsiz',
+          faiz: { tur: 'yasal', gerekce: 'yasal' },
+          alacakKalemleri: [
+            {
+              ad: 'Ana kalem',
+              tutar: 1000,
+              faiz: { tur: 'yasal', gerekce: 'yasal faiz' },
+            },
+          ],
+          tahsilHarciAsamasi: 'hacizden-once',
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.faiz',
+  );
+
+  assert.throws(
+    () =>
+      icraGirdiCoz({
+        alan: 'icra',
+        dosya: { mahkeme: 'Örnek İcra', esasNo: '2026/2', kaynak: 'test', altAlan: '60.05' },
+        hesapTarihi: '2026-05-01',
+        takip: {
+          takipTarihi: '2026-01-10',
+          takipTuru: 'ilamsiz',
+          alacakKalemleri: [],
+          tahsilHarciAsamasi: 'hacizden-once',
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.alacakKalemleri',
+  );
+
+  assert.throws(
+    () =>
+      icraGirdiCoz({
+        alan: 'icra',
+        dosya: { mahkeme: 'Örnek İcra', esasNo: '2026/2', kaynak: 'test', altAlan: '60.05' },
+        hesapTarihi: '2026-05-01',
+        takip: {
+          takipTarihi: '2026-01-10',
+          takipTuru: 'ilamli',
+          alacakKalemleri: [
+            {
+              ad: 'İlam kalemi',
+              tutar: 1000,
+              pesinHarcaTabiMi: true,
+              faiz: { tur: 'yasal', gerekce: 'yasal' },
+            },
+          ],
+          tahsilHarciAsamasi: 'hacizden-once',
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.alacakKalemleri[0].pesinHarcaTabiMi',
+  );
+
+  assert.throws(
+    () =>
+      icraGirdiCoz({
+        alan: 'icra',
+        dosya: { mahkeme: 'Örnek İcra', esasNo: '2026/2', kaynak: 'test', altAlan: '60.05' },
+        hesapTarihi: '2026-05-01',
+        takip: {
+          takipTarihi: '2026-01-10',
+          takipTuru: 'ilamsiz',
+          alacakKalemleri: [
+            {
+              ad: 'Farklı tarihli kalem',
+              tutar: 1000,
+              faizBaslangicTarihi: '2026-02-01',
+              faiz: { tur: 'yasal', baslangicTarihi: '2026-03-01', gerekce: 'yasal' },
+            },
+          ],
+          tahsilHarciAsamasi: 'hacizden-once',
+        },
+      }),
+    (err: unknown) => err instanceof GirdiHatasi && err.alanYolu === 'girdi.takip.alacakKalemleri[0].faiz.baslangicTarihi',
+  );
+});
+
+test('TTK m.1530/7 ticari temerrüt faizi 1 Ocak değişim kesitleriyle kuruşuna kadar hesaplanır', () => {
+  const tablolar = tablolariYukle();
+  const g = temelIcraGirdisi({
+    hesapTarihi: '2023-08-02',
+    takip: {
+      takipTarihi: '2020-12-30',
+      takipTuru: 'ilamsiz',
+      asilAlacak: 149924.51,
+      takipOncesiKalemler: [],
+      faiz: { tur: 'ttk1530', gerekce: '6102 s.K. TTK m.1530/7 mal ve hizmet tedarikinde temerrüt' },
+      pesinHarcAlindiMi: true,
+      tahsilHarciAsamasi: 'hacizden-once',
+      feragatVarMi: false,
+      vekaletUcreti: 17616.51,
+      masraflar: [{ tarih: '2020-12-30', tutar: 134.3, aciklama: 'Dosya masrafı' }],
+      kismiOdemeler: [],
+    },
+  });
+
+  const s = icraHesapla(g, tablolar);
+  assert.equal(s.faizDonemleri.length, 1);
+  assert.equal(s.faizDonemleri[0]!.kesitler.length, 4);
+  assert.deepEqual(
+    s.faizDonemleri[0]!.kesitler.map((k) => k.tutar.toFixed(2)),
+    ['61.61', '27361.22', '25861.98', '10328.36'],
+  );
+  // TCMB TTK m.1530/7 tebligleri 1 Ocak gecerlilik tarihli oldugundan 01.01 kesitleriyle 63.613,17 TL hesaplanir
+  assert.equal(s.toplamTakipSonrasiFaiz.toFixed(2), '63613.17');
+  assert.equal(s.harclar.pesinHarc.toFixed(2), '749.62');
+  assert.equal(s.harclar.bakiyeTahsilHarci.toFixed(2), '6071.95');
+  assert.equal(s.harclar.hesaplananTahsilHarci.toFixed(2), '6821.57');
+  assert.ok(s.dayanaklar.some((d) => d.includes('Türk Ticaret Kanunu m.1530/7')));
+});
+
+test('çoklu alacak kalemleri farklı faiz başlangıçları, faiz türleri ve peşin harç ayrımıyla hesaplanır', () => {
+  const tablolar = tablolariYukle();
+  const ortakVeri = (ekKalemPesin: boolean) =>
+    icraGirdiCoz({
+      alan: 'icra',
+      dosya: { mahkeme: 'Örnek İcra Dairesi', esasNo: '2026/10', kaynak: 'test', altAlan: '60.05' },
+      hesapTarihi: '2023-05-02',
+      parametreler: { faizGunEsasi: 365 },
+      takip: {
+        takipTarihi: '2021-12-29',
+        takipTuru: 'ilamsiz',
+        pesinHarcAlindiMi: true,
+        tahsilHarciAsamasi: 'satistan-once',
+        feragatVarMi: false,
+        vekaletUcreti: 44341.09,
+        alacakKalemleri: [
+          {
+            ad: 'Asıl fatura alacağı',
+            tutar: 215337.37,
+            faizBaslangicTarihi: '2021-12-29',
+            pesinHarcaTabiMi: true,
+            faiz: { tur: 'ttk1530', gerekce: 'TTK m.1530/7 ticari temerrüt faizi' },
+          },
+          {
+            ad: 'İcra inkar tazminatı',
+            tutar: 43067.47,
+            faizBaslangicTarihi: '2023-03-31',
+            pesinHarcaTabiMi: ekKalemPesin,
+            faiz: { tur: 'yasal', gerekce: 'İlam tarihinden itibaren yasal faiz' },
+          },
+          {
+            ad: 'İlam vekalet ücreti',
+            tutar: 33147.23,
+            faizBaslangicTarihi: '2023-03-31',
+            pesinHarcaTabiMi: ekKalemPesin,
+            faiz: { tur: 'yasal', gerekce: 'İlam tarihinden itibaren yasal faiz' },
+          },
+          {
+            ad: 'Yargılama giderleri',
+            tutar: 3741.44,
+            faizBaslangicTarihi: '2023-03-31',
+            pesinHarcaTabiMi: ekKalemPesin,
+            faiz: { tur: 'yasal', gerekce: 'İlam tarihinden itibaren yasal faiz' },
+          },
+        ],
+      },
+    });
+
+  const sTamPesin = icraHesapla(ortakVeri(true), tablolar);
+  assert.equal(sTamPesin.asilAlacak.toFixed(2), '295293.51');
+  assert.equal(sTamPesin.alacakKalemleri.length, 4);
+  assert.equal(sTamPesin.alacakKalemleri[0]!.islenenFaiz.toFixed(2), '45818.19');
+  assert.equal(
+    sTamPesin.alacakKalemleri[1]!.islenenFaiz
+      .plus(sTamPesin.alacakKalemleri[2]!.islenenFaiz)
+      .plus(sTamPesin.alacakKalemleri[3]!.islenenFaiz)
+      .toFixed(2),
+    '630.89',
+  );
+  assert.equal(sTamPesin.toplamTakipSonrasiFaiz.toFixed(2), '46449.08');
+  assert.equal(sTamPesin.harclar.pesinHarc.toFixed(2), '1476.47');
+
+  const sKismiPesin = icraHesapla(ortakVeri(false), tablolar);
+  assert.equal(sKismiPesin.toplamTakipSonrasiFaiz.toFixed(2), '46449.08');
+  // Yalnız 1. kalem (215.337,37 TL) peşin harca tabi -> binde 5 = 1.076,69 TL
+  assert.equal(sKismiPesin.harclar.pesinHarc.toFixed(2), '1076.69');
+  assert.equal(sKismiPesin.harclar.hesaplananTahsilHarci.toFixed(2), '26871.71');
+  assert.equal(sKismiPesin.harclar.bakiyeTahsilHarci.toFixed(2), '25795.02');
+});
+
+test('çoklu kalemde TBK m.102 kısmi ödeme mahsubu: sira, yuksek-faiz, orantili ve muacceliyet', () => {
+  const tablolar = tablolariYukle();
+  const senaryoKur = (kalemMahsupSirasi: 'sira' | 'yuksek-faiz' | 'orantili') =>
+    icraHesapla(
+      icraGirdiCoz({
+        alan: 'icra',
+        dosya: { mahkeme: 'Örnek İcra', esasNo: '2025/99', kaynak: 'test', altAlan: '60.05' },
+        hesapTarihi: '2025-07-01',
+        parametreler: { kalemMahsupSirasi },
+        takip: {
+          takipTarihi: '2025-01-01',
+          takipTuru: 'ilamli',
+          tahsilHarciAsamasi: 'hacizden-once',
+          vekaletUcreti: 0,
+          alacakKalemleri: [
+            {
+              ad: 'Yasal faizli kalem',
+              tutar: 100000,
+              faizBaslangicTarihi: '2025-01-01',
+              faiz: { tur: 'yasal', gerekce: 'yasal %24' },
+            },
+            {
+              ad: 'TTK 1530 kalemi',
+              tutar: 50000,
+              faizBaslangicTarihi: '2025-01-01',
+              faiz: { tur: 'ttk1530', gerekce: 'TTK 1530 %53,25' },
+            },
+            {
+              ad: 'İleri vadeli kalem',
+              tutar: 30000,
+              faizBaslangicTarihi: '2025-06-01',
+              faiz: { tur: 'sozlesme', sozlesmeOrani: 0.6, gerekce: 'akdi %60' },
+            },
+          ],
+          kismiOdemeler: [
+            // 2025 başvurma harcı (615,40 TL) + 90.000,00 TL anapara mahsubu
+            { tarih: '2025-01-01', tutar: 90615.4, tahsilYeri: 'haricen', aciklama: 'Haricen kısmi tahsilat' },
+          ],
+        },
+      }),
+      tablolar,
+    );
+
+  const sSira = senaryoKur('sira');
+  assert.deepEqual(
+    sSira.alacakKalemleri.map((k) => k.kalanAnapara.toFixed(2)),
+    ['10000.00', '50000.00', '30000.00'],
+  );
+
+  const sYuksek = senaryoKur('yuksek-faiz');
+  assert.deepEqual(
+    sYuksek.alacakKalemleri.map((k) => k.kalanAnapara.toFixed(2)),
+    ['60000.00', '0.00', '30000.00'],
+  );
+
+  const sOrantili = senaryoKur('orantili');
+  assert.deepEqual(
+    sOrantili.alacakKalemleri.map((k) => k.kalanAnapara.toFixed(2)),
+    ['40000.00', '20000.00', '30000.00'],
+  );
+
+  // Eşit 3 kalemde kuruş yuvarlamalı orantılı dağıtım (10.000 TL dağıtım -> 3.333,33 + 3.333,33 + 3.333,34)
+  const sYuvarlama = icraHesapla(
+    icraGirdiCoz({
+      alan: 'icra',
+      dosya: { mahkeme: 'Örnek İcra', esasNo: '2025/100', kaynak: 'test', altAlan: '60.05' },
+      hesapTarihi: '2025-01-01',
+      parametreler: { kalemMahsupSirasi: 'orantili' },
+      takip: {
+        takipTarihi: '2025-01-01',
+        takipTuru: 'ilamli',
+        tahsilHarciAsamasi: 'hacizden-once',
+        alacakKalemleri: [
+          { ad: 'A', tutar: 10000, faiz: { tur: 'yasal', gerekce: 'yasal' } },
+          { ad: 'B', tutar: 10000, faiz: { tur: 'yasal', gerekce: 'yasal' } },
+          { ad: 'C', tutar: 10000, faiz: { tur: 'yasal', gerekce: 'yasal' } },
+        ],
+        kismiOdemeler: [
+          { tarih: '2025-01-01', tutar: 10615.4, tahsilYeri: 'haricen', aciklama: 'Orantılı test' },
+        ],
+      },
+    }),
+    tablolar,
+  );
+  assert.deepEqual(
+    sYuvarlama.alacakKalemleri.map((k) => k.mahsupEdilenAnapara.toFixed(2)),
+    ['3333.33', '3333.33', '3333.34'],
+  );
+  assert.equal(sYuvarlama.kalanAsilAlacak.toFixed(2), '20000.00');
+});

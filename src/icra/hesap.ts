@@ -1,13 +1,16 @@
 // İcra kapak hesabı, takip sonrası faiz, 492 s.K. harçları, 2548 s.K. cezaevi harcı
 // ve 6098 s.K. TBK m.100 kısmi ödeme mahsubu motoru (Faz 2).
-import { d, Decimal, kurus, tl, topla } from '../para.ts';
+import { d, Decimal, kurus, tl, topla, yuzde } from '../para.ts';
 import { KaynakKaydi, type KaynakSatiri, type Tablolar } from '../tablolar.ts';
-import { dahilGun, gunEkle, gunFarki, karsilastir, trTarih } from '../tarih.ts';
+import { enBuyuk, dahilGun, gunEkle, gunFarki, karsilastir, trTarih } from '../tarih.ts';
 import type {
+  IcraAlacakKalemi,
+  IcraFaizGirdisi,
   IcraFaizTuru,
   IcraGirdisi,
   IcraMasrafi,
   IcraTakipTuru,
+  KalemMahsupSirasi,
   TahsilHarciAsamasi,
   TahsilYeri,
   TakipOncesiKalem,
@@ -63,6 +66,7 @@ export interface KismiOdemeAdimi {
   alacakliyaMahsupEdilen: Decimal;
   oncekiAsilAlacak: Decimal;
   donemFaizi: IcraFaizDonemi;
+  donemFaizleri: IcraFaizDonemi[];
   donemMasrafi: Decimal;
   mahsupOncesiFaizVeGider: Decimal;
   faizVeGiderdenMahsup: Decimal;
@@ -71,11 +75,26 @@ export interface KismiOdemeAdimi {
   kalanAsilAlacak: Decimal;
 }
 
+export interface IcraAlacakKalemiSonucu {
+  sira: number;
+  ad: string;
+  aciklama?: string;
+  tutar: Decimal;
+  faizBaslangicTarihi: string;
+  pesinHarcaTabiMi: boolean;
+  faiz: IcraFaizGirdisi;
+  islenenFaiz: Decimal;
+  mahsupEdilenAnapara: Decimal;
+  kalanAnapara: Decimal;
+}
+
 export interface IcraHesapSonucu {
   alan: 'icra';
   girdi: IcraGirdisi;
   takipTuru: IcraTakipTuru;
   asilAlacak: Decimal;
+  alacakKalemleri: IcraAlacakKalemiSonucu[];
+  kalemMahsupSirasi: KalemMahsupSirasi;
   takipOncesiKalemler: TakipOncesiKalem[];
   takipOncesiToplam: Decimal;
   takipCikisToplami: Decimal;
@@ -116,8 +135,26 @@ export const ICRA_FAIZ_TURU_ADLARI: Record<IcraFaizTuru, string> = {
   yasal: 'Yasal faiz (3095 s.K. m.1)',
   avans: 'Ticari temerrüt / avans faizi (3095 s.K. m.2/2)',
   reeskont: 'Reeskont iskonto faizi (3095 s.K. m.2/1)',
+  ttk1530: 'Ticari temerrüt faizi (TTK m.1530/7)',
   sozlesme: 'Sözleşme / ilam faizi',
 };
+
+export const KALEM_MAHSUP_SIRA_ADLARI: Record<KalemMahsupSirasi, string> = {
+  sira: 'Kalem sırasına göre (TBK m.102/1)',
+  orantili: 'Kalan anaparalarla orantılı (TBK m.102/2)',
+  'yuksek-faiz': 'Yüksek faiz oranlı kalemden başlayarak',
+};
+
+export function icraFaizOzetiMetni(sonuc: Pick<IcraHesapSonucu, 'alacakKalemleri'>): string {
+  const tek = sonuc.alacakKalemleri[0];
+  if (!tek) return '-';
+  if (sonuc.alacakKalemleri.length === 1) {
+    const baz = ICRA_FAIZ_TURU_ADLARI[tek.faiz.tur];
+    return tek.faiz.sozlesmeOrani ? `${baz} (${yuzde(tek.faiz.sozlesmeOrani)})` : baz;
+  }
+  const turler = [...new Set(sonuc.alacakKalemleri.map((k) => ICRA_FAIZ_TURU_ADLARI[k.faiz.tur]))];
+  return `${sonuc.alacakKalemleri.length} kalem (${turler.join(' · ')})`;
+}
 
 /**
  * Belirli bir (baslangic, bitis] aralığında anapara üzerinden basit faiz hesaplar.
@@ -142,6 +179,11 @@ export function icraDonemFaiziHesapla(
       throw new Error('Avans veya reeskont faizi hesabı için avans-reeskont-faizi.json tablosu gereklidir');
     }
     tabloAdi = t.avansReeskontFaizi.ad;
+  } else if (tur === 'ttk1530') {
+    if (!t.ttk1530Faizi) {
+      throw new Error('TTK m.1530 temerrüt faizi hesabı için ttk-1530-faizi.json tablosu gereklidir');
+    }
+    tabloAdi = t.ttk1530Faizi.ad;
   }
 
   const sonuc: IcraFaizDonemi = {
@@ -180,6 +222,14 @@ export function icraDonemFaiziHesapla(
       const tutar = kurus(matrah.times(oran).times(gun).div(gunEsasi));
       sonuc.kesitler.push({ baslangic: k.baslangic, bitis: k.bitis, gun, oran, tutar });
     }
+  } else if (tur === 'ttk1530') {
+    const tablo = t.ttk1530Faizi!;
+    for (const k of tablo.kesitler(gunEkle(baslangic, 1), bitis, kayit)) {
+      const gun = dahilGun(k.baslangic, k.bitis);
+      const oran = d(k.satir.oran);
+      const tutar = kurus(matrah.times(oran).times(gun).div(gunEsasi));
+      sonuc.kesitler.push({ baslangic: k.baslangic, bitis: k.bitis, gun, oran, tutar });
+    }
   } else {
     const tablo = t.avansReeskontFaizi!;
     for (const k of tablo.kesitler(gunEkle(baslangic, 1), bitis, kayit)) {
@@ -194,6 +244,114 @@ export function icraDonemFaiziHesapla(
   return sonuc;
 }
 
+function kalemYillikOrani(t: Tablolar, faiz: IcraFaizGirdisi, tarih: string): Decimal {
+  switch (faiz.tur) {
+    case 'sozlesme':
+      return faiz.sozlesmeOrani ?? d(0);
+    case 'yasal':
+      return d(t.yasalFaiz.bul(tarih).oran);
+    case 'avans':
+      if (!t.avansReeskontFaizi) throw new Error('Avans faizi için avans-reeskont-faizi.json gereklidir');
+      return d(t.avansReeskontFaizi.bul(tarih).avansOrani);
+    case 'reeskont':
+      if (!t.avansReeskontFaizi) throw new Error('Reeskont faizi için avans-reeskont-faizi.json gereklidir');
+      return d(t.avansReeskontFaizi.bul(tarih).reeskontOrani);
+    case 'ttk1530':
+      if (!t.ttk1530Faizi) throw new Error('TTK m.1530 faizi için ttk-1530-faizi.json gereklidir');
+      return d(t.ttk1530Faizi.bul(tarih).oran);
+  }
+}
+
+function anaparaKalemlerindenMahsupEt(
+  t: Tablolar,
+  kalemler: IcraAlacakKalemi[],
+  kalanKalemAnapara: Decimal[],
+  kalemMahsupAnapara: Decimal[],
+  odemeTarihi: string,
+  artanOdeme: Decimal,
+  siraYontemi: KalemMahsupSirasi,
+): Decimal {
+  if (artanOdeme.lte(0)) return d(0);
+  let kalanArtan = artanOdeme;
+  let toplamMahsup = d(0);
+
+  const gruplar = [
+    kalemler.map((_, idx) => idx).filter((i) => karsilastir(kalemler[i]!.faizBaslangicTarihi, odemeTarihi) <= 0),
+    kalemler.map((_, idx) => idx).filter((i) => karsilastir(kalemler[i]!.faizBaslangicTarihi, odemeTarihi) > 0),
+  ];
+
+  for (const grup of gruplar) {
+    if (kalanArtan.lte(0)) break;
+    const aktifler = grup.filter((i) => kalanKalemAnapara[i]!.gt(0));
+    if (aktifler.length === 0) continue;
+
+    if (siraYontemi === 'orantili') {
+      const grupToplam = topla(aktifler.map((i) => kalanKalemAnapara[i]!));
+      const hedef = Decimal.min(kalanArtan, grupToplam);
+      if (hedef.eq(grupToplam)) {
+        for (const i of aktifler) {
+          const dusulen = kalanKalemAnapara[i]!;
+          kalemMahsupAnapara[i] = kalemMahsupAnapara[i]!.plus(dusulen);
+          kalanKalemAnapara[i] = d(0);
+          kalanArtan = kalanArtan.minus(dusulen);
+          toplamMahsup = toplamMahsup.plus(dusulen);
+        }
+        continue;
+      }
+      let dagitilan = d(0);
+      for (const [poz, i] of aktifler.entries()) {
+        const kalanKalem = kalanKalemAnapara[i]!;
+        const hamPay =
+          poz === aktifler.length - 1
+            ? hedef.minus(dagitilan)
+            : kurus(hedef.times(kalanKalem).div(grupToplam));
+        const dusulen = Decimal.min(kalanKalem, hedef.minus(dagitilan), hamPay);
+        kalemMahsupAnapara[i] = kalemMahsupAnapara[i]!.plus(dusulen);
+        kalanKalemAnapara[i] = kalanKalem.minus(dusulen);
+        dagitilan = dagitilan.plus(dusulen);
+      }
+      if (dagitilan.lt(hedef)) {
+        for (const i of aktifler) {
+          const fark = hedef.minus(dagitilan);
+          if (fark.lte(0)) break;
+          const ek = Decimal.min(kalanKalemAnapara[i]!, fark);
+          if (ek.gt(0)) {
+            kalemMahsupAnapara[i] = kalemMahsupAnapara[i]!.plus(ek);
+            kalanKalemAnapara[i] = kalanKalemAnapara[i]!.minus(ek);
+            dagitilan = dagitilan.plus(ek);
+          }
+        }
+      }
+      kalanArtan = kalanArtan.minus(dagitilan);
+      toplamMahsup = toplamMahsup.plus(dagitilan);
+      continue;
+    }
+
+    const sirali =
+      siraYontemi === 'yuksek-faiz'
+        ? [...aktifler].sort((a, b) => {
+            const fark = kalemYillikOrani(t, kalemler[b]!.faiz, odemeTarihi).cmp(
+              kalemYillikOrani(t, kalemler[a]!.faiz, odemeTarihi),
+            );
+            return fark !== 0 ? fark : a - b;
+          })
+        : aktifler;
+
+    for (const i of sirali) {
+      if (kalanArtan.lte(0)) break;
+      const dusulen = Decimal.min(kalanArtan, kalanKalemAnapara[i]!);
+      if (dusulen.gt(0)) {
+        kalemMahsupAnapara[i] = kalemMahsupAnapara[i]!.plus(dusulen);
+        kalanKalemAnapara[i] = kalanKalemAnapara[i]!.minus(dusulen);
+        kalanArtan = kalanArtan.minus(dusulen);
+        toplamMahsup = toplamMahsup.plus(dusulen);
+      }
+    }
+  }
+
+  return toplamMahsup;
+}
+
 export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   if (!t.icraHarclari) {
     throw new Error('İcra kapak hesabı için icra-harclari.json tablosu gereklidir');
@@ -201,8 +359,10 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   const kaynaklar = new KaynakKaydi();
   const gunEsasi = g.parametreler?.faizGunEsasi ?? d(365);
   const { takip } = g;
+  const kalemler = takip.alacakKalemleri;
+  const kalemMahsupSirasi: KalemMahsupSirasi = g.parametreler?.kalemMahsupSirasi ?? 'sira';
 
-  const asilAlacak = takip.asilAlacak;
+  const asilAlacak = topla(kalemler.map((k) => k.tutar));
   const takipOncesiToplam = topla(takip.takipOncesiKalemler.map((k) => k.tutar));
   const takipCikisToplami = asilAlacak.plus(takipOncesiToplam);
 
@@ -213,8 +373,11 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   const hesapTarihiHarcSatiri = t.icraHarclari.bul(g.hesapTarihi, kaynaklar);
 
   const basvurmaHarci = kurus(d(takipTarihiHarcSatiri.basvurmaHarci));
-  const pesinHarcOrani = takip.pesinHarcAlindiMi ? d(takipTarihiHarcSatiri.pesinHarcOrani) : d(0);
-  const pesinHarc = takip.pesinHarcAlindiMi ? kurus(harcMatrahi.times(pesinHarcOrani)) : d(0);
+  const pesinHarcMatrahi = topla(kalemler.filter((k) => k.pesinHarcaTabiMi).map((k) => k.tutar)).plus(
+    takip.pesinHarcAlindiMi ? takipOncesiToplam : d(0),
+  );
+  const pesinHarcOrani = pesinHarcMatrahi.gt(0) ? d(takipTarihiHarcSatiri.pesinHarcOrani) : d(0);
+  const pesinHarc = pesinHarcMatrahi.gt(0) ? kurus(pesinHarcMatrahi.times(pesinHarcOrani)) : d(0);
 
   let bazTahsilOrani: Decimal;
   switch (takip.tahsilHarciAsamasi) {
@@ -269,6 +432,11 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   // TBK m.100 ve m.121/3: Takip sonrası faiz yalnız kalan asıl alacak üzerinden yürütülür.
   // Faiz üretmeyen alacak havuzu: takip öncesi fer'iler + başvurma harcı + mahsup edilen peşin harç + vekalet ücreti + masraflar + işlemiş faiz.
   // (492 s.K. m.29 ve m.31 gereği tahsil harcından mahsup edilemeyen peşin harç Hazinece alacaklıya iadeye tabidir, borçluya yüklenmez.)
+  const kalanKalemAnapara = kalemler.map((k) => k.tutar);
+  const kalemOncekiTarih = kalemler.map((k) => k.faizBaslangicTarihi);
+  const kalemIslenenFaiz = kalemler.map(() => d(0));
+  const kalemMahsupAnapara = kalemler.map(() => d(0));
+
   let kalanAsilAlacak = asilAlacak;
   let devredenFaizVeGider = takipOncesiToplam
     .plus(basvurmaHarci)
@@ -281,7 +449,6 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   let kesilenTahsilHarciToplami = d(0);
   let kesilenCezaeviHarciToplami = d(0);
 
-  let oncekiTarih = takip.takipTarihi;
   let masrafIndeksi = 0;
 
   const masraflariTopla = (ustTarih: string): Decimal => {
@@ -304,24 +471,64 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
   siraliOdemeler.forEach((odeme, idx) => {
     const sira = idx + 1;
     const oncekiAsilAlacak = kalanAsilAlacak;
-    const donemFaizi = icraDonemFaiziHesapla(
-      t,
-      takip.faiz.tur,
-      takip.faiz.sozlesmeOrani,
-      kalanAsilAlacak,
-      oncekiTarih,
-      odeme.tarih,
-      gunEsasi,
-      takip.faiz.gerekce,
-      `${sira}. kısmi ödeme öncesi dönem (${oncekiTarih} - ${odeme.tarih})`,
-      kaynaklar,
-    );
-    if (donemFaizi.kesitler.length > 0) {
-      faizDonemleri.push(donemFaizi);
+    const adimDonemFaizleri: IcraFaizDonemi[] = [];
+
+    for (let i = 0; i < kalemler.length; i++) {
+      const kalem = kalemler[i]!;
+      const kalemBas = kalemOncekiTarih[i]!;
+      if (kalanKalemAnapara[i]!.gt(0) && karsilastir(kalemBas, odeme.tarih) < 0) {
+        const temelAciklama = `${sira}. kısmi ödeme öncesi dönem (${kalemBas} - ${odeme.tarih})`;
+        const kalemDonemFaizi = icraDonemFaiziHesapla(
+          t,
+          kalem.faiz.tur,
+          kalem.faiz.sozlesmeOrani,
+          kalanKalemAnapara[i]!,
+          kalemBas,
+          odeme.tarih,
+          gunEsasi,
+          kalem.faiz.gerekce,
+          kalemler.length > 1 ? `${kalem.ad} · ${temelAciklama}` : temelAciklama,
+          kaynaklar,
+        );
+        if (kalemDonemFaizi.kesitler.length > 0) {
+          faizDonemleri.push(kalemDonemFaizi);
+          adimDonemFaizleri.push(kalemDonemFaizi);
+          kalemIslenenFaiz[i] = kalemIslenenFaiz[i]!.plus(kalemDonemFaizi.toplam);
+        }
+      }
+      kalemOncekiTarih[i] = enBuyuk(kalemBas, odeme.tarih);
     }
 
+    const donemFaizToplami = topla(adimDonemFaizleri.map((fd) => fd.toplam));
+    const donemFaizi: IcraFaizDonemi =
+      adimDonemFaizleri.length === 1
+        ? adimDonemFaizleri[0]!
+        : adimDonemFaizleri.length === 0
+          ? {
+              aciklama: `${sira}. kısmi ödeme öncesi dönem (${kalemOncekiTarih[0]!} - ${odeme.tarih})`,
+              tur: kalemler[0]!.faiz.tur,
+              tabloAdi: '-',
+              matrah: oncekiAsilAlacak,
+              baslangic: kalemOncekiTarih[0]!,
+              bitis: odeme.tarih,
+              gerekce: kalemler[0]!.faiz.gerekce,
+              kesitler: [],
+              toplam: d(0),
+            }
+          : {
+              aciklama: `${sira}. kısmi ödeme öncesi toplam faiz`,
+              tur: kalemler[0]!.faiz.tur,
+              tabloAdi: [...new Set(adimDonemFaizleri.map((x) => x.tabloAdi))].join(' · '),
+              matrah: oncekiAsilAlacak,
+              baslangic: adimDonemFaizleri[0]!.baslangic,
+              bitis: odeme.tarih,
+              gerekce: [...new Set(adimDonemFaizleri.map((x) => x.gerekce))].join(' · '),
+              kesitler: adimDonemFaizleri.flatMap((x) => x.kesitler),
+              toplam: donemFaizToplami,
+            };
+
     const donemMasrafi = masraflariTopla(odeme.tarih);
-    const mahsupOncesiFaizVeGider = devredenFaizVeGider.plus(donemFaizi.toplam).plus(donemMasrafi);
+    const mahsupOncesiFaizVeGider = devredenFaizVeGider.plus(donemFaizToplami).plus(donemMasrafi);
 
     const yer: TahsilYeri = odeme.tahsilYeri ?? 'vezne';
     let odemedenKesilenTahsilHarci = d(0);
@@ -352,7 +559,15 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
     const kalanFaizVeGider = mahsupOncesiFaizVeGider.minus(faizVeGiderdenMahsup);
 
     const artanOdeme = alacakliyaMahsupEdilen.minus(faizVeGiderdenMahsup);
-    const asilAlacaktanMahsup = Decimal.min(artanOdeme, kalanAsilAlacak);
+    const asilAlacaktanMahsup = anaparaKalemlerindenMahsupEt(
+      t,
+      kalemler,
+      kalanKalemAnapara,
+      kalemMahsupAnapara,
+      odeme.tarih,
+      artanOdeme,
+      kalemMahsupSirasi,
+    );
     const fazlaOdeme = artanOdeme.minus(asilAlacaktanMahsup);
     if (fazlaOdeme.gt(0)) {
       fazlaOdemeUyarilari.push(
@@ -367,9 +582,8 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
       kesilenCezaeviHarciToplami = kesilenCezaeviHarciToplami.plus(kesilenCezaeviHarci);
     }
 
-    kalanAsilAlacak = kalanAsilAlacak.minus(asilAlacaktanMahsup);
+    kalanAsilAlacak = topla(kalanKalemAnapara);
     devredenFaizVeGider = kalanFaizVeGider;
-    oncekiTarih = odeme.tarih;
 
     kismiOdemeAdimlari.push({
       sira,
@@ -381,6 +595,7 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
       alacakliyaMahsupEdilen,
       oncekiAsilAlacak,
       donemFaizi,
+      donemFaizleri: adimDonemFaizleri,
       donemMasrafi,
       mahsupOncesiFaizVeGider,
       faizVeGiderdenMahsup,
@@ -390,30 +605,58 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
     });
   });
 
-  const sonDonemEtiketi =
-    siraliOdemeler.length > 0
-      ? `Son kısmi ödemeden hesap tarihine (${oncekiTarih} - ${g.hesapTarihi})`
-      : `Takip tarihinden hesap tarihine (${oncekiTarih} - ${g.hesapTarihi})`;
+  const sonOdemeTarihi = siraliOdemeler.length > 0 ? siraliOdemeler[siraliOdemeler.length - 1]!.tarih : undefined;
+  const sonDonemFaizleri: IcraFaizDonemi[] = [];
+  for (let i = 0; i < kalemler.length; i++) {
+    const kalem = kalemler[i]!;
+    const bas = kalemOncekiTarih[i]!;
+    const temelEtiket =
+      sonOdemeTarihi && karsilastir(kalem.faizBaslangicTarihi, sonOdemeTarihi) <= 0
+        ? `Son kısmi ödemeden hesap tarihine (${bas} - ${g.hesapTarihi})`
+        : kalemler.length > 1 && kalem.faizBaslangicTarihi !== takip.takipTarihi
+          ? `Faiz başlangıcından hesap tarihine (${bas} - ${g.hesapTarihi})`
+          : `Takip tarihinden hesap tarihine (${bas} - ${g.hesapTarihi})`;
+    const sonDonemEtiketi = kalemler.length > 1 ? `${kalem.ad} · ${temelEtiket}` : temelEtiket;
 
-  const sonDonemFaizi = icraDonemFaiziHesapla(
-    t,
-    takip.faiz.tur,
-    takip.faiz.sozlesmeOrani,
-    kalanAsilAlacak,
-    oncekiTarih,
-    g.hesapTarihi,
-    gunEsasi,
-    takip.faiz.gerekce,
-    sonDonemEtiketi,
-    kaynaklar,
-  );
-  if (sonDonemFaizi.kesitler.length > 0 || faizDonemleri.length === 0) {
-    faizDonemleri.push(sonDonemFaizi);
+    const kalemSonFaizi = icraDonemFaiziHesapla(
+      t,
+      kalem.faiz.tur,
+      kalem.faiz.sozlesmeOrani,
+      kalanKalemAnapara[i]!,
+      bas,
+      g.hesapTarihi,
+      gunEsasi,
+      kalem.faiz.gerekce,
+      sonDonemEtiketi,
+      kaynaklar,
+    );
+    sonDonemFaizleri.push(kalemSonFaizi);
+    kalemIslenenFaiz[i] = kalemIslenenFaiz[i]!.plus(kalemSonFaizi.toplam);
+    if (kalemSonFaizi.kesitler.length > 0) {
+      faizDonemleri.push(kalemSonFaizi);
+    }
+  }
+  if (faizDonemleri.length === 0 && sonDonemFaizleri.length > 0) {
+    faizDonemleri.push(sonDonemFaizleri[0]!);
   }
 
+  const sonDonemFaizToplami = topla(sonDonemFaizleri.map((fd) => fd.toplam));
   const kalanMasraf = masraflariTopla(g.hesapTarihi);
-  const kalanFaizVeGider = devredenFaizVeGider.plus(sonDonemFaizi.toplam).plus(kalanMasraf);
+  const kalanFaizVeGider = devredenFaizVeGider.plus(sonDonemFaizToplami).plus(kalanMasraf);
   const toplamTakipSonrasiFaiz = topla(faizDonemleri.map((fd) => fd.toplam));
+
+  const alacakKalemleri: IcraAlacakKalemiSonucu[] = kalemler.map((kalem, i) => ({
+    sira: i + 1,
+    ad: kalem.ad,
+    ...(kalem.aciklama !== undefined ? { aciklama: kalem.aciklama } : {}),
+    tutar: kalem.tutar,
+    faizBaslangicTarihi: kalem.faizBaslangicTarihi,
+    pesinHarcaTabiMi: kalem.pesinHarcaTabiMi,
+    faiz: kalem.faiz,
+    islenenFaiz: kalemIslenenFaiz[i]!,
+    mahsupEdilenAnapara: kalemMahsupAnapara[i]!,
+    kalanAnapara: kalanKalemAnapara[i]!,
+  }));
 
   const harclar: IcraHarclariSonucu = {
     harcMatrahi,
@@ -445,6 +688,17 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
     '6098 s.K. Türk Borçlar Kanunu m.100 (kısmi ödemelerin öncelikle işlemiş faiz ve giderlerden, artanının asıl alacaktan mahsubu) ve m.121/3 (işlemiş faize faiz yürütülememesi / bileşik faiz yasağı)',
     '3095 s.K. Kanuni Faiz ve Temerrüt Faizine İlişkin Kanun m.1, m.2 ve m.3 (yasal faiz, reeskont ve ticari temerrüt/avans faizi oranları)',
   ];
+  const faizTurleri = new Set(kalemler.map((k) => k.faiz.tur));
+  if (faizTurleri.has('ttk1530')) {
+    dayanaklar.push(
+      '6102 s.K. Türk Ticaret Kanunu m.1530/7 (mal ve hizmet tedarikinde geç ödemelerde TCMB temerrüt faizi oranı ve asgari giderim tutarı)',
+    );
+  }
+  if (kalemler.length > 1 && siraliOdemeler.length > 0) {
+    dayanaklar.push(
+      `6098 s.K. TBK m.101-102 ve Yargıtay 6. HD 28.03.2022, 2021/2673 E., 2022/1670 K. (birden çok borç kaleminde anapara mahsup sırası: ${KALEM_MAHSUP_SIRA_ADLARI[kalemMahsupSirasi]})`,
+    );
+  }
   if (siraliOdemeler.length > 0) {
     dayanaklar.push(
       'İİK m.15 ve Yargıtay 12. HD 11.05.2023, 2022/10807 E., 2023/3309 K. (vezne tahsilatlarında tahsil harcının ödenen paradan ayrıştırılması, kalan tutarın alacaklı alacağına mahsubu)',
@@ -475,17 +729,25 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
       ozet: t.icraHarclari.ozet || '-',
     },
   ];
-  if (takip.faiz.tur === 'yasal') {
+  if (faizTurleri.has('yasal')) {
     tabloOzetleri.push({
       ad: t.yasalFaiz.ad,
       dogrulamaTarihi: t.yasalFaiz.dogrulamaTarihi,
       ozet: t.yasalFaiz.ozet || '-',
     });
-  } else if ((takip.faiz.tur === 'avans' || takip.faiz.tur === 'reeskont') && t.avansReeskontFaizi) {
+  }
+  if ((faizTurleri.has('avans') || faizTurleri.has('reeskont')) && t.avansReeskontFaizi) {
     tabloOzetleri.push({
       ad: t.avansReeskontFaizi.ad,
       dogrulamaTarihi: t.avansReeskontFaizi.dogrulamaTarihi,
       ozet: t.avansReeskontFaizi.ozet || '-',
+    });
+  }
+  if (faizTurleri.has('ttk1530') && t.ttk1530Faizi) {
+    tabloOzetleri.push({
+      ad: t.ttk1530Faizi.ad,
+      dogrulamaTarihi: t.ttk1530Faizi.dogrulamaTarihi,
+      ozet: t.ttk1530Faizi.ozet || '-',
     });
   }
 
@@ -494,6 +756,8 @@ export function icraHesapla(g: IcraGirdisi, t: Tablolar): IcraHesapSonucu {
     girdi: g,
     takipTuru: takip.takipTuru,
     asilAlacak,
+    alacakKalemleri,
+    kalemMahsupSirasi,
     takipOncesiKalemler: takip.takipOncesiKalemler,
     takipOncesiToplam,
     takipCikisToplami,

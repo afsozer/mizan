@@ -55,6 +55,9 @@ Her dosya aynı yapıdadır:
 - `yasal-faiz.json`: 31.07.2026'dan itibaren oran kanundaki formülden bulunur (önceki yılın 31 Aralık
   reeskont oranının %80'i; 30 Haziran oranı 5 puan ya da daha fazla farklıysa ikinci yarıda onun %80'i).
   2027 satırı, TCMB'nin 31.12.2026 reeskont oranı belli olunca eklenir.
+- `ttk-1530-faizi.json`: 6102 sayılı TTK m.1530/7 uyarınca TCMB'nin her yıl Ocak ayında ilan ettiği
+  ticari temerrüt faizi ve asgari giderim tutarı. Her yılın satırı 1 Ocak - 31 Aralık aralığında
+  kapanır; yeni yıl tebliği yayımlanmadan 2027 ve sonrası için hesap durur.
 - `mevduat-faizi*.json`: `node scripts/mevduat-guncelle.ts` ile çekilir. EVDS değeri ayın tamamında
   görülen en yüksek orandır ve ertesi ayın sonlarına doğru yayımlanır; son ay tablonun son satırıdır.
 - `ubgt-takvimi.json`: 2016-2027 yıllarının her biri için 2429 s.K. m.1-2 kapsamındaki sabit (`"sabit"`)

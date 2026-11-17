@@ -15,6 +15,7 @@ import {
   aileUdfDosyaAdi,
   aileUdfOlustur,
   hesapla,
+  icraGirdiCoz,
   icraHesapla,
   icraKanitDosyaAdi,
   icraUdfDosyaAdi,
@@ -455,6 +456,55 @@ test('ornek-icra.yaml ile uretilen UDF: ZIP, CRC32, 12 sutunlu TBK m.100 tablosu
     elementsXml,
     new RegExp(`<content startOffset="${kapakOffset}" length="33" bold="true" \\/>`),
   );
+
+  // TTK m.1530 ve coklu alacak kalemleri icra UDF çıktısı (6 sutunlu Alacak Kalemleri tablosu 480 pt)
+  const cokluIcraGirdi = icraGirdiCoz({
+    alan: 'icra',
+    dosya: { mahkeme: 'Örnek İcra Dairesi', esasNo: '2026/22', kaynak: 'kendi dosyam', altAlan: '60.05' },
+    hesapTarihi: '2026-06-15',
+    parametreler: { kalemMahsupSirasi: 'yuksek-faiz' },
+    takip: {
+      takipTarihi: '2025-01-10',
+      takipTuru: 'ilamsiz',
+      tahsilHarciAsamasi: 'hacizden-once',
+      vekaletUcreti: 10000,
+      alacakKalemleri: [
+        {
+          ad: 'Fatura bedeli',
+          tutar: 100000,
+          faizBaslangicTarihi: '2025-01-10',
+          pesinHarcaTabiMi: true,
+          faiz: { tur: 'ttk1530', gerekce: 'TTK m.1530/7 ticari temerrüt' },
+        },
+        {
+          ad: 'Ek ilam tazminatı',
+          tutar: 20000,
+          faizBaslangicTarihi: '2026-02-01',
+          pesinHarcaTabiMi: false,
+          faiz: { tur: 'yasal', gerekce: 'İlam yasal faiz' },
+        },
+      ],
+      kismiOdemeler: [
+        { tarih: '2026-04-01', tutar: 50000, tahsilYeri: 'vezne', aciklama: 'Vezne tahsilatı' },
+      ],
+    },
+  });
+  const cokluSonuc = icraHesapla(cokluIcraGirdi, tablolariYukle());
+  const cokluBilgi = { uretimZamani: '17.11.2026 11:00', surum: 'mizan 0.2.1 (test)', girdiOzeti: 'sha256-coklu' };
+  const cokluUdf = udfBelgesiniDogrula(
+    icraUdfOlustur(cokluSonuc, cokluBilgi),
+    icraUdfXmlOlustur(cokluSonuc, cokluBilgi),
+    [
+      'Alacak Kalemleri',
+      'Fatura bedeli',
+      'Ek ilam tazminatı',
+      'Ticari temerrüt faizi (TTK m.1530/7)',
+      'Çoklu kalem mahsup sırası',
+      'Yüksek faiz oranlı kalemden başlayarak',
+      UDF_DOGRULAMA_UYARISI,
+    ],
+  );
+  assert.match(cokluUdf.elementsXml, /columnSpans="22,138,64,116,70,70"/);
 });
 
 test('ornek-aaut.yaml ve maktu AAÜT ile uretilen UDF: ZIP, CRC32, taraf bolumleri ve offset tutarliligi', () => {

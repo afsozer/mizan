@@ -1,7 +1,9 @@
 import {
-  ICRA_FAIZ_TURU_ADLARI,
+  ICRA_ALACAK_KALEMI_BASLIKLARI,
   ICRA_KISMI_ODEME_BASLIKLARI,
   ICRA_TAKIP_TURU_ADLARI,
+  icraAlacakKalemSatirlari,
+  icraFaizOzetiMetni,
   icraHarcSatirlari,
   icraKismiOdemeSatirlari,
   icraOzetSatirlari,
@@ -378,6 +380,25 @@ export function IcraSonuclar({ sonuc: s, tam = false }: { sonuc: IcraHesapSonucu
         </div>
       </details>
 
+      {(s.alacakKalemleri.length > 1 || s.alacakKalemleri[0]?.faizBaslangicTarihi !== s.girdi.takip.takipTarihi) && <details class="sonuc-kalemi" open={tam || undefined}>
+        <summary>
+          <span class="kalem-adi">Alacak kalemleri ({s.alacakKalemleri.length} kalem)</span>
+          <span class="kalem-net">{tl(s.asilAlacak)} <small>TL ilk toplam</small></span>
+          <span class="ac-isareti" aria-hidden="true">+</span>
+          <span class="kalem-ozeti">
+            <span>Kalan anapara <b>{tl(s.kalanAsilAlacak)}</b></span>
+          </span>
+        </summary>
+        <div class="kalem-detayi">
+          <VeriTablosu
+            basliklar={ICRA_ALACAK_KALEMI_BASLIKLARI}
+            satirlar={icraAlacakKalemSatirlari(s)}
+            toplam={['Toplam', '', '', '', tl(s.asilAlacak), tl(s.kalanAsilAlacak)]}
+            aciklama="Takibe konu alacak kalemleri"
+          />
+        </div>
+      </details>}
+
       {s.takipOncesiKalemler.length > 0 && <details class="sonuc-kalemi" open={tam || undefined}>
         <summary>
           <span class="kalem-adi">Takip öncesi kalemler (TBK m.121/3)</span>
@@ -438,7 +459,7 @@ export function IcraSonuclar({ sonuc: s, tam = false }: { sonuc: IcraHesapSonucu
           <span class="kalem-net">{tl(s.toplamTakipSonrasiFaiz)} <small>TL</small></span>
           <span class="ac-isareti" aria-hidden="true">+</span>
           <span class="kalem-ozeti">
-            <span>{ICRA_FAIZ_TURU_ADLARI[s.girdi.takip.faiz.tur]}</span>
+            <span>{icraFaizOzetiMetni(s)}</span>
             <span>{s.faizDonemleri.length} dönem</span>
           </span>
         </summary>

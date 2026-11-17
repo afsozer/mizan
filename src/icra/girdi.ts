@@ -7,7 +7,8 @@ import { gecerliTarih, karsilastir } from '../tarih.ts';
 
 export type HesapAlani = 'iscilik' | 'icra' | 'aaut' | 'aile';
 export type IcraTakipTuru = 'ilamsiz' | 'ilamli' | 'kambiyo';
-export type IcraFaizTuru = 'yasal' | 'avans' | 'reeskont' | 'sozlesme';
+export type IcraFaizTuru = 'yasal' | 'avans' | 'reeskont' | 'ttk1530' | 'sozlesme';
+export type KalemMahsupSirasi = 'sira' | 'orantili' | 'yuksek-faiz';
 export type TahsilHarciAsamasi =
   | 'tebligden-once'
   | 'hacizden-once'
@@ -24,7 +25,17 @@ export interface TakipOncesiKalem {
 export interface IcraFaizGirdisi {
   tur: IcraFaizTuru;
   sozlesmeOrani?: Decimal;
+  baslangicTarihi?: string;
   gerekce: string;
+}
+
+export interface IcraAlacakKalemi {
+  ad: string;
+  tutar: Decimal;
+  faizBaslangicTarihi: string;
+  pesinHarcaTabiMi: boolean;
+  faiz: IcraFaizGirdisi;
+  aciklama?: string;
 }
 
 export interface IcraMasrafi {
@@ -49,7 +60,8 @@ export interface IcraTakipGirdisi {
   takipTuru: IcraTakipTuru;
   asilAlacak: Decimal;
   takipOncesiKalemler: TakipOncesiKalem[];
-  faiz: IcraFaizGirdisi;
+  faiz?: IcraFaizGirdisi;
+  alacakKalemleri: IcraAlacakKalemi[];
   pesinHarcAlindiMi: boolean;
   tahsilHarciAsamasi: TahsilHarciAsamasi;
   feragatVarMi: boolean;
@@ -71,6 +83,7 @@ export interface IcraGirdisi {
   hesapTarihi: string;
   parametreler?: {
     faizGunEsasi?: Decimal;
+    kalemMahsupSirasi?: KalemMahsupSirasi;
   };
   takip: IcraTakipGirdisi;
 }
@@ -198,6 +211,28 @@ export function metindenAlanOku(metin: string): HesapAlani {
   return alanOku(parse(metin));
 }
 
+function faizNesnesiCoz(fz: Okuyucu, hesapTarihi: string): IcraFaizGirdisi {
+  fz.izinli(['tur', 'sozlesmeOrani', 'baslangicTarihi', 'gerekce']);
+  const tur = fz.secenek('tur', ['yasal', 'avans', 'reeskont', 'ttk1530', 'sozlesme'] as const);
+  const sozlesmeOrani = fz.var('sozlesmeOrani') ? fz.oran('sozlesmeOrani') : undefined;
+  if (tur === 'sozlesme' && !sozlesmeOrani) {
+    alanHatasi(`${fz.yer}.sozlesmeOrani`, 'faiz türü "sozlesme" olduğunda zorunludur');
+  }
+  if (tur !== 'sozlesme' && sozlesmeOrani !== undefined) {
+    alanHatasi(`${fz.yer}.sozlesmeOrani`, 'yalnız faiz türü "sozlesme" olduğunda verilir');
+  }
+  const baslangicTarihi = fz.var('baslangicTarihi') ? fz.tarih('baslangicTarihi') : undefined;
+  if (baslangicTarihi !== undefined && karsilastir(baslangicTarihi, hesapTarihi) > 0) {
+    alanHatasi(`${fz.yer}.baslangicTarihi`, 'hesapTarihi tarihinden sonra olamaz');
+  }
+  return {
+    tur,
+    ...(sozlesmeOrani ? { sozlesmeOrani } : {}),
+    ...(baslangicTarihi !== undefined ? { baslangicTarihi } : {}),
+    gerekce: fz.metin('gerekce'),
+  };
+}
+
 export function icraGirdiCoz(veri: unknown): IcraGirdisi {
   const k = Okuyucu.kok(veri);
   k.izinli(['alan', 'dosya', 'hesapTarihi', 'parametreler', 'takip']);
@@ -222,12 +257,20 @@ export function icraGirdiCoz(veri: unknown): IcraGirdisi {
   let parametreler: IcraGirdisi['parametreler'];
   if (k.var('parametreler')) {
     const p = k.alt('parametreler');
-    p.izinli(['faizGunEsasi']);
+    p.izinli(['faizGunEsasi', 'kalemMahsupSirasi']);
     const faizGunEsasi = p.var('faizGunEsasi') ? p.sayi('faizGunEsasi', 1) : undefined;
     if (faizGunEsasi && !faizGunEsasi.eq(365) && !faizGunEsasi.eq(360)) {
       alanHatasi('girdi.parametreler.faizGunEsasi', '365 ya da 360 olmalı');
     }
-    parametreler = { faizGunEsasi };
+    const kalemMahsupSirasi = p.var('kalemMahsupSirasi')
+      ? p.secenek('kalemMahsupSirasi', ['sira', 'orantili', 'yuksek-faiz'] as const)
+      : undefined;
+    if (faizGunEsasi !== undefined || kalemMahsupSirasi !== undefined) {
+      parametreler = {
+        ...(faizGunEsasi !== undefined ? { faizGunEsasi } : {}),
+        ...(kalemMahsupSirasi !== undefined ? { kalemMahsupSirasi } : {}),
+      };
+    }
   }
 
   const t = k.alt('takip');
@@ -235,6 +278,7 @@ export function icraGirdiCoz(veri: unknown): IcraGirdisi {
     'takipTarihi',
     'takipTuru',
     'asilAlacak',
+    'alacakKalemleri',
     'takipOncesiKalemler',
     'faiz',
     'pesinHarcAlindiMi',
@@ -251,10 +295,9 @@ export function icraGirdiCoz(veri: unknown): IcraGirdisi {
   }
 
   const takipTuru = t.secenek('takipTuru', ['ilamsiz', 'ilamli', 'kambiyo'] as const);
-  const asilAlacak = t.tutar('asilAlacak');
-  if (asilAlacak.lte(0)) {
-    alanHatasi('girdi.takip.asilAlacak', '0 değerinden büyük olmalı');
-  }
+  const pesinHarcAlindiMi = t.var('pesinHarcAlindiMi')
+    ? t.mantiksal('pesinHarcAlindiMi')
+    : takipTuru !== 'ilamli';
 
   const takipOncesiKalemler: TakipOncesiKalem[] = t.var('takipOncesiKalemler')
     ? t.liste('takipOncesiKalemler').map((ok) => {
@@ -266,30 +309,91 @@ export function icraGirdiCoz(veri: unknown): IcraGirdisi {
       })
     : [];
 
-  const fz = t.alt('faiz');
-  fz.izinli(['tur', 'sozlesmeOrani', 'gerekce']);
-  const faizTuru = fz.secenek('tur', ['yasal', 'avans', 'reeskont', 'sozlesme'] as const);
-  const sozlesmeOrani = fz.var('sozlesmeOrani') ? fz.oran('sozlesmeOrani') : undefined;
-  if (faizTuru === 'sozlesme' && !sozlesmeOrani) {
-    alanHatasi('girdi.takip.faiz.sozlesmeOrani', 'faiz türü "sozlesme" olduğunda zorunludur');
-  }
-  if (faizTuru !== 'sozlesme' && sozlesmeOrani !== undefined) {
-    alanHatasi('girdi.takip.faiz.sozlesmeOrani', 'yalnız faiz türü "sozlesme" olduğunda verilir');
-  }
-  const faiz: IcraFaizGirdisi = {
-    tur: faizTuru,
-    ...(sozlesmeOrani ? { sozlesmeOrani } : {}),
-    gerekce: fz.metin('gerekce'),
-  };
+  let asilAlacak = d(0);
+  let tekFaiz: IcraFaizGirdisi | undefined;
+  let alacakKalemleri: IcraAlacakKalemi[];
 
-  const pesinHarcAlindiMi = t.var('pesinHarcAlindiMi')
-    ? t.mantiksal('pesinHarcAlindiMi')
-    : takipTuru !== 'ilamli';
-  if (takipTuru === 'ilamli' && pesinHarcAlindiMi) {
-    alanHatasi(
-      'girdi.takip.pesinHarcAlindiMi',
-      '492 s.K. m.29 gereği yalnız ilama dayanmayan takiplerde peşin harç alınır; ilamlı takipte true olamaz',
-    );
+  if (t.var('alacakKalemleri')) {
+    if (t.var('asilAlacak')) {
+      alanHatasi('girdi.takip.asilAlacak', 'alacakKalemleri kullanıldığında üst düzey asilAlacak alanı verilmez');
+    }
+    if (t.var('faiz')) {
+      alanHatasi('girdi.takip.faiz', 'alacakKalemleri kullanıldığında üst düzey faiz alanı verilmez');
+    }
+    if (takipTuru === 'ilamli' && pesinHarcAlindiMi) {
+      alanHatasi(
+        'girdi.takip.pesinHarcAlindiMi',
+        '492 s.K. m.29 gereği yalnız ilama dayanmayan takiplerde peşin harç alınır; ilamlı takipte true olamaz',
+      );
+    }
+    const kalemOkuyucular = t.liste('alacakKalemleri');
+    if (kalemOkuyucular.length === 0) {
+      alanHatasi('girdi.takip.alacakKalemleri', 'alacakKalemleri en az bir alacak kalemi içermelidir');
+    }
+    alacakKalemleri = kalemOkuyucular.map((ko) => {
+      ko.izinli(['ad', 'tutar', 'faizBaslangicTarihi', 'pesinHarcaTabiMi', 'faiz', 'aciklama']);
+      const ad = ko.metin('ad');
+      const tutar = ko.tutar('tutar');
+      if (tutar.lte(0)) {
+        alanHatasi(`${ko.yer}.tutar`, '0 değerinden büyük olmalı');
+      }
+      const kalemFaiz = faizNesnesiCoz(ko.alt('faiz'), hesapTarihi);
+      const acikBaslangic = ko.var('faizBaslangicTarihi') ? ko.tarih('faizBaslangicTarihi') : undefined;
+      if (
+        acikBaslangic !== undefined &&
+        kalemFaiz.baslangicTarihi !== undefined &&
+        acikBaslangic !== kalemFaiz.baslangicTarihi
+      ) {
+        alanHatasi(
+          `${ko.yer}.faiz.baslangicTarihi`,
+          'kalem düzeyindeki faizBaslangicTarihi ile faiz.baslangicTarihi çelişiyor',
+        );
+      }
+      const faizBaslangicTarihi = acikBaslangic ?? kalemFaiz.baslangicTarihi ?? takipTarihi;
+      if (karsilastir(faizBaslangicTarihi, hesapTarihi) > 0) {
+        alanHatasi(`${ko.yer}.faizBaslangicTarihi`, 'hesapTarihi tarihinden sonra olamaz');
+      }
+      const pesinHarcaTabiMi = ko.var('pesinHarcaTabiMi')
+        ? ko.mantiksal('pesinHarcaTabiMi')
+        : pesinHarcAlindiMi;
+      if (takipTuru === 'ilamli' && pesinHarcaTabiMi) {
+        alanHatasi(
+          `${ko.yer}.pesinHarcaTabiMi`,
+          '492 s.K. m.29 gereği yalnız ilama dayanmayan takiplerde peşin harç alınır; ilamlı takipte true olamaz',
+        );
+      }
+      const aciklama = ko.var('aciklama') ? ko.metin('aciklama') : undefined;
+      asilAlacak = asilAlacak.plus(tutar);
+      return {
+        ad,
+        tutar,
+        faizBaslangicTarihi,
+        pesinHarcaTabiMi,
+        faiz: kalemFaiz,
+        ...(aciklama !== undefined ? { aciklama } : {}),
+      };
+    });
+  } else {
+    asilAlacak = t.tutar('asilAlacak');
+    if (asilAlacak.lte(0)) {
+      alanHatasi('girdi.takip.asilAlacak', '0 değerinden büyük olmalı');
+    }
+    tekFaiz = faizNesnesiCoz(t.alt('faiz'), hesapTarihi);
+    if (takipTuru === 'ilamli' && pesinHarcAlindiMi) {
+      alanHatasi(
+        'girdi.takip.pesinHarcAlindiMi',
+        '492 s.K. m.29 gereği yalnız ilama dayanmayan takiplerde peşin harç alınır; ilamlı takipte true olamaz',
+      );
+    }
+    alacakKalemleri = [
+      {
+        ad: 'Asıl alacak',
+        tutar: asilAlacak,
+        faizBaslangicTarihi: tekFaiz.baslangicTarihi ?? takipTarihi,
+        pesinHarcaTabiMi: pesinHarcAlindiMi,
+        faiz: tekFaiz,
+      },
+    ];
   }
 
   const tahsilHarciAsamasi = t.secenek('tahsilHarciAsamasi', [
@@ -383,7 +487,8 @@ export function icraGirdiCoz(veri: unknown): IcraGirdisi {
       takipTuru,
       asilAlacak,
       takipOncesiKalemler,
-      faiz,
+      ...(tekFaiz ? { faiz: tekFaiz } : {}),
+      alacakKalemleri,
       pesinHarcAlindiMi,
       tahsilHarciAsamasi,
       feragatVarMi,

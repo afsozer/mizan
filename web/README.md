@@ -86,10 +86,11 @@ Başlangıçta worktree içinde bulunan çekirdek, test ve bağımlılık deği�
    çekirdek API'den gelir. PDF ve UDF'nin girdi SHA-256 değeri, arayüzden indirilen YAML'ın tam
    metnidir; özgün yüklenen dosyanın yorum ve boşlukları korunmaz. Üretim zamanı ve dosya tarihi
    İstanbul saatine göredir. **Uyarı:** İndirilen `.udf` belgeleri resmi gönderim öncesinde UYAP
-   Doküman Editör'de açılarak elle kontrol edilmelidir. İcra alanında kısmi ödemeler için `tahsilYeri`
-   (`vezne` veya `haricen`), aşamaya özgü `tahsilHarciOrani` ve makbuzdaki `kesilenTahsilHarci`
-   alanları desteklenir.
-5. **Tablolar** bölümünde sekiz paket tablosunu ve kaynaklarını inceleyin. Mevduat satırı olan
+   Doküman Editör'de açılarak elle kontrol edilmelidir. İcra alanında TTK m.1530 ticari temerrüt
+   faizi (`ttk1530`), farklı vade/faiz türü için çoklu alacak kalemleri (`alacakKalemleri`) ve
+   kısmi ödemeler için `tahsilYeri` (`vezne` veya `haricen`), aşamaya özgü `tahsilHarciOrani` ve
+   makbuzdaki `kesilenTahsilHarci` alanları desteklenir.
+5. **Tablolar** bölümünde paket tablolarını ve kaynaklarını inceleyin. Mevduat satırı olan
    hesapta tüm bankalar/kamu bankaları seçilebilir. Kendi banka yazısı JSON dosyanızı yükleyebilir,
    bu tabloyu ayrıca seçebilirsiniz. JSON çekirdeğin `tablolariKur` denetiminden geçirilir; dosyanın
    tam metni hash'lenir. YAML'daki banka yolu, yüklenen JSON'ın dosya adıyla eşleştirilir.

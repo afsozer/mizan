@@ -7,9 +7,11 @@ import {
   AAUT_NITELIK_ADLARI,
   ICRA_FAIZ_TURU_ADLARI,
   ICRA_TAKIP_TURU_ADLARI,
+  KALEM_MAHSUP_SIRA_ADLARI,
   TAHSIL_ASAMA_ADLARI,
   type IcraFaizTuru,
   type IcraTakipTuru,
+  type KalemMahsupSirasi,
   type TahsilHarciAsamasi,
 } from '../../src/index.ts';
 import type { Deger, Nesne } from './form-model.ts';
@@ -183,10 +185,13 @@ export const ICRA_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
             'Takip türü',
             (Object.keys(ICRA_TAKIP_TURU_ADLARI) as IcraTakipTuru[]).map(k => [k, ICRA_TAKIP_TURU_ADLARI[k]] as [string, string]),
           ),
-          sayi('asilAlacak', 'Asıl alacak (TL)'),
+          sayi('asilAlacak', 'Asıl alacak (TL)', {
+            gorunur: g => !Array.isArray(g.alacakKalemleri) || g.alacakKalemleri.length === 0,
+          }),
           {
             key: 'faiz',
             ad: 'Takip sonrası faiz',
+            gorunur: g => !Array.isArray(g.alacakKalemleri) || g.alacakKalemleri.length === 0,
             alanlar: [
               sec(
                 'tur',
@@ -197,7 +202,60 @@ export const ICRA_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
                 gorunur: g => g.tur === 'sozlesme',
                 ipucu: 'Oran 0 ile 1 arasında yazılır (%45 için 0.45).',
               }),
+              tarih('baslangicTarihi', 'Faiz başlangıç tarihi', {
+                ...ops,
+                varsayilan: 'Takip tarihi',
+                dayanak: 'İlam veya temerrüt tarihi',
+              }),
               metin('gerekce', 'Faiz gerekçesi', { tur: 'textarea' }),
+            ],
+          },
+          {
+            key: 'alacakKalemleri',
+            ad: 'Çoklu alacak kalemleri (farklı vade / faiz türlü kalemler)',
+            liste: true,
+            ...ops,
+            yeni: { ad: '', tutar: '', faiz: { tur: '', gerekce: '' } },
+            ipucu: 'Farklı temerrüt tarihi veya farklı faiz türü olan birden çok alacak kalemini ayrı satırlarda girin.',
+            alanlar: [
+              metin('ad', 'Alacak kalemi adı'),
+              sayi('tutar', 'Tutar (TL)'),
+              tarih('faizBaslangicTarihi', 'Faiz başlangıç tarihi', {
+                ...ops,
+                varsayilan: 'Takip tarihi',
+                dayanak: 'İlam veya temerrüt tarihi',
+              }),
+              sec(
+                'pesinHarcaTabiMi',
+                'Peşin harç durumu',
+                [
+                  [true, 'Binde 5 peşin harca tabi'],
+                  [false, 'Peşin harca tabi değil (ör. ek ilam kalemi)'],
+                ],
+                {
+                  ...ops,
+                  gorunur: (_g, kok) => ((kok.takip as Nesne | undefined)?.takipTuru) !== 'ilamli',
+                  varsayilan: 'Takibin peşin harç seçimi',
+                  dayanak: '492 s.K. m.28-29',
+                },
+              ),
+              {
+                key: 'faiz',
+                ad: 'Kalem faizi',
+                alanlar: [
+                  sec(
+                    'tur',
+                    'Kalem faiz türü',
+                    (Object.keys(ICRA_FAIZ_TURU_ADLARI) as IcraFaizTuru[]).map(k => [k, ICRA_FAIZ_TURU_ADLARI[k]] as [string, string]),
+                  ),
+                  sayi('sozlesmeOrani', 'Yıllık sözleşme / ilam faiz oranı (0 - 1)', {
+                    gorunur: g => g.tur === 'sozlesme',
+                    ipucu: 'Oran 0 ile 1 arasında yazılır (%45 için 0.45).',
+                  }),
+                  metin('gerekce', 'Faiz gerekçesi', { tur: 'textarea' }),
+                ],
+              },
+              metin('aciklama', 'Açıklama', ops),
             ],
           },
           {
@@ -224,6 +282,16 @@ export const ICRA_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
             varsayilan: '365',
             dayanak: '365 veya 360 gün; basit faiz',
           }),
+          sec(
+            'kalemMahsupSirasi',
+            'Çoklu alacak kaleminde anapara mahsup sırası',
+            (Object.keys(KALEM_MAHSUP_SIRA_ADLARI) as KalemMahsupSirasi[]).map(k => [k, KALEM_MAHSUP_SIRA_ADLARI[k]] as [string, string]),
+            {
+              ...ops,
+              varsayilan: 'Kalem sırasına göre (TBK m.102/1)',
+              dayanak: '6098 s.K. TBK m.101-102',
+            },
+          ),
         ],
       },
     ],

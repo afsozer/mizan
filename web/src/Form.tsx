@@ -59,9 +59,52 @@ function FormAlani({ alan, yol, form, degistir, hata }: FormProps & { alan: Alan
     }
     if (adres === 'girdi.takip.takipTuru' && v === 'ilamli') {
       sonuc = alanDegistir(sonuc, ['takip', 'pesinHarcAlindiMi'], undefined);
+      const mevcutKalemler = degerOku(sonuc, ['takip', 'alacakKalemleri']);
+      if (Array.isArray(mevcutKalemler)) {
+        sonuc = alanDegistir(
+          sonuc,
+          ['takip', 'alacakKalemleri'],
+          mevcutKalemler.map(k => (k && typeof k === 'object' && !Array.isArray(k) ? { ...(k as Nesne), pesinHarcaTabiMi: undefined } : k)),
+        );
+      }
     }
     if (adres === 'girdi.takip.faiz.tur' && v !== 'sozlesme') {
       sonuc = alanDegistir(sonuc, ['takip', 'faiz', 'sozlesmeOrani'], undefined);
+    }
+    if (/^girdi\.takip\.alacakKalemleri\[\d+\]\.faiz\.tur$/.test(adres) && v !== 'sozlesme') {
+      const satirYol = yol.slice(0, -1);
+      sonuc = alanDegistir(sonuc, [...satirYol, 'sozlesmeOrani'], undefined);
+    }
+    if (adres === 'girdi.takip.alacakKalemleri' && Array.isArray(v)) {
+      if (v.length > 0) {
+        const oncekiAsil = degerOku(form, ['takip', 'asilAlacak']);
+        const oncekiFaiz = degerOku(form, ['takip', 'faiz']) as Nesne | undefined;
+        const tekBosSatir = v.length === 1 && !(v[0] as Nesne | undefined)?.ad && !(v[0] as Nesne | undefined)?.tutar;
+        if (tekBosSatir && (oncekiAsil || oncekiFaiz?.tur)) {
+          const tasinanFaiz: Nesne = {
+            tur: oncekiFaiz?.tur ?? '',
+            ...(oncekiFaiz?.sozlesmeOrani !== undefined ? { sozlesmeOrani: oncekiFaiz.sozlesmeOrani } : {}),
+            gerekce: oncekiFaiz?.gerekce ?? '',
+          };
+          const birinciSatir: Nesne = {
+            ad: 'Asıl alacak',
+            tutar: oncekiAsil ?? '',
+            ...(oncekiFaiz?.baslangicTarihi ? { faizBaslangicTarihi: oncekiFaiz.baslangicTarihi } : {}),
+            faiz: tasinanFaiz,
+          };
+          sonuc = alanDegistir(sonuc, yol, [birinciSatir, formdanGirdiKur(alan.yeni ?? {})]);
+        }
+        sonuc = alanDegistir(sonuc, ['takip', 'asilAlacak'], undefined);
+        sonuc = alanDegistir(sonuc, ['takip', 'faiz'], undefined);
+      } else {
+        sonuc = alanDegistir(sonuc, ['takip', 'alacakKalemleri'], undefined);
+        if (degerOku(sonuc, ['takip', 'asilAlacak']) === undefined) {
+          sonuc = alanDegistir(sonuc, ['takip', 'asilAlacak'], '');
+        }
+        if (degerOku(sonuc, ['takip', 'faiz']) === undefined) {
+          sonuc = alanDegistir(sonuc, ['takip', 'faiz'], { tur: '', gerekce: '' });
+        }
+      }
     }
     if (/^girdi\.takip\.kismiOdemeler\[\d+\]\.tahsilYeri$/.test(adres) && v === 'haricen') {
       const satirYol = yol.slice(0, -1);

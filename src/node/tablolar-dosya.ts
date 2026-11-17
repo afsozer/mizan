@@ -22,6 +22,7 @@ export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): 
   const varsaOku = (ad: string) => (existsSync(join(dizin, ad)) ? oku(ad) : undefined);
   const f = TABLO_DOSYALARI;
   const avansReeskontFaizi = varsaOku(f.avansReeskontFaizi);
+  const ttk1530Faizi = varsaOku(f.ttk1530Faizi);
   const icraHarclari = varsaOku(f.icraHarclari);
   const aaut = varsaOku(f.aaut);
   return tablolariKur({
@@ -39,6 +40,7 @@ export function tablolariYukle(yollar: TabloYollari = {}, dizin = VERI_DIZINI): 
     gelirVergisi: oku(f.gelirVergisi),
     ubgtTakvimi: oku(f.ubgtTakvimi),
     ...(avansReeskontFaizi ? { avansReeskontFaizi } : {}),
+    ...(ttk1530Faizi ? { ttk1530Faizi } : {}),
     ...(icraHarclari ? { icraHarclari } : {}),
     ...(aaut ? { aaut } : {}),
   });

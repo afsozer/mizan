@@ -30,12 +30,17 @@ Takip tarihinden kapak (hesap) tarihine veya kısmi ödeme tarihlerine kadar ge�
 1. **`yasal` (3095 s.K. m.1):** Kanuni faiz oranları `data/yasal-faiz.json` tablosundan okunur (01.06.2024 tarihinden itibaren yıllık `%24` - 8485 sayılı Cumhurbaşkanı Kararı, RG 21.05.2024/32552).
 2. **`avans` (3095 s.K. m.2/2):** Ticari işlerde temerrüt faizi olarak Türkiye Cumhuriyet Merkez Bankası (TCMB) tarafından Resmi Gazete tebliğleriyle ilan edilen kısa vadeli avans işlemlerinde uygulanan faiz oranı (`data/avans-reeskont-faizi.json`, `avansOrani`) uygulanır.
 3. **`reeskont` (3095 s.K. m.2/1):** TCMB tarafından Resmi Gazete tebliğleriyle ilan edilen reeskont işlemlerinde uygulanan iskonto oranı (`data/avans-reeskont-faizi.json`, `reeskontOrani`) uygulanır.
-4. **`sozlesme`:** Taraflar arasındaki sözleşmede veya ilamda kararlaştırılan sabit yıllık faiz oranı (`sozlesmeOrani`) uygulanır.
+4. **`ttk1530` (6102 s.K. TTK m.1530/7):** Mal ve hizmet tedarikinde geç ödemelere ilişkin sözleşmede öngörülmeyen ya da geçersiz sayılan hallerde TCMB tarafından her yıl Ocak ayında Resmi Gazete tebliğiyle ilan edilen temerrüt faiz oranı (`data/ttk-1530-faizi.json`) uygulanır (1 Ocak değişim tarihlerinde kesitlere bölünür).
+5. **`sozlesme`:** Taraflar arasındaki sözleşmede veya ilamda kararlaştırılan sabit yıllık faiz oranı (`sozlesmeOrani`) uygulanır.
+
+### Çoklu Alacak Kalemi ve İsteğe Bağlı Faiz Başlangıcı
+
+* Tekil takipte `takip.asilAlacak` ve `takip.faiz` (isteğe bağlı `baslangicTarihi`) girilir. Aynı icra dosyasında farklı temerrüt/vade tarihine veya farklı faiz türüne tabi birden fazla alacak kalemi bulunduğunda (örneğin TTK m.1530 faizli asıl ticari alacak ile itirazın iptali ilamıyla eklenen yasal faizli inkar tazminatı ve yargılama giderleri), `takip.alacakKalemleri[]` dizisiyle her kalem kendi `tutar`, `faizBaslangicTarihi`, `pesinHarcaTabiMi` ve `faiz` özellikleriyle tanımlanır.
 
 ### Gün Sayımı ve Kesit Bölünmesi
 
 * Başlangıç günü (takip tarihi veya önceki kısmi ödeme günü) faize girmez, bitiş günü faize girer ($\text{Gün} = t_{\text{bitiş}} - t_{\text{başlangıç}}$).
-* Faiz dönemi içinde `data/yasal-faiz.json` veya `data/avans-reeskont-faizi.json` tablosunda yürürlük tarihi değiştiğinde dönem otomatik olarak kesitlere bölünür:
+* Faiz dönemi içinde `data/yasal-faiz.json`, `data/avans-reeskont-faizi.json` veya `data/ttk-1530-faizi.json` tablosunda yürürlük tarihi değiştiğinde dönem otomatik olarak kesitlere bölünür:
 
 $$\text{Kesit Faizi} = \text{kurus}\left(\text{Kalan Asıl Alacak} \times \text{Yıllık Oran} \times \frac{\text{Kesit Gün Sayısı}}{\text{Faiz Gün Esası}}\right)$$
 
@@ -113,3 +118,13 @@ $$\text{Bakiye Tahsil Harcı} = \text{Hesaplanan Tahsil Harcı} - \text{Mahsup E
    $$\text{Asıl Alacaktan Mahsup} = \min(\text{Alacaklıya Mahsup Edilen} - \text{Faiz ve Giderden Mahsup}, \text{Kalan Asıl Alacak})$$
 6. Vezne ödemesinde fazla ödeme dışındaki brüt reddiyat üzerinden %2 cezaevi harcı kesintisi kümülatif tavan dahilinde güncellenir.
 7. Ödeme tarihinden sonraki dönemde faiz, yalnızca indirgenmiş yeni `kalanAsilAlacak` üzerinden işlemeye devam eder; `kalanFaizVeGider` havuzuna hiçbir surette faiz yürütülmez.
+
+### 6.1 Çoklu Alacak Kalemlerinde Anapara Mahsubu (6098 s.K. TBK m.101-102; Yargıtay 6. HD 28.03.2022, 2021/2673 E., 2022/1670 K.)
+
+Birden fazla alacak kalemi (`takip.alacakKalemleri`) bulunan dosyalarda, TBK m.100 uyarınca işlemiş faiz ve takip giderleri kapatıldıktan sonra artan ödeme anaparalardan düşülürken TBK m.101-102 kuralları gözetilir:
+
+1. Öncelikle ödeme tarihi itibarıyla muaccel olan (`faizBaslangicTarihi <= odeme.tarih`) kalemler grubundan mahsup yapılır; tamamı kapandıktan sonra hala artan tutar kalırsa vadesi henüz gelmemiş kalemlere geçilir (TBK m.102/1).
+2. Aynı grup içindeki kalemler arası dağıtım sırası `parametreler.kalemMahsupSirasi` ile seçilir:
+   * **`sira` (varsayılan, TBK m.102/1):** Kalemlerin giriş sırasına göre önce ilk takip edilen/sıralanan kalem kapatılır.
+   * **`orantili` (TBK m.102/2):** Kalan anapara bakiyeleriyle orantılı paylaştırma yapılır; kuruş yuvarlamasından kaynaklanan artan kuruş farkı gruptaki son kaleme aktarılır.
+   * **`yuksek-faiz`:** Ödeme günündeki yıllık faiz oranı en yüksek kalemden başlanarak (eşitlikte giriş sırasına göre) mahsup edilir.

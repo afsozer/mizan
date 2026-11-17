@@ -8,7 +8,9 @@ import { trTarih } from '../tarih.ts';
 import {
   ICRA_FAIZ_TURU_ADLARI,
   ICRA_TAKIP_TURU_ADLARI,
+  KALEM_MAHSUP_SIRA_ADLARI,
   TAHSIL_ASAMA_ADLARI,
+  icraFaizOzetiMetni,
   type IcraHesapSonucu,
 } from './hesap.ts';
 
@@ -114,6 +116,26 @@ export function icraDefterSatiri(s: IcraHesapSonucu, uretimTarihi: string, surum
   return `| ${hucreler.map((h) => h.replace(/\|/g, '/')).join(' | ')} |`;
 }
 
+export const ICRA_ALACAK_KALEMI_BASLIKLARI = [
+  '#',
+  'Alacak kalemi',
+  'Faiz başlangıcı',
+  'Faiz türü',
+  'İlk tutar (TL)',
+  'Kalan anapara (TL)',
+];
+
+export function icraAlacakKalemSatirlari(s: IcraHesapSonucu): string[][] {
+  return s.alacakKalemleri.map((k) => [
+    String(k.sira),
+    k.ad,
+    trTarih(k.faizBaslangicTarihi),
+    ICRA_FAIZ_TURU_ADLARI[k.faiz.tur] + (k.faiz.sozlesmeOrani ? ` (${yuzde(k.faiz.sozlesmeOrani)})` : ''),
+    tl(k.tutar),
+    tl(k.kalanAnapara),
+  ]);
+}
+
 export const ICRA_KISMI_ODEME_BASLIKLARI = [
   '#',
   'Ödeme tarihi',
@@ -158,7 +180,7 @@ export function icraOzetSatirlari(s: IcraHesapSonucu): string[][] {
     ],
     ['İcra vekalet ücreti', 'AAÜT / İİK m.138', tl(s.vekaletUcreti)],
     ['Takip masrafları toplamı', 'İİK m.59', tl(s.toplamMasraf)],
-    ['Takip sonrası işlemiş faiz toplamı', ICRA_FAIZ_TURU_ADLARI[g.takip.faiz.tur], tl(s.toplamTakipSonrasiFaiz)],
+    ['Takip sonrası işlemiş faiz toplamı', icraFaizOzetiMetni(s), tl(s.toplamTakipSonrasiFaiz)],
     [
       'Kısmi ödemeler toplamı (mahsup)',
       h.odemelerdenKesilenTahsilHarci.gt(0)
@@ -256,6 +278,35 @@ export function icraRaporTanimi(s: IcraHesapSonucu, bilgi: RaporBilgisi): Record
   if (dsy.hazirlayan) ust.push(['Hazırlayan', dsy.hazirlayan]);
 
   const ozetSatirlari = icraOzetSatirlari(s);
+  const kalemlerGoster =
+    s.alacakKalemleri.length > 1 || s.alacakKalemleri[0]?.faizBaslangicTarihi !== g.takip.takipTarihi;
+  const esaslar: [string, string][] = [
+    ['Takip türü', ICRA_TAKIP_TURU_ADLARI[s.takipTuru]],
+    ['Takip tarihi', trTarih(g.takip.takipTarihi)],
+    ['Asıl alacak', `${tl(s.asilAlacak)} TL`],
+    ["Takip öncesi fer'iler toplamı", `${tl(s.takipOncesiToplam)} TL`],
+    ['Takip çıkışı toplamı', `${tl(s.takipCikisToplami)} TL`],
+    [
+      'Takip sonrası faiz türü',
+      `${icraFaizOzetiMetni(s)} · gün esası 1/${gunEsasi}${s.alacakKalemleri.length === 1 ? ` (${s.alacakKalemleri[0]!.faiz.gerekce})` : ''}`,
+    ],
+    ...(s.alacakKalemleri.length > 1 && s.kismiOdemeAdimlari.length > 0
+      ? ([['Çoklu kalem mahsup sırası', KALEM_MAHSUP_SIRA_ADLARI[s.kalemMahsupSirasi]]] as [string, string][])
+      : []),
+    ['Tahsil harcı aşaması', TAHSIL_ASAMA_ADLARI[h.tahsilHarciAsamasi]],
+    ['Takipten feragat / vazgeçme', h.feragatVarMi ? 'Var (492 s.K. m.23)' : 'Yok'],
+  ];
+
+  const alacakKalemleriBolumu: Icerik[] = kalemlerGoster
+    ? [
+        { text: 'Alacak Kalemleri', style: 'etiket' },
+        tablo(ICRA_ALACAK_KALEMI_BASLIKLARI, icraAlacakKalemSatirlari(s), {
+          genislik: [18, '*', 64, 118, 72, 72],
+          sag: [0, 4, 5],
+          toplam: ['Toplam', '', '', '', tl(s.asilAlacak), tl(s.kalanAsilAlacak)],
+        }),
+      ]
+    : [];
 
   const takipOncesiBolumu: Icerik[] =
     s.takipOncesiKalemler.length > 0
@@ -363,19 +414,8 @@ export function icraRaporTanimi(s: IcraHesapSonucu, bilgi: RaporBilgisi): Record
       kalinSatirlar: [2, 11, 14],
     }),
     baslik('2. Takip Çıkışı, Masraflar ve Esaslar'),
-    ikiSutun([
-      ['Takip türü', ICRA_TAKIP_TURU_ADLARI[s.takipTuru]],
-      ['Takip tarihi', trTarih(g.takip.takipTarihi)],
-      ['Asıl alacak', `${tl(s.asilAlacak)} TL`],
-      ['Takip öncesi fer\'iler toplamı', `${tl(s.takipOncesiToplam)} TL`],
-      ['Takip çıkışı toplamı', `${tl(s.takipCikisToplami)} TL`],
-      [
-        'Takip sonrası faiz türü',
-        `${ICRA_FAIZ_TURU_ADLARI[g.takip.faiz.tur]}${g.takip.faiz.sozlesmeOrani ? ` (${yuzde(g.takip.faiz.sozlesmeOrani)})` : ''} · gün esası 1/${gunEsasi} (${g.takip.faiz.gerekce})`,
-      ],
-      ['Tahsil harcı aşaması', TAHSIL_ASAMA_ADLARI[h.tahsilHarciAsamasi]],
-      ['Takipten feragat / vazgeçme', h.feragatVarMi ? 'Var (492 s.K. m.23)' : 'Yok'],
-    ]),
+    ikiSutun(esaslar),
+    ...alacakKalemleriBolumu,
     ...takipOncesiBolumu,
     ...masrafBolumu,
     baslik('3. Harç Hesabı (492 s.K. ve 2548 s.K.)'),

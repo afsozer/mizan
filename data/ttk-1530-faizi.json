@@ -1,0 +1,218 @@
+{
+  "tablo": "ttk-1530-faizi",
+  "ad": "TTK m.1530/7 ticari temerrüt faiz oranları (TCMB)",
+  "aciklama": "6102 sayılı Türk Ticaret Kanunu m.1530/7 uyarınca mal ve hizmet tedarikinde geç ödemelerde uygulanacak temerrüt faiz oranı ve alacağın tahsili masrafları için talep edilebilecek asgari giderim tutarı. TCMB tarafından her yıl Ocak ayında ilan edilir ve icra takiplerinde 1 Ocak değişim tarihlerinde kesitlere bölünerek uygulanır.",
+  "dogrulamaTarihi": "2026-11-17",
+  "satirlar": [
+    {
+      "baslangic": "2013-01-01",
+      "bitis": "2013-12-31",
+      "oran": "0.15",
+      "asgariGiderimTutari": "95",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Alacaklıya Yapılan Geç Ödemelere İlişkin Temerrüt Faiz Oranının Belirlenmesi Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2012/12/20121229-21.htm",
+        "resmiGazete": {
+          "tarih": "2012-12-29",
+          "sayi": "28512"
+        },
+        "dogrulama": "Okundu: RG 29.12.2012/28512 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %15,00; asgari giderim 95,00 TL; 01.01.2013 tarihinden geçerli)."
+      }
+    },
+    {
+      "baslangic": "2014-01-01",
+      "bitis": "2014-12-31",
+      "oran": "0.1275",
+      "asgariGiderimTutari": "120",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Alacaklıya Yapılan Geç Ödemelere İlişkin Temerrüt Faiz Oranının Belirlenmesi Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2014/01/20140125-14.htm",
+        "resmiGazete": {
+          "tarih": "2014-01-25",
+          "sayi": "28893"
+        },
+        "dogrulama": "Okundu: RG 25.01.2014/28893 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %12,75; asgari giderim 120,00 TL; 01.01.2014 tarihinden geçerli)."
+      }
+    },
+    {
+      "baslangic": "2015-01-01",
+      "bitis": "2015-12-31",
+      "oran": "0.115",
+      "asgariGiderimTutari": "120",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Alacaklıya Yapılan Geç Ödemelere İlişkin Temerrüt Faiz Oranının Tespiti Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2015/01/20150101-14.htm",
+        "resmiGazete": {
+          "tarih": "2015-01-01",
+          "sayi": "29223"
+        },
+        "dogrulama": "Okundu: RG 01.01.2015/29223 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %11,50; asgari giderim 120,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2016-01-01",
+      "bitis": "2016-12-31",
+      "oran": "0.115",
+      "asgariGiderimTutari": "130",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Alacaklıya Yapılan Geç Ödemelere İlişkin Temerrüt Faiz Oranının Tespiti Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2015/12/20151231m4-37.htm",
+        "resmiGazete": {
+          "tarih": "2015-12-31",
+          "sayi": "29579 (4. Mükerrer)"
+        },
+        "dogrulama": "Okundu: RG 31.12.2015/29579 (4. Mükerrer) TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %11,50; asgari giderim 130,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2017-01-01",
+      "bitis": "2017-12-31",
+      "oran": "0.1075",
+      "asgariGiderimTutari": "150",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Alacaklıya Yapılan Geç Ödemelere İlişkin Temerrüt Faiz Oranının Tespiti Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2017/01/20170102-8.htm",
+        "resmiGazete": {
+          "tarih": "2017-01-02",
+          "sayi": "29936"
+        },
+        "dogrulama": "Okundu: RG 02.01.2017/29936 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %10,75; asgari giderim 150,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2018-01-01",
+      "bitis": "2018-12-31",
+      "oran": "0.1075",
+      "asgariGiderimTutari": "185",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderim Tutarına İlişkin Karar",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2018/01/20180101-7.htm",
+        "resmiGazete": {
+          "tarih": "2018-01-01",
+          "sayi": "30288"
+        },
+        "dogrulama": "Okundu: RG 01.01.2018/30288 TCMB kararı ve TCMB TTK m.1530 tablosu (temerrüt faizi %10,75; asgari giderim 185,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2019-01-01",
+      "bitis": "2019-12-31",
+      "oran": "0.2125",
+      "asgariGiderimTutari": "245",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Alacaklıya Yapılan Geç Ödemelere İlişkin Temerrüt Faiz Oranının Tespiti Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2019/01/20190102-1.pdf",
+        "resmiGazete": {
+          "tarih": "2019-01-02",
+          "sayi": "30643"
+        },
+        "dogrulama": "Okundu: RG 02.01.2019/30643 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %21,25; asgari giderim 245,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2020-01-01",
+      "bitis": "2020-12-31",
+      "oran": "0.15",
+      "asgariGiderimTutari": "260",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderin Tutarına İlişkin Karar",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2020/01/20200102-4.pdf",
+        "resmiGazete": {
+          "tarih": "2020-01-02",
+          "sayi": "30996"
+        },
+        "dogrulama": "Okundu: RG 02.01.2020/30996 TCMB kararı ve TCMB TTK m.1530 tablosu (temerrüt faizi %15,00; asgari giderim 260,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2021-01-01",
+      "bitis": "2021-12-31",
+      "oran": "0.1825",
+      "asgariGiderimTutari": "385",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderim Tutarı Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2021/01/20210102-6.pdf",
+        "resmiGazete": {
+          "tarih": "2021-01-02",
+          "sayi": "31352"
+        },
+        "dogrulama": "Okundu: RG 02.01.2021/31352 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %18,25; asgari giderim 385,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2022-01-01",
+      "bitis": "2022-12-31",
+      "oran": "0.1725",
+      "asgariGiderimTutari": "555",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderim Tutarı Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2022/01/20220102-6.pdf",
+        "resmiGazete": {
+          "tarih": "2022-01-02",
+          "sayi": "31707"
+        },
+        "dogrulama": "Okundu: RG 02.01.2022/31707 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %17,25; asgari giderim 555,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2023-01-01",
+      "bitis": "2023-12-31",
+      "oran": "0.1175",
+      "asgariGiderimTutari": "800",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderim Tutarı Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2023/01/20230102-3.pdf",
+        "resmiGazete": {
+          "tarih": "2023-01-02",
+          "sayi": "32061"
+        },
+        "dogrulama": "Okundu: RG 02.01.2023/32061 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %11,75; asgari giderim 800,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2024-01-01",
+      "bitis": "2024-12-31",
+      "oran": "0.48",
+      "asgariGiderimTutari": "1310",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderim Tutarı Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2024/01/20240102-3.pdf",
+        "resmiGazete": {
+          "tarih": "2024-01-02",
+          "sayi": "32417"
+        },
+        "dogrulama": "Okundu: RG 02.01.2024/32417 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %48,00; asgari giderim 1.310,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2025-01-01",
+      "bitis": "2025-12-31",
+      "oran": "0.5325",
+      "asgariGiderimTutari": "1475",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderim Tutarı Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2025/01/20250102-5.pdf",
+        "resmiGazete": {
+          "tarih": "2025-01-02",
+          "sayi": "32770"
+        },
+        "dogrulama": "Okundu: RG 02.01.2025/32770 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %53,25; asgari giderim 1.475,00 TL)."
+      }
+    },
+    {
+      "baslangic": "2026-01-01",
+      "bitis": "2026-12-31",
+      "oran": "0.43",
+      "asgariGiderimTutari": "2020",
+      "kaynak": {
+        "ad": "Mal ve Hizmet Tedarikinde Geç Ödemelerde Uygulanacak Temerrüt Faiz Oranı ve Alacağın Tahsili Masrafları İçin Talep Edilebilecek Asgari Giderim Tutarı Hakkında Tebliğ",
+        "url": "https://www.resmigazete.gov.tr/eskiler/2026/01/20260102-3.pdf",
+        "resmiGazete": {
+          "tarih": "2026-01-02",
+          "sayi": "33125"
+        },
+        "dogrulama": "Okundu: RG 02.01.2026/33125 TCMB tebliği ve TCMB TTK m.1530 tablosu (temerrüt faizi %43,00; asgari giderim 2.020,00 TL)."
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 // İcra kapak hesabı UYAP Doküman Formatı (.udf, format_id="1.8") rapor üreticisi.
 // src/icra/rapor.ts ile bölüm bölüm eşdeğerdir; sıfır dış paket ve sıfır Node modülü kullanır.
-import { tl, yuzde } from '../para.ts';
+import { tl } from '../para.ts';
 import type { RaporBilgisi } from '../rapor/pdf.ts';
 import {
   UDF_DOGRULAMA_UYARISI,
@@ -15,12 +15,16 @@ import { trTarih } from '../tarih.ts';
 import {
   ICRA_FAIZ_TURU_ADLARI,
   ICRA_TAKIP_TURU_ADLARI,
+  KALEM_MAHSUP_SIRA_ADLARI,
   TAHSIL_ASAMA_ADLARI,
+  icraFaizOzetiMetni,
   type IcraHesapSonucu,
 } from './hesap.ts';
 import {
+  ICRA_ALACAK_KALEMI_BASLIKLARI,
   ICRA_KISMI_ODEME_ACIKLAMASI,
   ICRA_KISMI_ODEME_BASLIKLARI,
+  icraAlacakKalemSatirlari,
   icraHarcSatirlari,
   icraKanitDosyaAdi,
   icraKismiOdemeSatirlari,
@@ -61,6 +65,8 @@ export function icraUdfXmlOlustur(s: IcraHesapSonucu, bilgi: RaporBilgisi): stri
 
   // 2. Takip Çıkışı, Masraflar ve Esaslar
   kurucu.baslik('2. Takip Çıkışı, Masraflar ve Esaslar', 1);
+  const kalemlerGoster =
+    s.alacakKalemleri.length > 1 || s.alacakKalemleri[0]?.faizBaslangicTarihi !== g.takip.takipTarihi;
   kurucu.ikiSutun(
     [
       ['Takip türü', ICRA_TAKIP_TURU_ADLARI[s.takipTuru]],
@@ -70,13 +76,25 @@ export function icraUdfXmlOlustur(s: IcraHesapSonucu, bilgi: RaporBilgisi): stri
       ['Takip çıkışı toplamı', `${tl(s.takipCikisToplami)} TL`],
       [
         'Takip sonrası faiz türü',
-        `${ICRA_FAIZ_TURU_ADLARI[g.takip.faiz.tur]}${g.takip.faiz.sozlesmeOrani ? ` (${yuzde(g.takip.faiz.sozlesmeOrani)})` : ''} · gün esası 1/${gunEsasi} (${g.takip.faiz.gerekce})`,
+        `${icraFaizOzetiMetni(s)} · gün esası 1/${gunEsasi}${s.alacakKalemleri.length === 1 ? ` (${s.alacakKalemleri[0]!.faiz.gerekce})` : ''}`,
       ],
+      ...(s.alacakKalemleri.length > 1 && s.kismiOdemeAdimlari.length > 0
+        ? ([['Çoklu kalem mahsup sırası', KALEM_MAHSUP_SIRA_ADLARI[s.kalemMahsupSirasi]]] as [string, string][])
+        : []),
       ['Tahsil harcı aşaması', TAHSIL_ASAMA_ADLARI[h.tahsilHarciAsamasi]],
       ['Takipten feragat / vazgeçme', h.feragatVarMi ? 'Var (492 s.K. m.23)' : 'Yok'],
     ],
     150,
   );
+
+  if (kalemlerGoster) {
+    kurucu.etiket('Alacak Kalemleri');
+    kurucu.tablo(ICRA_ALACAK_KALEMI_BASLIKLARI, icraAlacakKalemSatirlari(s), {
+      genislikler: [22, 138, 64, 116, 70, 70],
+      sag: [0, 4, 5],
+      toplam: ['Toplam', '', '', '', tl(s.asilAlacak), tl(s.kalanAsilAlacak)],
+    });
+  }
 
   if (s.takipOncesiKalemler.length > 0) {
     kurucu.etiket('Takip Öncesi Kalemler');

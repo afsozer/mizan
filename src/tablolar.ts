@@ -68,6 +68,7 @@ const ALANLAR: Record<string, { etiket: string; tur: 'tl' | 'oran' | 'kat' }> = 
   ustSinirKati: { etiket: 'üst sınır', tur: 'kat' },
   reeskontOrani: { etiket: 'reeskont', tur: 'oran' },
   avansOrani: { etiket: 'avans', tur: 'oran' },
+  asgariGiderimTutari: { etiket: 'asgari giderim', tur: 'tl' },
   basvurmaHarci: { etiket: 'başvurma', tur: 'tl' },
   pesinHarcOrani: { etiket: 'peşin harç', tur: 'oran' },
   tahsilTebligdenOnce: { etiket: 'tebliğden önce', tur: 'oran' },
@@ -233,6 +234,10 @@ export interface SgkSatiri extends DonemSatiri {
 export interface AvansReeskontSatiri extends DonemSatiri {
   reeskontOrani: string;
   avansOrani: string;
+}
+export interface Ttk1530FaizSatiri extends DonemSatiri {
+  oran: string;
+  asgariGiderimTutari: string;
 }
 export interface IcraHarclariSatiri extends DonemSatiri {
   basvurmaHarci: string;
@@ -623,6 +628,7 @@ export interface Tablolar {
   gelirVergisi: GelirVergisiTarifesi;
   ubgtTakvimi: UbgtTakvimi;
   avansReeskontFaizi?: DonemselTablo<AvansReeskontSatiri>;
+  ttk1530Faizi?: DonemselTablo<Ttk1530FaizSatiri>;
   icraHarclari?: DonemselTablo<IcraHarclariSatiri>;
   aaut?: AautTarifesi;
 }
@@ -639,6 +645,7 @@ export const TABLO_DOSYALARI = {
   gelirVergisi: 'gelir-vergisi.json',
   ubgtTakvimi: 'ubgt-takvimi.json',
   avansReeskontFaizi: 'avans-reeskont-faizi.json',
+  ttk1530Faizi: 'ttk-1530-faizi.json',
   icraHarclari: 'icra-harclari.json',
   aaut: 'aaut.json',
 } as const;
@@ -659,6 +666,7 @@ export interface HamTablolar {
   gelirVergisi: HamTablo;
   ubgtTakvimi?: HamTablo;
   avansReeskontFaizi?: HamTablo;
+  ttk1530Faizi?: HamTablo;
   icraHarclari?: HamTablo;
   aaut?: HamTablo;
 }
@@ -680,6 +688,9 @@ export function tablolariKur(h: HamTablolar): Tablolar {
       : new UbgtTakvimi({ tablo: 'ubgt-takvimi', ad: 'Ulusal bayram ve genel tatil takvimi (2429 s.K.)', dogrulamaTarihi: '2026-11-11', satirlar: [] }, ''),
     ...(h.avansReeskontFaizi
       ? { avansReeskontFaizi: kur<AvansReeskontSatiri>(h.avansReeskontFaizi, ['reeskontOrani', 'avansOrani']) }
+      : {}),
+    ...(h.ttk1530Faizi
+      ? { ttk1530Faizi: kur<Ttk1530FaizSatiri>(h.ttk1530Faizi, ['oran', 'asgariGiderimTutari']) }
       : {}),
     ...(h.icraHarclari
       ? {

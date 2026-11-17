@@ -212,6 +212,7 @@ function tablolarKomutu(): void {
     t.yasalFaiz,
     t.mevduatFaizi,
     ...(t.avansReeskontFaizi ? [t.avansReeskontFaizi] : []),
+    ...(t.ttk1530Faizi ? [t.ttk1530Faizi] : []),
     ...(t.icraHarclari ? [t.icraHarclari] : []),
   ];
   for (const x of donemseller) {

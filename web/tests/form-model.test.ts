@@ -65,6 +65,13 @@ test('hata yolundan formdaki alan adı bulunur', () => {
   assert.equal(alanAdi('girdi.hesapTarihi', 'icra'), 'Kapak (hesap) tarihi');
   assert.equal(alanAdi('girdi.parametreler.faizGunEsasi', 'icra'), 'Faiz gün esası');
   assert.equal(alanAdi('girdi.takip.faiz.sozlesmeOrani', 'icra'), 'Yıllık sözleşme / ilam faiz oranı (0 - 1)');
+  assert.equal(alanAdi('girdi.takip.faiz.baslangicTarihi', 'icra'), 'Faiz başlangıç tarihi');
+  assert.equal(alanAdi('girdi.takip.alacakKalemleri', 'icra'), 'Çoklu alacak kalemleri (farklı vade / faiz türlü kalemler)');
+  assert.equal(alanAdi('girdi.takip.alacakKalemleri[0].tutar', 'icra'), 'Tutar (TL)');
+  assert.equal(alanAdi('girdi.takip.alacakKalemleri[0].faizBaslangicTarihi', 'icra'), 'Faiz başlangıç tarihi');
+  assert.equal(alanAdi('girdi.takip.alacakKalemleri[0].pesinHarcaTabiMi', 'icra'), 'Peşin harç durumu');
+  assert.equal(alanAdi('girdi.takip.alacakKalemleri[0].faiz.tur', 'icra'), 'Kalem faiz türü');
+  assert.equal(alanAdi('girdi.parametreler.kalemMahsupSirasi', 'icra'), 'Çoklu alacak kaleminde anapara mahsup sırası');
   assert.equal(alanAdi('girdi.takip.pesinHarcAlindiMi', 'icra'), 'Peşin harç durumu');
   assert.equal(alanAdi('girdi.takip.tahsilHarciAsamasi', 'icra'), 'İcra tahsil harcı aşaması (492 s.K. B/I-3)');
   assert.equal(alanAdi('girdi.takip.masraflar[0].tarih', 'icra'), 'Masraf tarihi');
@@ -275,4 +282,42 @@ test('örnek icra YAML formdan kayıpsız geçer ve GirdiHatasi alanYolu döndü
     () => icraFormuDogrula(fazlaKesinti),
     (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.takip.kismiOdemeler[0].kesilenTahsilHarci',
   );
+
+  // Çoklu alacak kalemi görünürlüğü ve YAML dönüşümü
+  const takipGrupAlanlari = ICRA_BOLUMLER[1]!.alanlar[0]!.alanlar!;
+  const asilAlan = takipGrupAlanlari.find(a => a.key === 'asilAlacak')!;
+  const tekFaizAlan = takipGrupAlanlari.find(a => a.key === 'faiz')!;
+  const kalemlerAlan = takipGrupAlanlari.find(a => a.key === 'alacakKalemleri')!;
+  const kalemPesinAlan = kalemlerAlan.alanlar!.find(a => a.key === 'pesinHarcaTabiMi')!;
+  assert.equal(asilAlan.gorunur?.({}, bos), true);
+  assert.equal(tekFaizAlan.gorunur?.({}, bos), true);
+  assert.equal(asilAlan.gorunur?.({ alacakKalemleri: [{}] }, bos), false);
+  assert.equal(tekFaizAlan.gorunur?.({ alacakKalemleri: [{}] }, bos), false);
+  assert.equal(kalemPesinAlan.gorunur?.({}, { takip: { takipTuru: 'ilamsiz' } }), true);
+  assert.equal(kalemPesinAlan.gorunur?.({}, { takip: { takipTuru: 'ilamli' } }), false);
+
+  const cokluYaml = [
+    'alan: icra',
+    'dosya: { mahkeme: Örnek İcra Dairesi, esasNo: "2026/55", kaynak: örnek, altAlan: "60.05" }',
+    'hesapTarihi: 2026-06-15',
+    'parametreler: { faizGunEsasi: 365, kalemMahsupSirasi: yuksek-faiz }',
+    'takip:',
+    '  takipTarihi: 2025-01-10',
+    '  takipTuru: ilamsiz',
+    '  tahsilHarciAsamasi: hacizden-once',
+    '  alacakKalemleri:',
+    '    - ad: Ticari fatura',
+    '      tutar: 100000',
+    '      faizBaslangicTarihi: 2025-01-10',
+    '      pesinHarcaTabiMi: true',
+    '      faiz: { tur: ttk1530, gerekce: TTK m.1530/7 }',
+    '    - ad: Ek ilam ferisi',
+    '      tutar: 25000',
+    '      faizBaslangicTarihi: 2026-02-01',
+    '      pesinHarcaTabiMi: false',
+    '      faiz: { tur: yasal, gerekce: Yasal faiz }',
+  ].join('\n');
+  const cokluForm = yamlForma(cokluYaml);
+  assert.deepEqual(icraFormuDogrula(cokluForm), icraGirdiMetindenCoz(cokluYaml));
+  assert.deepEqual(icraGirdiMetindenCoz(formYamli(cokluForm)), icraGirdiMetindenCoz(cokluYaml));
 });

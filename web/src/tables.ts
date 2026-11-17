@@ -39,6 +39,7 @@ export function hesapTablolari(belgeler: TabloBelgesi[], secim: string | undefin
     ubgtTakvimi: dosyaBul(TABLO_DOSYALARI.ubgtTakvimi),
     mevduatFaizi: dosyaBul(mevduatAdi),
     avansReeskontFaizi: dosyaBul(TABLO_DOSYALARI.avansReeskontFaizi),
+    ttk1530Faizi: dosyaBul(TABLO_DOSYALARI.ttk1530Faizi),
     icraHarclari: dosyaBul(TABLO_DOSYALARI.icraHarclari),
     aaut: dosyaBul(TABLO_DOSYALARI.aaut),
   };

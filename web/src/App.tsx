@@ -8,11 +8,12 @@ import {
   aileKanitDosyaAdi,
   defterSatiri,
   hesapla,
-  ICRA_FAIZ_TURU_ADLARI,
   ICRA_TAKIP_TURU_ADLARI,
   icraDefterSatiri,
+  icraFaizOzetiMetni,
   icraHesapla,
   icraKanitDosyaAdi,
+  KALEM_MAHSUP_SIRA_ADLARI,
   kanitDosyaAdi,
   TABLO_DOSYALARI,
   TAHSIL_ASAMA_ADLARI,
@@ -326,7 +327,8 @@ export function App() {
           {d.icraSonuc ? <><dl class="ihtimal-toplamlari">{[['Takip çıkışı', d.icraSonuc.takipCikisToplami], ['Borçlunun ödeyeceği kapak tutarı', d.icraSonuc.borclununOdeyecegiKapakTutari], ['Alacaklıya net ödenecek tutar', d.icraSonuc.alacakliyaNetOdenecekTutar]].map(([ad, v]) => <div key={String(ad)}><dt>{String(ad)}</dt><dd>{tl(v as IcraHesapSonucu['takipCikisToplami'])} TL</dd></div>)}</dl>
             <details><summary>Tercihleri incele</summary><dl class="bilgi-listesi">
               <div><dt>Takip türü</dt><dd>{ICRA_TAKIP_TURU_ADLARI[d.icraSonuc.takipTuru]}</dd></div>
-              <div><dt>Takip sonrası faiz</dt><dd>{ICRA_FAIZ_TURU_ADLARI[d.icraSonuc.girdi.takip.faiz.tur]}{d.icraSonuc.girdi.takip.faiz.sozlesmeOrani ? ` (${yuzde(d.icraSonuc.girdi.takip.faiz.sozlesmeOrani)})` : ''}</dd></div>
+              <div><dt>Takip sonrası faiz</dt><dd>{icraFaizOzetiMetni(d.icraSonuc)}</dd></div>
+              {d.icraSonuc.alacakKalemleri.length > 1 && <div><dt>Çoklu kalem mahsubu</dt><dd>{KALEM_MAHSUP_SIRA_ADLARI[d.icraSonuc.kalemMahsupSirasi]}</dd></div>}
               <div><dt>Tahsil harcı aşaması</dt><dd>{TAHSIL_ASAMA_ADLARI[d.icraSonuc.harclar.tahsilHarciAsamasi]} ({yuzde(d.icraSonuc.harclar.uygulananTahsilOrani)})</dd></div>
               <div><dt>Peşin harç</dt><dd>{d.icraSonuc.girdi.takip.pesinHarcAlindiMi ? `${tl(d.icraSonuc.harclar.pesinHarc)} TL alındı` : 'Alınmadı / muaf'}</dd></div>
               <div><dt>Feragat indirimi</dt><dd>{d.icraSonuc.harclar.feragatIndirimiUygulandiMi ? '492 s.K. m.23 (1/2)' : d.icraSonuc.harclar.feragatVarMi ? 'Satış sonrası feragat (tam)' : 'Yok'}</dd></div>

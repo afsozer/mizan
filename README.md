@@ -223,6 +223,7 @@ hepsi girdiyle değiştirilebilir.
 | `mevduat-faizi-kamu.json` | aynı seri, kamu bankaları |
 | `ubgt-takvimi.json` | 2429 s.K. m.1-2 ulusal bayram ve genel tatil günleri takvimi (2016-2027) |
 | `avans-reeskont-faizi.json` | 3095 s.K. m.2 TCMB reeskont iskonto ve avans faiz oranları |
+| `ttk-1530-faizi.json` | 6102 s.K. TTK m.1530/7 mal ve hizmet tedarikinde geç ödeme temerrüt faiz oranı ve asgari giderim tutarı (TCMB, yıllık) |
 | `icra-harclari.json` | 492 s.K. (1) sayılı tarife icra harçları ve 2548 s.K. m.1 cezaevi yapı pulu harcı |
 | `aaut.json` | TBB Avukatlık Asgari Ücret Tarifesi maktu ücretler ve Üçüncü Kısım kademeli dilimler |
 
