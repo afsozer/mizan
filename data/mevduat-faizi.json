@@ -2,7 +2,7 @@
   "tablo": "mevduat-faizi",
   "ad": "Bankalarca mevduata fiilen uygulanan azami faiz (TCMB, 1 yıla kadar vadeli TL, vekil seri)",
   "aciklama": "1475 s.K. m.14: kıdem tazminatı geç ödenirse mevduata uygulanan en yüksek faiz. Yargıtay ölçütü (9. HD 06.11.2025, 2025/6610 E., 2025/8609 K.): bir yıllık mevduata fiilen uygulanan en yüksek oran; fesih tarihindeki oran ilk yıl, her yıldönümündeki oran sonraki yıl için sabit uygulanır, yıl içi değişiklikler dikkate alınmaz. Yargıtay oranın bankalara müzekkere yazılarak tespitini ister. Bu tablo TCMB EVDS serisidir ve vekil seri niteliğindedir: değer o ayın en yüksek oranıdır, \"1 yıla kadar\" dilimi 6 aydan uzun 12 ay dahil vadeleri kapsar. Banka yazısı varsa onun oranları ayrı bir tablo dosyasıyla girilmeli (girdi: tablolar.mevduatFaizi).",
-  "dogrulamaTarihi": "2026-11-11",
+  "dogrulamaTarihi": "2026-11-17",
   "satirlar": [
     {
       "baslangic": "2016-01-01",
@@ -11,7 +11,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
       }
     },
     {
@@ -21,7 +21,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
       }
     },
     {
@@ -31,7 +31,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
       }
     },
     {
@@ -41,7 +41,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
       }
     },
     {
@@ -51,7 +51,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.20, ayın en yüksek oranı"
       }
     },
     {
@@ -61,7 +61,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.00, ayın en yüksek oranı"
       }
     },
     {
@@ -71,7 +71,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.00, ayın en yüksek oranı"
       }
     },
     {
@@ -81,7 +81,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.95, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.95, ayın en yüksek oranı"
       }
     },
     {
@@ -91,7 +91,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.95, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.95, ayın en yüksek oranı"
       }
     },
     {
@@ -101,7 +101,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.95, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.95, ayın en yüksek oranı"
       }
     },
     {
@@ -111,7 +111,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.65, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.65, ayın en yüksek oranı"
       }
     },
     {
@@ -121,7 +121,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2016-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.65, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.65, ayın en yüksek oranı"
       }
     },
     {
@@ -131,7 +131,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.65, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.65, ayın en yüksek oranı"
       }
     },
     {
@@ -141,7 +141,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.65, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.65, ayın en yüksek oranı"
       }
     },
     {
@@ -151,7 +151,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.75, ayın en yüksek oranı"
       }
     },
     {
@@ -161,7 +161,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.55, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.55, ayın en yüksek oranı"
       }
     },
     {
@@ -171,7 +171,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.00, ayın en yüksek oranı"
       }
     },
     {
@@ -181,7 +181,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.40, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.40, ayın en yüksek oranı"
       }
     },
     {
@@ -191,7 +191,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.25, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.25, ayın en yüksek oranı"
       }
     },
     {
@@ -201,7 +201,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.15, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.15, ayın en yüksek oranı"
       }
     },
     {
@@ -211,7 +211,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.15, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.15, ayın en yüksek oranı"
       }
     },
     {
@@ -221,7 +221,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.00, ayın en yüksek oranı"
       }
     },
     {
@@ -231,7 +231,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 16.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 16.00, ayın en yüksek oranı"
       }
     },
     {
@@ -241,7 +241,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2017-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 16.40, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 16.40, ayın en yüksek oranı"
       }
     },
     {
@@ -251,7 +251,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
       }
     },
     {
@@ -261,7 +261,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
       }
     },
     {
@@ -271,7 +271,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
       }
     },
     {
@@ -281,7 +281,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.75, ayın en yüksek oranı"
       }
     },
     {
@@ -291,7 +291,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 17.82, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 17.82, ayın en yüksek oranı"
       }
     },
     {
@@ -301,7 +301,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 21.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 21.00, ayın en yüksek oranı"
       }
     },
     {
@@ -311,7 +311,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.85, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.85, ayın en yüksek oranı"
       }
     },
     {
@@ -321,7 +321,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 28.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 28.00, ayın en yüksek oranı"
       }
     },
     {
@@ -331,7 +331,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.00, ayın en yüksek oranı"
       }
     },
     {
@@ -341,7 +341,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.00, ayın en yüksek oranı"
       }
     },
     {
@@ -351,7 +351,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 28.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 28.00, ayın en yüksek oranı"
       }
     },
     {
@@ -361,7 +361,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2018-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.00, ayın en yüksek oranı"
       }
     },
     {
@@ -371,7 +371,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.00, ayın en yüksek oranı"
       }
     },
     {
@@ -381,7 +381,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 24.82, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 24.82, ayın en yüksek oranı"
       }
     },
     {
@@ -391,7 +391,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.00, ayın en yüksek oranı"
       }
     },
     {
@@ -401,7 +401,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.00, ayın en yüksek oranı"
       }
     },
     {
@@ -411,7 +411,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.98, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.98, ayın en yüksek oranı"
       }
     },
     {
@@ -421,7 +421,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.50, ayın en yüksek oranı"
       }
     },
     {
@@ -431,7 +431,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.50, ayın en yüksek oranı"
       }
     },
     {
@@ -441,7 +441,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 24.40, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 24.40, ayın en yüksek oranı"
       }
     },
     {
@@ -451,7 +451,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.50, ayın en yüksek oranı"
       }
     },
     {
@@ -461,7 +461,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.75, ayın en yüksek oranı"
       }
     },
     {
@@ -471,7 +471,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 24.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 24.00, ayın en yüksek oranı"
       }
     },
     {
@@ -481,7 +481,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2019-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.40, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.40, ayın en yüksek oranı"
       }
     },
     {
@@ -491,7 +491,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 23.02, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 23.02, ayın en yüksek oranı"
       }
     },
     {
@@ -501,7 +501,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 16.92, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 16.92, ayın en yüksek oranı"
       }
     },
     {
@@ -511,7 +511,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.00, ayın en yüksek oranı"
       }
     },
     {
@@ -521,7 +521,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 12.75, ayın en yüksek oranı"
       }
     },
     {
@@ -531,7 +531,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 9.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 9.75, ayın en yüksek oranı"
       }
     },
     {
@@ -541,7 +541,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 9.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 9.75, ayın en yüksek oranı"
       }
     },
     {
@@ -551,7 +551,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 10.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 10.00, ayın en yüksek oranı"
       }
     },
     {
@@ -561,7 +561,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 13.50, ayın en yüksek oranı"
       }
     },
     {
@@ -571,7 +571,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.25, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 14.25, ayın en yüksek oranı"
       }
     },
     {
@@ -581,7 +581,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.35, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 15.35, ayın en yüksek oranı"
       }
     },
     {
@@ -591,7 +591,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 17.68, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 17.68, ayın en yüksek oranı"
       }
     },
     {
@@ -601,7 +601,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2020-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 19.55, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 19.55, ayın en yüksek oranı"
       }
     },
     {
@@ -611,7 +611,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 19.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 19.00, ayın en yüksek oranı"
       }
     },
     {
@@ -621,7 +621,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 18.20, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 18.20, ayın en yüksek oranı"
       }
     },
     {
@@ -631,7 +631,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.22, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.22, ayın en yüksek oranı"
       }
     },
     {
@@ -641,7 +641,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.50, ayın en yüksek oranı"
       }
     },
     {
@@ -651,7 +651,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.75, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.75, ayın en yüksek oranı"
       }
     },
     {
@@ -661,7 +661,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.50, ayın en yüksek oranı"
       }
     },
     {
@@ -671,7 +671,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.92, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.92, ayın en yüksek oranı"
       }
     },
     {
@@ -681,7 +681,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.10, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.10, ayın en yüksek oranı"
       }
     },
     {
@@ -691,7 +691,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.10, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.10, ayın en yüksek oranı"
       }
     },
     {
@@ -701,7 +701,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 20.00, ayın en yüksek oranı"
       }
     },
     {
@@ -711,7 +711,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 19.76, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 19.76, ayın en yüksek oranı"
       }
     },
     {
@@ -721,7 +721,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2021-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.50, ayın en yüksek oranı"
       }
     },
     {
@@ -731,7 +731,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 27.17, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 27.17, ayın en yüksek oranı"
       }
     },
     {
@@ -741,7 +741,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 25.50, ayın en yüksek oranı"
       }
     },
     {
@@ -751,7 +751,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 27.24, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 27.24, ayın en yüksek oranı"
       }
     },
     {
@@ -761,7 +761,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.05, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 26.05, ayın en yüksek oranı"
       }
     },
     {
@@ -771,7 +771,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 22.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 22.00, ayın en yüksek oranı"
       }
     },
     {
@@ -781,7 +781,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 30.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 30.00, ayın en yüksek oranı"
       }
     },
     {
@@ -791,7 +791,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.50, ayın en yüksek oranı"
       }
     },
     {
@@ -801,7 +801,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 31.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 31.00, ayın en yüksek oranı"
       }
     },
     {
@@ -811,7 +811,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 31.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 31.00, ayın en yüksek oranı"
       }
     },
     {
@@ -821,7 +821,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 28.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 28.00, ayın en yüksek oranı"
       }
     },
     {
@@ -831,7 +831,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.50, ayın en yüksek oranı"
       }
     },
     {
@@ -841,7 +841,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2022-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 32.50, ayın en yüksek oranı"
       }
     },
     {
@@ -851,7 +851,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 34.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 34.50, ayın en yüksek oranı"
       }
     },
     {
@@ -861,7 +861,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 34.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 34.50, ayın en yüksek oranı"
       }
     },
     {
@@ -871,7 +871,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 39.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 39.00, ayın en yüksek oranı"
       }
     },
     {
@@ -881,7 +881,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 39.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 39.00, ayın en yüksek oranı"
       }
     },
     {
@@ -891,7 +891,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.00, ayın en yüksek oranı"
       }
     },
     {
@@ -901,7 +901,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 48.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 48.00, ayın en yüksek oranı"
       }
     },
     {
@@ -911,7 +911,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.00, ayın en yüksek oranı"
       }
     },
     {
@@ -921,7 +921,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 49.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 49.00, ayın en yüksek oranı"
       }
     },
     {
@@ -931,7 +931,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 60.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 60.00, ayın en yüksek oranı"
       }
     },
     {
@@ -941,7 +941,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 60.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 60.00, ayın en yüksek oranı"
       }
     },
     {
@@ -951,7 +951,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 61.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 61.00, ayın en yüksek oranı"
       }
     },
     {
@@ -961,7 +961,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2023-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 66.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 66.00, ayın en yüksek oranı"
       }
     },
     {
@@ -971,7 +971,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 62.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 62.00, ayın en yüksek oranı"
       }
     },
     {
@@ -981,7 +981,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 62.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 62.00, ayın en yüksek oranı"
       }
     },
     {
@@ -991,7 +991,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 80.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 80.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1001,7 +1001,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 75.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 75.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1011,7 +1011,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 75.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 75.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1021,7 +1021,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 58.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 58.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1031,7 +1031,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 60.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 60.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1041,7 +1041,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 58.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 58.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1051,7 +1051,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 55.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 55.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1061,7 +1061,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 54.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 54.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1071,7 +1071,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 54.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 54.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1081,7 +1081,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2024-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 55.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 55.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1091,7 +1091,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 50.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 50.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1101,7 +1101,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1111,7 +1111,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 46.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 46.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1121,7 +1121,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 52.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 52.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1131,7 +1131,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 50.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 50.50, ayın en yüksek oranı"
       }
     },
     {
@@ -1141,7 +1141,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 49.22, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 49.22, ayın en yüksek oranı"
       }
     },
     {
@@ -1151,7 +1151,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 47.06, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 47.06, ayın en yüksek oranı"
       }
     },
     {
@@ -1161,7 +1161,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 50.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 50.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1171,7 +1171,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1181,7 +1181,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-10",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.25, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.25, ayın en yüksek oranı"
       }
     },
     {
@@ -1191,7 +1191,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-11",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.50, ayın en yüksek oranı"
       }
     },
     {
@@ -1201,7 +1201,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2025-12",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 42.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 42.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1211,7 +1211,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-01",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 40.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 40.50, ayın en yüksek oranı"
       }
     },
     {
@@ -1221,7 +1221,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-02",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 40.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 40.50, ayın en yüksek oranı"
       }
     },
     {
@@ -1231,7 +1231,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-03",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 43.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 43.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1241,7 +1241,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-04",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 44.50, ayın en yüksek oranı"
       }
     },
     {
@@ -1251,7 +1251,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-05",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.50, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.50, ayın en yüksek oranı"
       }
     },
     {
@@ -1261,7 +1261,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-06",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.25, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.25, ayın en yüksek oranı"
       }
     },
     {
@@ -1271,7 +1271,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-07",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.17, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 45.17, ayın en yüksek oranı"
       }
     },
     {
@@ -1281,7 +1281,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-08",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 43.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 43.00, ayın en yüksek oranı"
       }
     },
     {
@@ -1291,7 +1291,7 @@
       "kaynak": {
         "ad": "TCMB EVDS, Bankalarca Mevduatlara Fiilen Uygulanan Azami Faiz Oranları (Stok-Aylık), seri TP.TRY.MT04.S, 2026-09",
         "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/File+Resources/YFA/Metaveri_Bankalar+Mevduat+Fiilen+Uygulanan+Faiz",
-        "dogrulama": "EVDS'den 2026-11-11 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 42.00, ayın en yüksek oranı"
+        "dogrulama": "EVDS'den 2026-11-17 tarihinde çekildi (scripts/mevduat-guncelle.ts); yüzde değer 42.00, ayın en yüksek oranı"
       }
     }
   ]

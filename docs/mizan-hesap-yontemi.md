@@ -136,7 +136,7 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
 
 - Dayanak: 2429 s.K. m.1-2 (günler), 4857 m.47 (çalışılan her gün için ayrıca bir günlük ücret).
 - Günler `gunler` listesiyle tek tek verilebilir ya da `takvim` seçeneğiyle `data/ubgt-takvimi.json`
-  tablosundan (2016-2026) otomatik türetilebilir; ikisi birlikte verilirse birleştirilir ve aynı tarih
+  tablosundan (2016-2027) otomatik türetilebilir; ikisi birlikte verilirse birleştirilir ve aynı tarih
   mükerrer sayılmaz.
 - 2429 s.K. m.1-2 tatil günleri: 29 Ekim Cumhuriyet Bayramı (28 Ekim 13:00'ten itibaren 1,5 gün),
   1 Ocak (1 gün), 23 Nisan (1 gün), 1 Mayıs (1 gün), 19 Mayıs (1 gün), 15 Temmuz (1 gün; 6752 s.K.
@@ -220,7 +220,7 @@ Kanun maddeleri 22 Ekim 2026'da mevzuat.gov.tr metninden (dayanak korpusu) kontr
   19.12.2025/33112).
 - Yasal faiz: %9 (BKK 2005/9831), 01.06.2024 %24 (CBK 8485), 31.07.2026 %31 (7589 s.K. m.10 formülü).
   AYM E.2024/24, K.2025/164 iptali madde 31.07.2026'da değiştiği için işçilik alacaklarını etkilemiyor.
-- UBGT takvimi: 2016-2026 yılları, 2429 s.K. m.1-2 (6752 s.K. m.2 ile 29.10.2016'da eklenen 15 Temmuz
+- UBGT takvimi: 2016-2027 yılları, 2429 s.K. m.1-2 (6752 s.K. m.2 ile 29.10.2016'da eklenen 15 Temmuz
   dahil) ve Diyanet İşleri Başkanlığı dini günler takviminden doğrulanan Ramazan ve Kurban Bayramı
   miladi tarihleri.
 

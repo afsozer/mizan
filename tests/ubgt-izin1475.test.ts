@@ -7,13 +7,13 @@ import { UbgtTakvimi } from '../src/tablolar.ts';
 import { tablolariYukle } from '../src/node/tablolar-dosya.ts';
 import { girdi, testTablolari } from './yardimci.ts';
 
-test('ubgt-takvimi.json: 2016-2026 yillari, 2016 15 Temmuz istisnasi ve sabit/dini toplamlar', () => {
+test('ubgt-takvimi.json: 2016-2027 yillari, 2016 15 Temmuz istisnasi ve sabit/dini toplamlar', () => {
   const tablolar = tablolariYukle();
   const takvim = tablolar.ubgtTakvimi;
-  assert.equal(takvim.yillar.length, 11);
+  assert.equal(takvim.yillar.length, 12);
   assert.deepEqual(
     takvim.yillar.map((y) => y.yil),
-    [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026],
+    [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027],
   );
 
   // 2016 yilinda 15 Temmuz genel tatil degildir (6752 s.K. yururluk: 29.10.2016)
@@ -28,8 +28,8 @@ test('ubgt-takvimi.json: 2016-2026 yillari, 2016 15 Temmuz istisnasi ve sabit/di
   assert.equal(sabit2016.toString(), '6.5');
   assert.equal(dini2016.toString(), '8');
 
-  // 2017-2026 arasinda 15 Temmuz her yil 1 gun sabit tatildir, sabit toplam 7.5 gundur
-  for (let yil = 2017; yil <= 2026; yil++) {
+  // 2017-2027 arasinda 15 Temmuz her yil 1 gun sabit tatildir, sabit toplam 7.5 gundur
+  for (let yil = 2017; yil <= 2027; yil++) {
     const satir = takvim.yil(yil);
     const temmuz15 = satir.gunler.find((g) => g.tarih === `${yil}-07-15` && g.tur === 'sabit');
     assert.ok(temmuz15, `${yil}-07-15 sabit tatil olmali`);
@@ -155,6 +155,16 @@ test('UBGT: resmi ve dini tatil ayni miladi gune denk geldiginde cift sayim yapi
   assert.equal(nisan23.length, 1);
   assert.equal(nisan23[0]![2], '1');
   assert.ok(ubgt2023.notlar.some((n) => n.includes('23.04.2023') && n.includes('çift sayım yapılmadı')));
+
+  // 2027-05-19: 19 Mayis (1 gun) + Kurban Bayrami 4. gun (1 gun) -> 1 gun alinmali (toplam 14,5 gun)
+  const turetildi2027 = t.ubgtTakvimi.turet({ donemler: [{ baslangic: '2027-01-01', bitis: '2027-12-31' }] });
+  assert.equal(turetildi2027.gunler.length, 16);
+  const toplam2027 = turetildi2027.gunler.reduce((acc, g) => acc.plus(g.gun), new Decimal(0));
+  assert.equal(toplam2027.toString(), '14.5');
+  const mayis19 = turetildi2027.gunler.filter((g) => g.tarih === '2027-05-19');
+  assert.equal(mayis19.length, 1);
+  assert.equal(mayis19[0]!.gun.toString(), '1');
+  assert.ok(turetildi2027.notlar.some((n) => n.includes('19.05.2027') && n.includes('çift sayım yapılmadı')));
 
   // Sabit 0.5 gun (28 Ekim) ile dini 1 gun cakistiginda yuksek olan 1 gun alinir
   const yapayTakvim = new UbgtTakvimi(

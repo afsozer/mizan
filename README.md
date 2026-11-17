@@ -220,7 +220,7 @@ hepsi girdiyle değiştirilebilir.
 | `yasal-faiz.json` | 3095 s.K. m.1 yasal faiz |
 | `mevduat-faizi.json` | kıdem faizi: bankalarca fiilen uygulanan azami faiz (TCMB, aylık) |
 | `mevduat-faizi-kamu.json` | aynı seri, kamu bankaları |
-| `ubgt-takvimi.json` | 2429 s.K. m.1-2 ulusal bayram ve genel tatil günleri takvimi (2016-2026) |
+| `ubgt-takvimi.json` | 2429 s.K. m.1-2 ulusal bayram ve genel tatil günleri takvimi (2016-2027) |
 | `avans-reeskont-faizi.json` | 3095 s.K. m.2 TCMB reeskont iskonto ve avans faiz oranları |
 | `icra-harclari.json` | 492 s.K. (1) sayılı tarife icra harçları ve 2548 s.K. m.1 cezaevi yapı pulu harcı |
 | `aaut.json` | TBB Avukatlık Asgari Ücret Tarifesi maktu ücretler ve Üçüncü Kısım kademeli dilimler |
@@ -262,7 +262,7 @@ satırının kaynak bağlantısı. Aynı girdi ve aynı commit ile hesap yeniden
   sayılır.
 - Fazla çalışma ve hafta tatili dönemleri tek bir hizmet döneminin içinde olmalı, birbiriyle
   çakışmamalı; UBGT günleri ve takvim dönemleri hizmet dönemlerinin içinde olmalı. Aksi halde hesap durur.
-- UBGT günleri `gunler` ile tek tek yazılabilir ya da `takvim` seçeneğiyle 2016-2026 yılları için
+- UBGT günleri `gunler` ile tek tek yazılabilir ya da `takvim` seçeneğiyle 2016-2027 yılları için
   `ubgt-takvimi.json` tablosundan türetilebilir; aynı miladi güne sabit ve dini tatil çakıştığında
   mükerrer sayım yapılmaz.
 - Hafta tatili çalışması ayrıca fazla çalışma hesabına katılırsa çift sayım olur; dönem girdileri buna

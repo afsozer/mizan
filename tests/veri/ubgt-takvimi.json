@@ -2,7 +2,7 @@
   "tablo": "ubgt-takvimi",
   "ad": "Ulusal bayram ve genel tatil takvimi (2429 s.K.)",
   "aciklama": "2429 s.K. m.1-2 uyarınca ulusal bayram (29 Ekim, 28 Ekim 13.00'ten itibaren 1,5 gün), resmi bayram ve genel tatil günleri (1 Ocak, 23 Nisan, 1 Mayıs, 19 Mayıs, 2017'den itibaren 15 Temmuz, 30 Ağustos) ile Diyanet İşleri Başkanlığı dini günler takvimine göre Ramazan Bayramı (arife 13.00'ten itibaren 3,5 gün) ve Kurban Bayramı (arife 13.00'ten itibaren 4,5 gün) miladi tarihleri. 15 Temmuz Demokrasi ve Milli Birlik Günü 6752 s.K. (RG 29.10.2016/29872) ile eklendiğinden 2016 yılında genel tatil değildir.",
-  "dogrulamaTarihi": "2026-11-11",
+  "dogrulamaTarihi": "2026-11-17",
   "satirlar": [
     {
       "yil": 2016,
@@ -346,6 +346,38 @@
           "sayi": "17284"
         },
         "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2026 yılı Ramazan (19-22.03.2026) ve Kurban (26-30.05.2026) Bayramı miladi tarihleri doğrulandı."
+      }
+    },
+    {
+      "yil": 2027,
+      "gunler": [
+        { "tarih": "2027-01-01", "gun": "1", "ad": "Yılbaşı", "tur": "sabit" },
+        { "tarih": "2027-03-08", "gun": "0.5", "ad": "Ramazan Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2027-03-09", "gun": "1", "ad": "Ramazan Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2027-03-10", "gun": "1", "ad": "Ramazan Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2027-03-11", "gun": "1", "ad": "Ramazan Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2027-04-23", "gun": "1", "ad": "Ulusal Egemenlik ve Çocuk Bayramı", "tur": "sabit" },
+        { "tarih": "2027-05-01", "gun": "1", "ad": "Emek ve Dayanışma Günü", "tur": "sabit" },
+        { "tarih": "2027-05-15", "gun": "0.5", "ad": "Kurban Bayramı arifesi", "tur": "dini" },
+        { "tarih": "2027-05-16", "gun": "1", "ad": "Kurban Bayramı 1. gün", "tur": "dini" },
+        { "tarih": "2027-05-17", "gun": "1", "ad": "Kurban Bayramı 2. gün", "tur": "dini" },
+        { "tarih": "2027-05-18", "gun": "1", "ad": "Kurban Bayramı 3. gün", "tur": "dini" },
+        { "tarih": "2027-05-19", "gun": "1", "ad": "Atatürk'ü Anma ve Gençlik ve Spor Bayramı", "tur": "sabit" },
+        { "tarih": "2027-05-19", "gun": "1", "ad": "Kurban Bayramı 4. gün", "tur": "dini" },
+        { "tarih": "2027-07-15", "gun": "1", "ad": "Demokrasi ve Milli Birlik Günü", "tur": "sabit" },
+        { "tarih": "2027-08-30", "gun": "1", "ad": "Zafer Bayramı", "tur": "sabit" },
+        { "tarih": "2027-10-28", "gun": "0.5", "ad": "Cumhuriyet Bayramı arifesi", "tur": "sabit" },
+        { "tarih": "2027-10-29", "gun": "1", "ad": "Cumhuriyet Bayramı", "tur": "sabit" }
+      ],
+      "kaynak": {
+        "ad": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı 2027 Yılı Dini Günler Listesi",
+        "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.2429.pdf",
+        "resmiGazete": {
+          "tarih": "1981-03-19",
+          "sayi": "17284"
+        },
+        "dogrulama": "2429 s.K. m.1-2 ve Diyanet İşleri Başkanlığı Dini Günler takviminden 2027 yılı Ramazan (08-11.03.2027) ve Kurban (15-19.05.2027) Bayramı miladi tarihleri doğrulandı.",
+        "not": "19.05.2027 tarihinde Atatürk'ü Anma ve Gençlik ve Spor Bayramı (1 gün) ile Kurban Bayramı 4. günü (1 gün) çakışmaktadır; Yargıtay uygulaması uyarınca aynı miladi günde çift sayım yapılmaz, tek tatil günü (1 gün) esas alınır (Yargıtay 9. HD 2015/30408 E., 2016/4301 K.)."
       }
     }
   ]

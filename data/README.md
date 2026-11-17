@@ -57,7 +57,7 @@ Her dosya aynı yapıdadır:
   2027 satırı, TCMB'nin 31.12.2026 reeskont oranı belli olunca eklenir.
 - `mevduat-faizi*.json`: `node scripts/mevduat-guncelle.ts` ile çekilir. EVDS değeri ayın tamamında
   görülen en yüksek orandır ve ertesi ayın sonlarına doğru yayımlanır; son ay tablonun son satırıdır.
-- `ubgt-takvimi.json`: 2016-2026 yıllarının her biri için 2429 s.K. m.1-2 kapsamındaki sabit (`"sabit"`)
+- `ubgt-takvimi.json`: 2016-2027 yıllarının her biri için 2429 s.K. m.1-2 kapsamındaki sabit (`"sabit"`)
   ve dini (`"dini"`) tatil günlerini, gün katsayısını (`"1"` ya da `"0.5"`) ve Diyanet / mevzuat
   kaynağını tutar. 6752 s.K. 29.10.2016 tarihinde yürürlüğe girdiğinden 15 Temmuz 2016 yılında yer almaz,
   2017'den itibaren 1 gün olarak yer alır. Aynı miladi güne hem sabit hem dini tatil denk geldiğinde
