@@ -6,6 +6,8 @@ import {
   GirdiHatasi,
   girdiCoz,
   girdiMetindenCoz,
+  icraGirdiCoz,
+  icraGirdiMetindenCoz,
 } from '../../src/index.ts';
 import { parse, stringify } from 'yaml';
 
@@ -50,6 +52,29 @@ export function bosAileFormu(): Nesne {
   };
 }
 
+export function bosIcraFormu(): Nesne {
+  return {
+    alan: 'icra',
+    dosya: { mahkeme: '', esasNo: '', kaynak: '', altAlan: '60.05' },
+    hesapTarihi: '',
+    parametreler: {},
+    takip: {
+      takipTarihi: '',
+      takipTuru: 'ilamsiz',
+      asilAlacak: '',
+      takipOncesiKalemler: [],
+      faiz: { tur: '', gerekce: '' },
+      tahsilHarciAsamasi: '',
+      masraflar: [],
+      kismiOdemeler: [],
+    },
+  };
+}
+
+export function icraFormuMu(form: Nesne): boolean {
+  return form.alan === 'icra';
+}
+
 export function aautFormuMu(form: Nesne): boolean {
   return form.alan === 'aaut';
 }
@@ -58,7 +83,8 @@ export function aileFormuMu(form: Nesne): boolean {
   return form.alan === 'aile';
 }
 
-export function formAlanTuru(form: Nesne): 'iscilik' | 'aaut' | 'aile' {
+export function formAlanTuru(form: Nesne): 'iscilik' | 'icra' | 'aaut' | 'aile' {
+  if (form.alan === 'icra') return 'icra';
   if (form.alan === 'aaut') return 'aaut';
   if (form.alan === 'aile') return 'aile';
   return 'iscilik';
@@ -79,6 +105,10 @@ export function formdanGirdiKur(form: Nesne): Nesne {
 export function yamlForma(metin: string): Nesne {
   const ham = parse(metin) as Nesne | null;
   if (ham && typeof ham === 'object' && !Array.isArray(ham)) {
+    if (ham.alan === 'icra') {
+      icraGirdiMetindenCoz(metin);
+      return ham;
+    }
     if (ham.alan === 'aaut') {
       aautGirdiMetindenCoz(metin);
       return ham;
@@ -109,6 +139,7 @@ export function formYamli(form: Nesne): string {
 }
 
 export function formuDogrula(form: Nesne) { return girdiCoz(formdanGirdiKur(form)); }
+export function icraFormuDogrula(form: Nesne) { return icraGirdiCoz(formdanGirdiKur({ ...form, alan: 'icra' })); }
 export function aileFormuDogrula(form: Nesne) { return aileGirdiCoz(formdanGirdiKur({ ...form, alan: 'aile' })); }
 
 export function aautFormuDogrula(form: Nesne) { return aautGirdiCoz(formdanGirdiKur(form)); }

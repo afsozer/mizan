@@ -2,7 +2,7 @@ import { TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
 import type { HamTablo, HamTablolar, Tablolar } from '../../src/index.ts';
 
 export interface TabloBelgesi { dosyaAdi: string; metin: string; ham: HamTablo }
-const metinler = import.meta.glob<string>('../../data/*.json', { query: '?raw', import: 'default', eager: true });
+const metinler = import.meta.glob<string>('../../data/*.json', { query: '?raw', import: 'default', eager: false });
 export async function sha256(metin: string): Promise<string> {
   if (!globalThis.crypto?.subtle) throw new Error('SHA-256 için uygulamayı localhost veya HTTPS üzerinden açın.');
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(metin));
@@ -12,10 +12,10 @@ export async function tabloHazirla(dosyaAdi: string, metin: string): Promise<Tab
   return { dosyaAdi, metin, ham: { dosya: JSON.parse(metin) as unknown, ozet: await sha256(metin) } };
 }
 export async function paketTablolari(): Promise<TabloBelgesi[]> {
-  return Promise.all(Object.values(TABLO_DOSYALARI).map(ad => {
-    const metin = metinler[`../../data/${ad}`];
-    if (metin === undefined) throw new Error(`Paket tablosu okunamadı: ${ad}`);
-    return tabloHazirla(ad, metin);
+  return Promise.all(Object.values(TABLO_DOSYALARI).map(async ad => {
+    const yukle = metinler[`../../data/${ad}`];
+    if (!yukle) throw new Error(`Paket tablosu okunamadı: ${ad}`);
+    return tabloHazirla(ad, await yukle());
   }));
 }
 export function hesapTablolari(belgeler: TabloBelgesi[], secim: string | undefined): Tablolar {

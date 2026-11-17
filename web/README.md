@@ -23,8 +23,10 @@ node --test web/tests/*.test.ts
 
 Vite kökü `web/`, dağıtım çıktısı `web/dist/` olur; çıktı git dışında tutulur. Varsayılan geliştirme
 sunucusu yalnız `127.0.0.1` adresini dinler. SHA-256 için localhost veya HTTPS gerekir. Alt dizine
-kurulum için kaynak adresleri göreli üretilir. PDF motoru ve Roboto vfs yalnız rapor istendiğinde,
-uygulamanın kendi dağıtım dosyalarından yüklenir. Yeni paket eklenmedi.
+kurulum için kaynak adresleri göreli üretilir. Gömülü `data/*.json` kaynak tabloları ayrı bir
+`tablolar-*.js` parçasına (`eager: false` dinamik içe aktarma ve `manualChunks` ile), PDF motoru
+ve Roboto vfs ise yalnız rapor istendiğinde yüklenen parçalara ayrıldığı için ana uygulama paketi
+(`index-*.js`) 500 kB altında kalır. Yeni paket eklenmedi.
 
 ### GitHub Actions ve GitHub Pages dağıtımı
 
@@ -43,21 +45,27 @@ uygulamanın kendi dağıtım dosyalarından yüklenir. Yeni paket eklenmedi.
 ## Dosyalar
 
 - `index.html`: Türkçe giriş belgesi ve dış bağlantı isteklerini kısıtlayan CSP.
-- `vite.config.ts`: Preact, kök dizin, göreli dağıtım ve derleme anındaki sürüm/commit bilgisi.
+- `vite.config.ts`: Preact, kök dizin, göreli dağıtım, `data/*.json` tablolarını `tablolar`
+  parçasına ayıran `rolldownOptions.output.manualChunks` ayarı ve derleme anındaki sürüm/commit bilgisi.
 - `tsconfig.json`, `.gitignore`: bağımsız strict tip denetimi ve derleme çıktısı kuralı.
-- `src/main.tsx`, `src/App.tsx`: uygulama girişi, 4 hesap alanı gezinmesi (`iscilik`, `icra`, `aaut`, `aile`) ve bellekteki ihtimaller.
-- `src/IcraPanel.tsx`: icra takibi kapak hesabı, harç ve TBK m.100 kısmi ödeme çalışma alanı.
-- `src/form-model.ts`: saf form nesnesi kurma, alan düzenleme ve YAML dönüşümü.
-- `src/schema.ts`: alan etiketleri, seçimler, görünür varsayılanlar ve tekrar eden satırların yapısı.
-- `src/Form.tsx`: etiketli alanlar, listeler, isteğe bağlı gruplar ve alana bağlı hata gösterimi.
-- `src/Results.tsx`: brüt/net/faiz, hesap ayrıntıları, kesintiler, tercihler, kaynaklar ve uyarılar.
-- `src/tables.ts`: gömülü JSON metinleri, SHA-256 ve çekirdek üzerinden tablo kurma.
+- `src/main.tsx`, `src/App.tsx`: uygulama girişi, 4 hesap alanı (`iscilik`, `icra`, `aaut`, `aile`)
+  için ortak form/ihtimal/rapor akışı ve bellekteki ihtimaller.
+- `src/form-model.ts`: saf form nesnesi kurma (`bosForm`, `bosIcraFormu`, `bosAautFormu`, `bosAileFormu`),
+  alan düzenleme ve 4 alan için YAML dönüşümü.
+- `src/schema.ts`: 4 alan (`BOLUMLER`, `ICRA_BOLUMLER`, `AAUT_BOLUMLER`, `AILE_BOLUMLER`) için
+  alan etiketleri, seçimler, koşullu görünürlük, görünür varsayılanlar ve `alanAdi(yol, alan)`.
+- `src/Form.tsx`: etiketli alanlar, listeler, koşullu alan temizleme, isteğe bağlı gruplar ve
+  alana bağlı hata gösterimi.
+- `src/Results.tsx`: 4 alanın (`Sonuclar`, `IcraSonuclar`, `AautSonuclar`, `AileSonuclar`)
+  özet ve ayrıntılı sonuç tabloları, kesintiler, tercihler, kaynaklar ve uyarılar.
+- `src/tables.ts`: `eager: false` ile dinamik yüklenen gömülü JSON metinleri, SHA-256 ve
+  çekirdek üzerinden tablo kurma.
 - `src/TablesView.tsx`: tablo satırları, doğrulama kayıtları ve kullanıcı banka tablosu aktarımı.
 - `src/exports.ts`: PDF, UYAP UDF, YAML, indirme ve raporda kullanılan sürüm bilgisi.
 - `src/env.d.ts`, `src/pdfmake.d.ts`: derleme sabiti ve kurulu pdfmake tarayıcı paketinin tipleri.
 - `src/style.css`: kağıt/mürekkep/bakır renkleri, sistem serif başlıklar, tablo rakamları ve iki tema.
-- `tests/form-model.test.ts`: örnek girdinin kayıpsız aktarımı, boş hukuki tercihler, sıfır/false,
-  bağımsız ihtimaller, dönem satırları ve hata yolları.
+- `tests/form-model.test.ts`: 4 hesap alanı için örnek girdinin kayıpsız aktarımı, boş hukuki
+  tercihler, sıfır/false, bağımsız ihtimaller, dönem satırları ve `GirdiHatasi.alanYolu` doğrulamaları.
 
 Kök `package.json` dosyasına yalnız `web:dev`, `web:build`, `web:preview` komutları eklendi.
 Başlangıçta worktree içinde bulunan çekirdek, test ve bağımlılık değişikliklerine dokunulmadı.
@@ -92,9 +100,9 @@ harici sayfa açar; uygulamada CDN, analitik, uzaktan font veya veri API'si bulu
 
 ## Doğrulama ve kalan kontrol
 
-- Üretim derlemesi (`npm run web:build`), kök ve web tip denetimi, çekirdek testleri ve 6 web birim
-  testi sıfır hatayla geçti; örnek hesabın form/YAML dönüşümü çekirdeğin doğrudan YAML çözümlemesiyle
-  eşittir.
+- Üretim derlemesi (`npm run web:build`), kök ve web tip denetimi, çekirdek testleri ve 10 web birim
+  testi sıfır hatayla geçti; dört alandaki örnek hesapların form/YAML dönüşümü çekirdeğin
+  doğrudan YAML çözümlemesiyle eşittir.
 - Gerçek Brave tarayıcısında (`http://127.0.0.1:5179/`) tüm kullanıcı akışları
   canlı doğrulandı:
   - **Örnek hesap yükle** ile brüt `552.872,22 TL`, net `472.071,94 TL` ve işlemiş faiz `47.905,57 TL`
@@ -121,8 +129,10 @@ harici sayfa açar; uygulamada CDN, analitik, uzaktan font veya veri API'si bulu
     offset) tüm etkileşimli öğelerde göründüğü ve `375 px` genişlikte tüm ekranlarda yatay taşma
     olmadığı (`scrollWidth === clientWidth`, geniş veri tabloları yalnız `.tablo-kaydir` bölgesi
     içinde kaydırılabilir) ekran görüntüleriyle doğrulandı.
-- Vite, pdfmake ve Roboto parçalarının 500 kB üstünde olması nedeniyle boyut uyarısı verir. Bu
-  parçalar yalnız PDF istendiğinde yüklenir ve derlemeyi engellemez.
+- Ana uygulama kodu (`index-*.js`) ile gömülü kaynak tabloları (`tablolar-*.js`) kod bölme sonrası
+  500 kB altında kalır. Vite yalnız pdfmake ve Roboto parçalarının 500 kB üstünde olması
+  nedeniyle boyut uyarısı verir; bu parçalar yalnız PDF istendiğinde yüklenir ve derlemeyi
+  engellemez.
 
 ## Çekirdek API notları
 

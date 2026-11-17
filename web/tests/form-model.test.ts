@@ -1,11 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { aautGirdiMetindenCoz, aileGirdiMetindenCoz, GirdiHatasi, girdiCoz, girdiMetindenCoz, hesapla, TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
-import { aautFormuDogrula, aautFormuMu, aileFormuDogrula, aileFormuMu, alanDegistir, bosAileFormu, bosForm, degerOku, formAlanTuru, formdanGirdiKur, formYamli, formuDogrula, hataAciklamasi, hataYolu, yamlForma } from '../src/form-model.ts';
+import { aautGirdiMetindenCoz, aileGirdiMetindenCoz, GirdiHatasi, girdiCoz, girdiMetindenCoz, hesapla, icraGirdiMetindenCoz, TABLO_DOSYALARI, tablolariKur } from '../../src/index.ts';
+import { aautFormuDogrula, aautFormuMu, aileFormuDogrula, aileFormuMu, alanDegistir, bosAileFormu, bosForm, bosIcraFormu, degerOku, formAlanTuru, formdanGirdiKur, formYamli, formuDogrula, hataAciklamasi, hataYolu, icraFormuDogrula, icraFormuMu, yamlForma } from '../src/form-model.ts';
 import type { Nesne } from '../src/form-model.ts';
-import { alanAdi, KALEMLER, kalemYeni } from '../src/schema.ts';
+import { alanAdi, ICRA_BOLUMLER, KALEMLER, kalemYeni } from '../src/schema.ts';
 const ornek = readFileSync(new URL('../../ornekler/ornek-iscilik.yaml', import.meta.url), 'utf8');
+const ornekIcra = readFileSync(new URL('../../ornekler/ornek-icra.yaml', import.meta.url), 'utf8');
 const ornekAaut = readFileSync(new URL('../../ornekler/ornek-aaut.yaml', import.meta.url), 'utf8');
 const ornekAile = readFileSync(new URL('../../ornekler/ornek-aile.yaml', import.meta.url), 'utf8');
 
@@ -60,6 +61,17 @@ test('hata yolundan formdaki alan adı bulunur', () => {
   assert.equal(alanAdi('girdi.uyusmazlik.davaDegeri'), 'Dava / takip değeri (müddeabih, TL)');
   assert.equal(alanAdi('girdi.evlilik.malRejimiSonaErmeTarihi'), 'Mal rejiminin sona erme tarihi');
   assert.equal(alanAdi('girdi.mallar[0].tasfiyeDegeri'), 'Tasfiye (karar/güncel) sürüm değeri (TL)');
+  assert.equal(alanAdi('girdi.dosya.mahkeme', 'icra'), 'İcra dairesi / mahkeme');
+  assert.equal(alanAdi('girdi.hesapTarihi', 'icra'), 'Kapak (hesap) tarihi');
+  assert.equal(alanAdi('girdi.parametreler.faizGunEsasi', 'icra'), 'Faiz gün esası');
+  assert.equal(alanAdi('girdi.takip.faiz.sozlesmeOrani', 'icra'), 'Yıllık sözleşme / ilam faiz oranı (0 - 1)');
+  assert.equal(alanAdi('girdi.takip.pesinHarcAlindiMi', 'icra'), 'Peşin harç durumu');
+  assert.equal(alanAdi('girdi.takip.tahsilHarciAsamasi', 'icra'), 'İcra tahsil harcı aşaması (492 s.K. B/I-3)');
+  assert.equal(alanAdi('girdi.takip.masraflar[0].tarih', 'icra'), 'Masraf tarihi');
+  assert.equal(alanAdi('girdi.takip.kismiOdemeler[0].tutar', 'icra'), 'Ödeme tutarı (TL)');
+  assert.equal(alanAdi('girdi.takip.takipOncesiKalemler[0].ad', 'icra'), 'Kalem adı');
+  assert.equal(alanAdi('girdi.takip.vekaletUcreti', 'icra'), 'İcra vekalet ücreti (TL)');
+  assert.equal(alanAdi('girdi.takip.feragatVarMi', 'icra'), 'Takipten feragat / vazgeçme');
 });
 
 test('formuDogrula ve hesapla GirdiHatasi alanYolu değerini doğrudan döndürür', () => {
@@ -169,5 +181,67 @@ test('örnek aile YAML formdan kayıpsız geçer ve çekirdekte aynı girdiyi ü
   assert.throws(
     () => aileFormuDogrula(bosAileFormu()),
     (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.dosya.mahkeme',
+  );
+});
+
+test('örnek icra YAML formdan kayıpsız geçer ve GirdiHatasi alanYolu döndürür', () => {
+  const form = yamlForma(ornekIcra);
+  assert.equal(icraFormuMu(form), true);
+  assert.equal(formAlanTuru(form), 'icra');
+  assert.deepEqual(icraFormuDogrula(form), icraGirdiMetindenCoz(ornekIcra));
+  assert.deepEqual(icraGirdiMetindenCoz(formYamli(form)), icraGirdiMetindenCoz(ornekIcra));
+
+  const bos = bosIcraFormu();
+  assert.equal(icraFormuMu(bos), true);
+  assert.equal(formAlanTuru(bos), 'icra');
+  assert.equal(degerOku(bos, ['takip', 'faiz', 'tur']), '');
+  assert.equal(degerOku(bos, ['takip', 'tahsilHarciAsamasi']), '');
+  assert.throws(
+    () => icraFormuDogrula(bos),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.dosya.mahkeme',
+  );
+
+  let kismiDolu = alanDegistir(bos, ['dosya', 'mahkeme'], 'Örnek İcra Dairesi');
+  kismiDolu = alanDegistir(kismiDolu, ['dosya', 'esasNo'], '2026/1');
+  kismiDolu = alanDegistir(kismiDolu, ['dosya', 'kaynak'], 'örnek hesap');
+  kismiDolu = alanDegistir(kismiDolu, ['hesapTarihi'], '2026-06-15');
+  kismiDolu = alanDegistir(kismiDolu, ['takip', 'takipTarihi'], '2025-10-01');
+  kismiDolu = alanDegistir(kismiDolu, ['takip', 'asilAlacak'], '10000');
+  assert.throws(
+    () => icraFormuDogrula(kismiDolu),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.takip.faiz.tur',
+  );
+  kismiDolu = alanDegistir(kismiDolu, ['takip', 'faiz', 'tur'], 'yasal');
+  kismiDolu = alanDegistir(kismiDolu, ['takip', 'faiz', 'gerekce'], '3095 s.K. m.1');
+  assert.throws(
+    () => icraFormuDogrula(kismiDolu),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.takip.tahsilHarciAsamasi',
+  );
+
+  assert.deepEqual(ICRA_BOLUMLER.map(b => b.ad), ['Dosya', 'Takip ve Faiz', 'Harçlar ve Masraflar', 'Kısmi Ödemeler']);
+  const faizAlan = ICRA_BOLUMLER[1]!.alanlar[0]!.alanlar!.find(a => a.key === 'faiz')!;
+  const sozlesmeOraniAlan = faizAlan.alanlar!.find(a => a.key === 'sozlesmeOrani')!;
+  assert.equal(sozlesmeOraniAlan.gorunur?.({ tur: 'sozlesme' }, bos), true);
+  assert.equal(sozlesmeOraniAlan.gorunur?.({ tur: 'avans' }, bos), false);
+  const pesinHarcAlan = ICRA_BOLUMLER[2]!.alanlar[0]!.alanlar!.find(a => a.key === 'pesinHarcAlindiMi')!;
+  assert.equal(pesinHarcAlan.gorunur?.({ takipTuru: 'ilamsiz' }, bos), true);
+  assert.equal(pesinHarcAlan.gorunur?.({ takipTuru: 'ilamli' }, bos), false);
+
+  const sozlesmesiz = alanDegistir(form, ['takip', 'faiz', 'tur'], 'sozlesme');
+  assert.throws(
+    () => icraFormuDogrula(sozlesmesiz),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.takip.faiz.sozlesmeOrani',
+  );
+
+  const ilamliPesinli = alanDegistir(form, ['takip', 'takipTuru'], 'ilamli');
+  assert.throws(
+    () => icraFormuDogrula(ilamliPesinli),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.takip.pesinHarcAlindiMi',
+  );
+
+  const eksiOdeme = alanDegistir(form, ['takip', 'kismiOdemeler', 0, 'tutar'], '-5');
+  assert.throws(
+    () => icraFormuDogrula(eksiOdeme),
+    (e: unknown) => e instanceof GirdiHatasi && e.alanYolu === 'girdi.takip.kismiOdemeler[0].tutar',
   );
 });

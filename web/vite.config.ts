@@ -52,7 +52,17 @@ export default defineConfig({
   base: './',
   plugins: [preact(), kapatmaUcu()],
   define: { __MIZAN_SURUM__: JSON.stringify({ surum: paket.version, commit, degisiklikVar }) },
-  build: { outDir: 'dist', emptyOutDir: true },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (/[\\/]data[\\/][^\\/]+\.json/.test(id)) return 'tablolar';
+        },
+      },
+    },
+  },
   // Sunucu ayağa kalkınca arayüz varsayılan tarayıcıda kendiliğinden açılır.
   server: { host: '127.0.0.1', open: true, fs: { allow: [fileURLToPath(new URL('..', import.meta.url))] } },
   preview: { host: '127.0.0.1', open: true },

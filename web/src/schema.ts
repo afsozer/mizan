@@ -5,6 +5,12 @@ import {
   AAUT_MERCI_ADLARI,
   AAUT_NITELIKLERI,
   AAUT_NITELIK_ADLARI,
+  ICRA_FAIZ_TURU_ADLARI,
+  ICRA_TAKIP_TURU_ADLARI,
+  TAHSIL_ASAMA_ADLARI,
+  type IcraFaizTuru,
+  type IcraTakipTuru,
+  type TahsilHarciAsamasi,
 } from '../../src/index.ts';
 import type { Deger, Nesne } from './form-model.ts';
 
@@ -143,6 +149,177 @@ export const BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
     ] },
   ] },
   { ad: 'Kalemler', alanlar: [] },
+];
+
+export const ICRA_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
+  {
+    ad: 'Dosya',
+    alanlar: [
+      {
+        key: 'dosya',
+        ad: 'Dosya bilgisi',
+        alanlar: [
+          metin('mahkeme', 'İcra dairesi / mahkeme'),
+          metin('esasNo', 'Dosya (esas) numarası'),
+          metin('kaynak', 'Defterdeki kaynak'),
+          metin('altAlan', 'Bilirkişilik alt alanı'),
+          metin('kisaAd', 'Dosya kısa adı', ops),
+          metin('hazirlayan', 'Hazırlayan', ops),
+        ],
+      },
+      tarih('hesapTarihi', 'Kapak (hesap) tarihi'),
+    ],
+  },
+  {
+    ad: 'Takip ve Faiz',
+    alanlar: [
+      {
+        key: 'takip',
+        ad: 'Takip ve faiz esasları',
+        alanlar: [
+          tarih('takipTarihi', 'Takip tarihi'),
+          sec(
+            'takipTuru',
+            'Takip türü',
+            (Object.keys(ICRA_TAKIP_TURU_ADLARI) as IcraTakipTuru[]).map(k => [k, ICRA_TAKIP_TURU_ADLARI[k]] as [string, string]),
+          ),
+          sayi('asilAlacak', 'Asıl alacak (TL)'),
+          {
+            key: 'faiz',
+            ad: 'Takip sonrası faiz',
+            alanlar: [
+              sec(
+                'tur',
+                'Takip sonrası faiz türü',
+                (Object.keys(ICRA_FAIZ_TURU_ADLARI) as IcraFaizTuru[]).map(k => [k, ICRA_FAIZ_TURU_ADLARI[k]] as [string, string]),
+              ),
+              sayi('sozlesmeOrani', 'Yıllık sözleşme / ilam faiz oranı (0 - 1)', {
+                gorunur: g => g.tur === 'sozlesme',
+                ipucu: 'Oran 0 ile 1 arasında yazılır (%45 için 0.45).',
+              }),
+              metin('gerekce', 'Faiz gerekçesi', { tur: 'textarea' }),
+            ],
+          },
+          {
+            key: 'takipOncesiKalemler',
+            ad: "Takip öncesi birikmiş faiz ve fer'i kalemler",
+            liste: true,
+            ...ops,
+            yeni: { ad: '', tutar: '' },
+            ipucu: 'TBK m.121/3 gereği takip sonrasında faiz yürütülmez; 492 s.K. m.20 gereği harç matrahına girer.',
+            alanlar: [
+              metin('ad', 'Kalem adı'),
+              sayi('tutar', 'Tutar (TL)'),
+              metin('aciklama', 'Açıklama', ops),
+            ],
+          },
+        ],
+      },
+      {
+        key: 'parametreler',
+        ad: 'Faiz hesap esasları',
+        alanlar: [
+          sayi('faizGunEsasi', 'Faiz gün esası', {
+            ...ops,
+            varsayilan: '365',
+            dayanak: '365 veya 360 gün; basit faiz',
+          }),
+        ],
+      },
+    ],
+  },
+  {
+    ad: 'Harçlar ve Masraflar',
+    alanlar: [
+      {
+        key: 'takip',
+        ad: 'Harçlar, vekalet ücreti ve masraflar',
+        alanlar: [
+          sec(
+            'pesinHarcAlindiMi',
+            'Peşin harç durumu',
+            [
+              [true, 'Takip açılışında binde 5 peşin harç alındı'],
+              [false, 'Peşin harç alınmadı / muaf'],
+            ],
+            {
+              ...ops,
+              gorunur: g => g.takipTuru !== 'ilamli',
+              varsayilan: 'İlamsız ve kambiyo takiplerinde alındı',
+              dayanak: '492 s.K. m.28-29 (tahsil harcından mahsup edilir)',
+            },
+          ),
+          sec(
+            'tahsilHarciAsamasi',
+            'İcra tahsil harcı aşaması (492 s.K. B/I-3)',
+            (Object.keys(TAHSIL_ASAMA_ADLARI) as TahsilHarciAsamasi[]).map(k => [k, TAHSIL_ASAMA_ADLARI[k]] as [string, string]),
+          ),
+          sec(
+            'feragatVarMi',
+            'Takipten feragat / vazgeçme',
+            [
+              [false, 'Feragat / vazgeçme yok'],
+              [true, 'Takipten feragat / vazgeçme var (1/2 indirim)'],
+            ],
+            {
+              ...ops,
+              varsayilan: 'Feragat yok',
+              dayanak: '492 s.K. m.23 (satış öncesi aşamalarda tahsil harcı yarı oranında alınır)',
+            },
+          ),
+          sayi('vekaletUcreti', 'İcra vekalet ücreti (TL)', {
+            ...ops,
+            varsayilan: '0',
+            dayanak: 'AAÜT / İİK m.138',
+          }),
+          {
+            key: 'masraflar',
+            ad: 'Takip masrafları (İİK m.59)',
+            liste: true,
+            ...ops,
+            yeni: { tutar: '', aciklama: '' },
+            alanlar: [
+              tarih('tarih', 'Masraf tarihi', {
+                ...ops,
+                varsayilan: 'Takip tarihi',
+                dayanak: 'İİK m.59',
+              }),
+              sayi('tutar', 'Tutar (TL)'),
+              metin('aciklama', 'Açıklama'),
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    ad: 'Kısmi Ödemeler',
+    alanlar: [
+      {
+        key: 'takip',
+        ad: 'TBK m.100 kısmi ödemeler',
+        alanlar: [
+          {
+            key: 'kismiOdemeler',
+            ad: 'TBK m.100 kısmi ödemeler',
+            liste: true,
+            ...ops,
+            yeni: { tarih: '', tutar: '' },
+            ipucu: 'Kısmi ödemeler önce ödeme tarihine kadar işlemiş faiz ve takip giderlerinden, artanı asıl alacaktan düşülür.',
+            alanlar: [
+              tarih('tarih', 'Ödeme tarihi'),
+              sayi('tutar', 'Ödeme tutarı (TL)'),
+              metin('aciklama', 'Açıklama', {
+                ...ops,
+                varsayilan: 'Kısmi ödeme',
+                dayanak: 'TBK m.100',
+              }),
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export const AAUT_BOLUMLER: { ad: string; alanlar: Alan[] }[] = [
@@ -357,22 +534,24 @@ function bolumlerdenAlanAdi(parcalar: string[], bolumler: { alanlar: Alan[] }[])
       continue;
     }
     if (parca === 'kalemler') continue;
-    const alan = alanlar.find(a => a.key === parca);
-    if (!alan) return '';
-    ad = alan.ad;
-    alanlar = alan.alanlar ?? [];
+    const eslesenler = alanlar.filter(a => a.key === parca);
+    if (!eslesenler.length) return '';
+    ad = eslesenler[0]!.ad;
+    alanlar = eslesenler.flatMap(a => a.alanlar ?? []);
   }
   return ad;
 }
 
 /** "girdi.kalemler.ihbar.faiz[0].baslangic" gibi bir yolun formdaki alan adı (bulunamazsa boş). */
-export function alanAdi(yol: string, alan?: 'iscilik' | 'aaut' | 'aile'): string {
+export function alanAdi(yol: string, alan?: 'iscilik' | 'icra' | 'aaut' | 'aile'): string {
   const parcalar = yol.replace(/^girdi\.?/, '').replace(/\[\d+\]/g, '').split('.').filter(Boolean);
+  if (alan === 'icra') return bolumlerdenAlanAdi(parcalar, ICRA_BOLUMLER);
   if (alan === 'aaut') return bolumlerdenAlanAdi(parcalar, AAUT_BOLUMLER);
   if (alan === 'aile') return bolumlerdenAlanAdi(parcalar, AILE_BOLUMLER);
   if (alan === 'iscilik') return bolumlerdenAlanAdi(parcalar, BOLUMLER);
   return (
     bolumlerdenAlanAdi(parcalar, BOLUMLER) ||
+    bolumlerdenAlanAdi(parcalar, ICRA_BOLUMLER) ||
     bolumlerdenAlanAdi(parcalar, AAUT_BOLUMLER) ||
     bolumlerdenAlanAdi(parcalar, AILE_BOLUMLER)
   );
