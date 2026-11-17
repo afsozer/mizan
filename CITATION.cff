@@ -6,8 +6,8 @@ abstract: >-
   Calculation tool for Turkish legal claims at the level of a court expert
   report, covering employment receivables, enforcement cover accounts, statutory
   attorney fees and matrimonial property regime liquidation. For each item it
-  produces a dated PDF report (and UYAP .udf document format output for
-  employment claims) showing the inputs, the formula, the statutory basis and
+  produces a dated PDF report (and UYAP .udf document format output across all four
+  calculation domains) showing the inputs, the formula, the statutory basis and
   the source of every official table row used. Phase 1 covers severance, notice
   and bad-faith pay, reinstatement items (idle-period pay and non-reinstatement
   compensation), annual leave (including pre-2003 Law No. 1475 tiers), unpaid
@@ -22,7 +22,7 @@ abstract: >-
 authors:
   - family-names: "Sözer"
     given-names: "Alpaslan Fatih"
-version: "0.2.0"
+version: "0.2.1"
 date-released: "2026-11-17"
 license: AGPL-3.0-only
 repository-code: "https://github.com/afsozer/mizan"
